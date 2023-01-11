@@ -18,13 +18,13 @@ const createUser = asyncHandler(async(req, res) => {
         //     success: false
         // })
         throw new Error('User already exists.');
-    }
-});
+    } 
+}); 
 
 //User login
 const loginUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
-    console.log(email,password);
+    // console.log(email,password);
     //user validation
     const findUser = await User.findOne({"email": email});
     if(findUser && (await findUser.isPasswordMatched(password))) {
@@ -57,7 +57,40 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 //Admin login
-
+const loginAdmin = asyncHandler(async (req, res) => {
+    const { email, password } = req.body;
+    // console.log(email,password);
+    //user validation
+    const findAdmin = await User.findOne({"email": email});
+    if(findAdmin.role !== 'admin') throw new Error('You are not authorized.');
+    if(findAdmin && (await findAdmin.isPasswordMatched(password))) {
+        // res.json(findUser);
+        const refreshToken = await generateRefreshToken(findAdmin?.id);
+        const updateAdmin = await User.findByIdAndUpdate(
+            findAdmin.id,
+            {
+                refreshToken: refreshToken,
+            },
+            { new:true }
+            );
+        res.cookie("refreshToken", refreshToken, 
+        {
+            httpOnly:true,
+            maxAge: 72 * 60 * 60 * 1000
+        });
+        res.json({
+            _id: findAdmin ?. _id,
+            firstname: findAdmin ?. firstname,
+            lastname: findAdmin ?. lastname,
+            email: findAdmin ?. email,
+            mobile: findAdmin ?. mobile,
+            token: generateToken(findAdmin ?. _id),
+            // role: findUser ?. role
+        });
+    } else {
+        throw new Error('Invalid Credentials.');
+    }
+});
 
 //Handle refresh token
 const handleRefreshToken = asyncHandler(async (req, res) => {
@@ -185,6 +218,7 @@ const unblockUser = asyncHandler(async (req, res) => {
 module.exports = { 
     createUser, 
     loginUser, 
+    loginAdmin,
     getAllUsers, 
     getaUser, 
     deleteaUser,

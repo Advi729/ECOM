@@ -5,12 +5,12 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const dotenv = require('dotenv').config();
 
-const authRouter = require('./routes/authRoute');
+const userRouter = require('./routes/userRoute');
 const productRouter = require('./routes/productRoute');
 const categoryRouter = require('./routes/categoryRoute');
 
 const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
+
 
 const dbConnect = require('./config/dbConnect');
 const { notFound, errorHandler } = require('./middlewares/errorHandler');
@@ -30,8 +30,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 dbConnect();
 
 app.use('/', indexRouter);
-// app.use('/users', usersRouter);
-app.use('/api/user', authRouter);
+
+app.use('/api/user', userRouter);
 app.use('/api/product', productRouter);
 app.use('/api/category', categoryRouter);
 
