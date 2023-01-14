@@ -1,5 +1,8 @@
 const Product = require('../models/productModel');
+const User = require('../models/userModel');
+
 const asyncHandler = require('express-async-handler');
+
 
 // Create product
 const createProduct = asyncHandler(async (req, res) => {
@@ -22,13 +25,14 @@ const getProduct = asyncHandler(async (req, res) => {
     }
 })
 
-//Get all products
+//Get all products 
 const getAllProducts = asyncHandler(async (req, res) => {
     try {
         const findAllProducts = await Product.find();
-        res.json(findAllProducts);
+        return res.json({findAllProducts});
+    
     } catch (error) {
-        throw new Error(error);
+        throw new Error(error); 
     }
 });
 
@@ -45,7 +49,7 @@ const updateProduct = asyncHandler(async (req, res) => {
     } catch (error) {
         throw new Error(error); 
     }
-});
+});   
 
 // Delete a product
 const deleteProduct = asyncHandler(async (req, res) => {

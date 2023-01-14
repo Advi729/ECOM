@@ -2,27 +2,44 @@ const User = require('../models/userModel');
 const asyncHandler = require('express-async-handler');
 const { generateToken } = require('../config/jwtToken');
 const { generateRefreshToken } = require('../config/refreshToken');
+const { getAllProducts } = require('../controllers/productCtrl');
 
-// User sign up
-const createUser = asyncHandler(async(req, res) => {
+
+//User sign up GET 
+const createUserGet = asyncHandler(async (req, res) => {
+    res.render('user/signup',{user:true});
+});
+
+
+//User sign up POST
+const createUserPost = asyncHandler(async(req, res) => {
     const email = req.body.email;
     const findUser = await User.findOne({ "email": email});
     if(!findUser) {
         //create new user
         const newUser = await User.create(req.body);
-        res.json(newUser);
+        // res.json(newUser);
+        res.render('user/home',{newUser,user:true});
+
+        
     } else {
         //user already exists
-        // res.json({
+        // res.json({ 
         //     msg: 'User Already Exists',
         //     success: false
         // })
+        res.redirect('/signup');
         throw new Error('User already exists.');
     } 
-}); 
+});  
 
-//User login
-const loginUser = asyncHandler(async (req, res) => {
+//User login GET
+const loginUserGet = asyncHandler(async (req, res) => {
+    res.render('user/login',{user:true});
+});
+
+//User login POST
+const loginUserPost = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
     // console.log(email,password);
     //user validation
@@ -42,29 +59,41 @@ const loginUser = asyncHandler(async (req, res) => {
             httpOnly:true,
             maxAge: 72 * 60 * 60 * 1000
         });
-        res.json({
-            _id: findUser ?. _id,
-            firstname: findUser ?. firstname,
-            lastname: findUser ?. lastname,
-            email: findUser ?. email,
-            mobile: findUser ?. mobile,
-            token: generateToken(findUser ?. _id),
-            // role: findUser ?. role
-        });
+        // res.json({
+        //     _id: findUser ?. _id,
+        //     firstname: findUser ?. firstname,
+        //     lastname: findUser ?. lastname,
+        //     email: findUser ?. email,
+        //     mobile: findUser ?. mobile,
+        //     token: generateToken(findUser ?. _id),
+        //     // role: findUser ?. role
+        // });
+        const allProducts = getAllProducts();
+        res.render('user/home',{allProducts,user:true});
+
     } else {
+        res.redirect('/login');
         throw new Error('Invalid Credentials.');
     }
-});
+});  
 
-//Admin login
-const loginAdmin = asyncHandler(async (req, res) => {
+//Admin-login GET
+const loginAdminGet = asyncHandler(async (req, res) => {
+    res.render('admin/login',{admin:true});
+});
+//Admin login POST
+const loginAdminPost = asyncHandler(async (req, res) => {
+    // res.redirect('/admin/login-admin');
+    // res.redirect('/admin/login')
+
     const { email, password } = req.body;
     // console.log(email,password);
-    //user validation
+    //admin validation
     const findAdmin = await User.findOne({"email": email});
+    // console.log(req.body);
     if(findAdmin.role !== 'admin') throw new Error('You are not authorized.');
     if(findAdmin && (await findAdmin.isPasswordMatched(password))) {
-        // res.json(findUser);
+        // res.json(findAdmin);
         const refreshToken = await generateRefreshToken(findAdmin?.id);
         const updateAdmin = await User.findByIdAndUpdate(
             findAdmin.id,
@@ -87,7 +116,11 @@ const loginAdmin = asyncHandler(async (req, res) => {
             token: generateToken(findAdmin ?. _id),
             // role: findUser ?. role
         });
+        
+        getAllProducts();
+       
     } else {
+        res.redirect('/admin-login');
         throw new Error('Invalid Credentials.');
     }
 });
@@ -142,7 +175,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 const getAllUsers = asyncHandler(async (req, res) => {
     try {
         const getUsers = await User.find();
-        res.json(getUsers);
+        res.json({getUsers});
     } catch (error) {
         throw new Error(error);
     }
@@ -216,9 +249,12 @@ const unblockUser = asyncHandler(async (req, res) => {
 });
 
 module.exports = { 
-    createUser, 
-    loginUser, 
-    loginAdmin,
+    createUserGet,
+    createUserPost, 
+    loginUserGet, 
+    loginUserPost,
+    loginAdminGet,
+    loginAdminPost,
     getAllUsers, 
     getaUser, 
     deleteaUser,
