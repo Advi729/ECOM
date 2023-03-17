@@ -15,8 +15,11 @@ const {
     loginUserPost,
     createUserGet,
     createUserPost,
+    loginUserPostOTP,
+    loginUserGetOTP,
+    verifyOtp,
 } = require("../controllers/userCtrl");
-const { authMiddleware, isAdmin } = require("../middlewares/authMiddleware");
+const { authMiddleware, isAdmin, loggedInSession } = require("../middlewares/authMiddleware");
 const router = express.Router();
  
 // router.get("/", (req,res)=>{    
@@ -25,43 +28,54 @@ const router = express.Router();
 // router.get('/:id', getProduct);
 // router.get('/', getAllProducts);
 // });  
-router.get('/', async (req, res) => {
-    let allProducts = getAllProducts();
-    // const allProducts = 100;
-    console.log(req.body);
-    if(req.body !== ' '){     
-        const { email } = req.body;
-        const adUser = await User.findOne({email});
-        if(adUser.role == "admin") {
-            res.render('admin/dashboard',{adUser,admin:true});
-        } else {
-            res.render('user/home',{adUser,allProducts,user:true});
-        }
-    } else {
-        res.render('user/home',{allProducts,user:true});
-    }
+// router.get('/', async (req, res) => {
+//     let allProducts = getAllProducts();
+//     res.render('index',{allProducts,user:true});
+//     // // const allProducts = 100;
+//     // console.log(req.body);
+//     // if(req.body !== { }){     
+//     //     const { email } = req.body;
+//     //     const adUser = await User.findOne({email});
+//     //     if(adUser.role == "admin") {
+//     //         res.render('admin/dashboard',{adUser,admin:true});
+//     //     } else {
+//     //         res.render('user/home',{adUser,allProducts,user:true});
+//     //     }
+//     // } else {
+//     //     res.render('user/home',{allProducts,user:true});
+//     // }
     
+// });  
 
-});   
 // router.get('/:id', getProduct); // edit  
+
+router.get('/', (req, res) => {
+    res.render("index");
+});
 
 router.route("/signup")
 .get(createUserGet)  
-.post(createUserPost); 
+.post(createUserPost);  
 // router.post("/signup", createUser);
 
 router.route("/login")
-.get(loginUserGet)  
-.post(loginUserPost);  
+.get(loggedInSession, loginUserGet)  
+.post(loggedInSession, loginUserPost);  
 // router.post("/login", loginUser); 
+router.route("/login-otp")
+.get(loggedInSession, loginUserGetOTP)
+.post(loggedInSession, loginUserPostOTP);
+
+router.post("/verify", verifyOtp);
 
 router.route("/admin-login")
-.get(loginAdminGet)  
-.post(loginAdminPost);   
+.get(loggedInSession, loginAdminGet)  
+.post(loggedInSession, loginAdminPost); 
+
 
 router.get("/all-users", getAllUsers); 
 router.get("/refresh", handleRefreshToken); 
-router.get("/logout", logoutUser); 
+router.get("/logout", loggedInSession, logoutUser); 
 
 router.get("/:id", authMiddleware, isAdmin, getaUser); 
 router.delete("/:id", deleteaUser); 

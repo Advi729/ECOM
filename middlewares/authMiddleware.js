@@ -33,5 +33,32 @@ const isAdmin = asyncHandler(async (req, res, next) => {
     }
 });
 
+const loggedInSession = asyncHandler(async(req, res, next) => {
+        // Get the token from the request header
+        const token = req.headers.authorization;
+        
+        if (token) {
+          try { 
+            // Verify the token using your secret key
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            // Set the decoded token on the request object for later use
+            req.user = decoded;
+          } catch (err) {
+            // If the token is invalid or has expired, ignore it and proceed
+            console.error('Invalid or expired token:', err.message);
+          }
+        }
+      
+        // Check if the user is already logged in
+        if (req.user) {
+          // If the user is already logged in, return an error
+          return res.status(403).json({ message: 'User is already logged in' });
+        }  
+      
+        // Call next to proceed to the next middleware or route handler
+        next();
+     
+});
 
-module.exports = { authMiddleware, isAdmin };
+
+module.exports = { authMiddleware, isAdmin, loggedInSession };

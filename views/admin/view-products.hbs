@@ -1,0 +1,50 @@
+<section>
+    <div class="container">
+        {{!-- {{#if admin}}
+        <div class="mt-4 mb-3">
+            <a href="admin/add-product" class="btn btn-success">Add Product</a>
+        </div>
+        {{/if}} --}}
+        <table class="table mt-5" id="productTable">
+            <thead>
+                <tr>
+                    
+                    <th scope="col">Title</th>
+                    <th scope="col">Slug</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Brand</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Color</th>
+
+                    <th scope="col">Image</th>
+                    {{!-- {{#if admin}}
+                    <th scope="col">Options</th>
+                    {{/if}} --}}
+                </tr>
+            </thead>
+            <tbody>
+                {{#each findAllProducts}}
+                <tr>
+                    <td>{{this.title}}</td>
+                    <td>{{this.slug}}</td>
+                    <td>{{this.description}}</td>
+                    <td>Rs. {{this.price}}</td>
+                    <td>{{this.category}}</td>
+                    <td>{{this.brand}}</td>
+                    <td>{{this.quantity}}</td>
+                    <td>{{this.color}}</td>
+                    {{!-- <td><img src="/images/products/{{this._id}}.jpg" style="width:50px;height:35px;" alt=""></td> --}}
+                    {{!-- {{#if admin}}
+                    <td>
+                        <a href="/admin/edit-product" class="btn btn-primary">Edit</a>
+                        <a href="/admin/delete-product" class="btn btn-danger">Delete</a>
+                    </td>
+                    {{/if}} --}}
+                </tr>
+                {{/each}}
+            </tbody> 
+        </table>
+    </div>
+</section>

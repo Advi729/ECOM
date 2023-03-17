@@ -2,13 +2,14 @@ const Product = require('../models/productModel');
 const User = require('../models/userModel');
 
 const asyncHandler = require('express-async-handler');
+  
 
-
-// Create product
+// Create product 
 const createProduct = asyncHandler(async (req, res) => {
     try {
         const newProduct = await Product.create(req.body); 
         res.json(newProduct);
+        // here we have to give successfully added message
     } catch (error) { 
         throw new Error(error);
     }
@@ -29,8 +30,9 @@ const getProduct = asyncHandler(async (req, res) => {
 const getAllProducts = asyncHandler(async (req, res) => {
     try {
         const findAllProducts = await Product.find();
-        return res.json({findAllProducts});
-    
+        // res.json({findAllProducts});
+        // res.render('index',{findAllProducts});
+        res.render('admin/view-products',{findAllProducts, admin:true});
     } catch (error) {
         throw new Error(error); 
     }

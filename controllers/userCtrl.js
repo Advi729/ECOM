@@ -3,6 +3,14 @@ const asyncHandler = require('express-async-handler');
 const { generateToken } = require('../config/jwtToken');
 const { generateRefreshToken } = require('../config/refreshToken');
 const { getAllProducts } = require('../controllers/productCtrl');
+const twilio = require('twilio');
+const { send_otp, verifying_otp } = require('../middlewares/twilio');
+
+const accountSid = process.env.ACCOUNT_SID;
+const authToken = process.env.AUTH_TOKEN;
+
+const client = twilio(accountSid, authToken);
+
 
 
 //User sign up GET 
@@ -19,7 +27,8 @@ const createUserPost = asyncHandler(async(req, res) => {
         //create new user
         const newUser = await User.create(req.body);
         // res.json(newUser);
-        res.render('user/home',{newUser,user:true});
+        let newusername = newUser.firstname;
+        res.render('user/home',{newusername,user:true});
 
         
     } else {
@@ -38,6 +47,52 @@ const loginUserGet = asyncHandler(async (req, res) => {
     res.render('user/login',{user:true});
 });
 
+//User login GET using OTP
+const loginUserGetOTP = asyncHandler(async (req, res) => {
+    res.render('user/otp-form',{user:true});
+});
+
+// //generate otp
+// const generateOTP = () => {
+//     const digits = '0123456789';
+//     let OTP = '';
+//     for (let i = 0; i < 6; i++) {
+//       OTP += digits[Math.floor(Math.random() * 10)];
+//     }
+//     return OTP;
+// };
+// //send otp
+// const sendOTP = (mobileNumber, otp) => {
+//     client.messages.create({
+//       to: mobileNumber,
+//       from: '+15074872503',  // twilio phone number
+//       body: `Your OTP for login is ${otp}`,
+//     })
+//     .then(message => console.log(message.sid))
+//     .catch(err => console.log(err));
+// }
+  
+// User login POST using OTP
+const loginUserPostOTP = asyncHandler((req, res) => {
+  const mobileNumber = req.body.mobileNumber;
+//   const otp = generateOTP();
+  send_otp(mobileNumber).then((response) => {
+    // const mobileNumber = req.body.mobileNumber;
+    res.render('user/otp', { title: 'OTP Verification', mobileNumber: mobileNumber });
+  })
+}); 
+ 
+// User login otp verify
+const verifyOtp = async (req, res) => {
+    const mobileNumber = req.body.mobileNumber;
+    const otp = req.body.otp;
+    // Verify the OTP
+    verifying_otp(mobileNumber, otp).then((verification) => {
+        res.render('user/home',{user:true});
+        // here we need to send username
+    })
+  };
+   
 //User login POST
 const loginUserPost = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
@@ -68,18 +123,25 @@ const loginUserPost = asyncHandler(async (req, res) => {
         //     token: generateToken(findUser ?. _id),
         //     // role: findUser ?. role
         // });
-        const allProducts = getAllProducts();
-        res.render('user/home',{allProducts,user:true});
+        // const allProducts = getAllProducts();
+
+        // console.log(findUser.firstname);
+        // res.render('user/home',{findUser, user:true});
+        let username = findUser.firstname;  //working
+        res.render('user/home',{username, user:true});  // working
+
+        // res.render('user/home',{allProducts,user:true});
 
     } else {
         res.redirect('/login');
         throw new Error('Invalid Credentials.');
     }
-});  
-
+});   
+ 
 //Admin-login GET
 const loginAdminGet = asyncHandler(async (req, res) => {
-    res.render('admin/login',{admin:true});
+    res.render('admin/login');
+    // res.render('admin/login',{admin:true});
 });
 //Admin login POST
 const loginAdminPost = asyncHandler(async (req, res) => {
@@ -107,17 +169,19 @@ const loginAdminPost = asyncHandler(async (req, res) => {
             httpOnly:true,
             maxAge: 72 * 60 * 60 * 1000
         });
-        res.json({
-            _id: findAdmin ?. _id,
-            firstname: findAdmin ?. firstname,
-            lastname: findAdmin ?. lastname,
-            email: findAdmin ?. email,
-            mobile: findAdmin ?. mobile,
-            token: generateToken(findAdmin ?. _id),
-            // role: findUser ?. role
-        });
-        
-        getAllProducts();
+        // res.json({
+        //     _id: findAdmin ?. _id,
+        //     firstname: findAdmin ?. firstname,
+        //     lastname: findAdmin ?. lastname,
+        //     email: findAdmin ?. email,
+        //     mobile: findAdmin ?. mobile,
+        //     token: generateToken(findAdmin ?. _id),
+        //     // role: findUser ?. role
+        // });
+        // const allAdminProducts = getAllProducts();
+        // res.render('admin/dashboard',{allAdminProducts,admin:true});
+        res.render('admin/dashboard',{admin:true});
+        // getAllProducts();
        
     } else {
         res.redirect('/admin-login');
@@ -139,9 +203,9 @@ const handleRefreshToken = asyncHandler(async (req, res) => {
         res.json({accessToken});
     });
 });
-
+ 
 // logout user
-const logoutUser = asyncHandler(async (req, res) => {
+    const logoutUser = asyncHandler(async (req, res) => {
     const cookie = req.cookies;
     // console.log(cookie);
     if(!cookie?.refreshToken) throw new Error('No refresh token in cookie.');
@@ -154,7 +218,7 @@ const logoutUser = asyncHandler(async (req, res) => {
             secure:true
         });
         res.sendStatus(204); //forbidden
-    }
+    } 
     await User.findOneAndUpdate(
         refreshToken,
         { "refreshToken": " " }  
@@ -164,7 +228,10 @@ const logoutUser = asyncHandler(async (req, res) => {
             httpOnly:true,
             secure:true
         });
-        res.sendStatus(204);
+    // res.redirect('/user/home');
+    res.redirect('/');
+    res.sendStatus(204);
+        
 });
 
 
@@ -262,4 +329,7 @@ module.exports = {
     unblockUser,
     handleRefreshToken,
     logoutUser,
+    loginUserGetOTP,
+    loginUserPostOTP,
+    verifyOtp
  };

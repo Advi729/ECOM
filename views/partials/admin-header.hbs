@@ -5,7 +5,7 @@
 <!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:32:35 GMT -->
 <head>
     <meta charset="utf-8">
-    <title>Evara Dashboard</title>
+    <title>Heats Admin Panel</title>
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,17 +14,23 @@
     <meta property="og:url" content="">
     <meta property="og:image" content="">
     <!-- Favicon -->
-    <link rel="shortcut icon" type="image/x-icon" href="assets-admin/imgs/theme/heats_favicon.png">
+    <link rel="shortcut icon" type="image/x-icon" href="/assets-admin/imgs/theme/heats_favicon.png">
     <!-- Template CSS -->
-    <link href="assets-admin/css/main.css" rel="stylesheet" type="text/css" />
+    <link href="/assets-admin/css/main.css" rel="stylesheet" type="text/css" />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.css"> 
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.js"></script>
+
 </head>
 
 <body>
+    
     <div class="screen-overlay"></div>
     <aside class="navbar-aside" id="offcanvas_aside">
         <div class="aside-top">
             <a href="index.html" class="brand-wrap">
-                <img src="assets-admin/imgs/theme/Heats.png" class="logo" alt="Evara Dashboard">
+                <img src="/assets-admin/imgs/theme/Heats.png" class="logo" alt="Heats Dashboard">
             </a>
             <div>
                 <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i> </button>
@@ -32,25 +38,25 @@
         </div>
         <nav>
             <ul class="menu-aside">
-                <li class="menu-item active">
-                    <a class="menu-link" href="index.html"> <i class="icon material-icons md-home"></i>
+                <li class="menu-item">     {{!--  correction needed below   --}}
+                    <a class="menu-link" href="/dashboard"> <i class="icon material-icons md-home"></i>
                         <span class="text">Dashboard</span>
                     </a>
                 </li>
                 <li class="menu-item has-submenu">
-                    <a class="menu-link" href="page-products-list.html"> <i class="icon material-icons md-shopping_bag"></i>
+                    <a class="menu-link" href="/product"> <i class="icon material-icons md-shopping_bag"></i>
                         <span class="text">Products</span>
                     </a>
                     <div class="submenu">
-                        <a href="page-products-list.html">Product List</a>
+                        <a href="product/products-list">Product List123</a>
                         <a href="page-products-grid.html">Product grid</a>
                         <a href="page-products-grid-2.html">Product grid 2</a>
-                        <a href="page-categories.html">Categories</a>
+                        <a href="product/add-product">Add Product</a>
                     </div>
                 </li>
                 <li class="menu-item has-submenu">
                     <a class="menu-link" href="page-orders-1.html"> <i class="icon material-icons md-shopping_cart"></i>
-                        <span class="text">Orders</span>
+                        <span class="text">Orders</span> 
                     </a>
                     <div class="submenu">
                         <a href="page-orders-1.html">Order list 1</a>
@@ -70,7 +76,7 @@
                 </li>
                 <li class="menu-item has-submenu">
                     <a class="menu-link" href="page-form-product-1.html"> <i class="icon material-icons md-add_box"></i>
-                        <span class="text">Add product</span>
+                        <span class="text">Category</span>
                     </a>
                     <div class="submenu">
                         <a href="page-form-product-1.html">Add product 1</a>
@@ -79,7 +85,7 @@
                         <a href="page-form-product-4.html">Add product 4</a>
                     </div>
                 </li>
-                <li class="menu-item has-submenu">
+                {{!-- <li class="menu-item has-submenu">
                     <a class="menu-link" href="page-transactions-1.html"> <i class="icon material-icons md-monetization_on"></i>
                         <span class="text">Transactions</span>
                     </a>
@@ -87,7 +93,7 @@
                         <a href="page-transactions-1.html">Transaction 1</a>
                         <a href="page-transactions-2.html">Transaction 2</a>
                     </div>
-                </li>
+                </li> --}}
                 <li class="menu-item has-submenu">
                     <a class="menu-link" href="#"> <i class="icon material-icons md-person"></i>
                         <span class="text">Account</span>
@@ -98,22 +104,22 @@
                         <a href="page-error-404.html">Error 404</a>
                     </div>
                 </li>
-                <li class="menu-item">
+                {{!-- <li class="menu-item">
                     <a class="menu-link" href="page-reviews.html"> <i class="icon material-icons md-comment"></i>
                         <span class="text">Reviews</span>
                     </a>
-                </li>
-                <li class="menu-item">
+                </li> --}}
+                {{!-- <li class="menu-item">
                     <a class="menu-link" href="page-brands.html"> <i class="icon material-icons md-stars"></i>
                         <span class="text">Brands</span> </a>
-                </li>
-                <li class="menu-item">
+                </li> --}}
+                {{!-- <li class="menu-item">
                     <a class="menu-link" disabled href="#"> <i class="icon material-icons md-pie_chart"></i>
                         <span class="text">Statistics</span>
                     </a>
-                </li>
+                </li> --}}
             </ul>
-            <hr>
+            {{!-- <hr>
             <ul class="menu-aside">
                 <li class="menu-item has-submenu">
                     <a class="menu-link" href="#"> <i class="icon material-icons md-settings"></i>
@@ -131,7 +137,7 @@
                 </li>
             </ul>
             <br>
-            <br>
+            <br> --}}
         </nav>
     </aside>
     <main class="main-wrap">
@@ -168,14 +174,14 @@
                     <li class="dropdown nav-item">
                         <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage" aria-expanded="false"><i class="material-icons md-public"></i></a>
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
-                            <a class="dropdown-item text-brand" href="#"><img src="assets-admin/imgs/theme/flag-us.png" alt="English">English</a>
-                            <a class="dropdown-item" href="#"><img src="assets-admin/imgs/theme/flag-fr.png" alt="Français">Français</a>
-                            <a class="dropdown-item" href="#"><img src="assets-admin/imgs/theme/flag-jp.png" alt="Français">日本語</a>
-                            <a class="dropdown-item" href="#"><img src="assets-admin/imgs/theme/flag-cn.png" alt="Français">中国人</a>
+                            <a class="dropdown-item text-brand" href="#"><img src="/assets-admin/imgs/theme/flag-us.png" alt="English">English</a>
+                            <a class="dropdown-item" href="#"><img src="/assets-admin/imgs/theme/flag-fr.png" alt="Français">Français</a>
+                            <a class="dropdown-item" href="#"><img src="/assets-admin/imgs/theme/flag-jp.png" alt="Français">日本語</a>
+                            <a class="dropdown-item" href="#"><img src="/assets-admin/imgs/theme/flag-cn.png" alt="Français">中国人</a>
                         </div>
                     </li>
                     <li class="dropdown nav-item">
-                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="assets-admin/imgs/people/avatar2.jpg" alt="User"></a>
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="/assets-admin/imgs/people/avatar2.jpg" alt="User"></a>
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
                             <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit Profile</a>
                             <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account Settings</a>

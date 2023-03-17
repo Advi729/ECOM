@@ -1,0 +1,54 @@
+{{!-- <h1>{{title}}</h1>
+<p>Please enter the OTP sent to {{mobileNumber}}:</p>
+<form action="/verify" method="POST">
+  <input type="hidden" name="mobileNumber" value="{{mobileNumber}}">
+  <input type="text" name="otp" maxlength="6">
+  <button type="submit">Verify</button>
+</form> --}}
+
+<main class="main">
+<div class="page-header breadcrumb-wrap">
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="index.html" rel="nofollow">Home</a>
+            <span></span> Pages
+            <span></span> Login 
+            <span></span> OTP 
+            <span></span> Verify
+        </div>
+    </div>
+</div>
+<section class="pt-150 pb-150">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-10 m-auto">
+                <div class="row">
+                    <div class="col-lg-5">
+                        <div class="login_wrap widget-taber-content p-30 background-white border-radius-10 mb-md-5 mb-lg-0 mb-sm-5">
+                            <div class="padding_eight_all bg-white">
+                                <div class="heading_s1">
+                                    <h3 class="mb-30">{{title}}</h3>
+                                </div>
+                                <p>Please enter the OTP sent to {{mobileNumber}}:</p>
+                                <form method="post" action="/verify">
+                                    <div class="form-group">
+                                        <input type="hidden" required="" name="mobileNumber" value="{{mobileNumber}}">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" name="otp" maxlength="6">
+                                    </div>
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-fill-out btn-block hover-up" name="verify">Verify</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-1"></div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</main>
