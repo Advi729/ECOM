@@ -46,3 +46,34 @@
 //     }
 //   },
 
+
+
+
+
+
+
+// res.cookie("refreshToken", refreshToken, 
+//         {
+//             httpOnly:true,
+//             maxAge: 72 * 60 * 60 * 1000
+//         });  
+        
+//         const newDetails =  {
+//           _id: findAdmin ?. _id,
+//              firstname: findAdmin ?. firstname,
+//              lastname: findAdmin ?. lastname,
+//              email: findAdmin ?. email, 
+//              mobile: findAdmin ?. mobile,
+//              token: generateToken(findAdmin ?. _id),
+//          role: findUser ?. role
+//          };
+
+//          res.cookie("newDetails", newDetails,
+//             {
+//                 httpOnly:true,
+//                 maxAge: 72 * 60 * 60 * 1000
+//             }
+//          );
+     
+//         res.render('admin/dashboard',{admin:true});
+

@@ -6,12 +6,19 @@ const logger = require('morgan');
 const hbs = require('express-handlebars'); 
 // const Handlebars= require('handlebars');  
 const dotenv = require('dotenv').config();  
-     
-const userRouter = require('./routes/userRoute'); 
-const productRouter = require('./routes/productRoute');
-const categoryRouter = require('./routes/categoryRoute');
+const bodyParser = require("body-parser")
+const session = require('express-session');
+const nocache = require('nocache');
 
-// const indexRouter = require('./routes/index');
+
+
+              // earlier v.0.1
+// const userRouter = require('./routes/userRoute'); 
+// const productRouter = require('./routes/productRoute');
+// const categoryRouter = require('./routes/categoryRoute');
+
+const indexRouter = require('./routes/index');
+const adminRouter = require('./routes/admin');
 
 
 const dbConnect = require('./config/dbConnect');
@@ -27,20 +34,32 @@ app.engine('hbs',hbs.engine({extname:'hbs',defaultLayout:'layout',layoutsDir:__d
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false })); 
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(session({
+  secret: "secretkey",
+  saveUninitialized: true,
+  cookie: {maxAge: 1000 * 60 * 60 * 24},
+  resave: false
+}));
+
+// app.use(nocache());
+
 dbConnect(); 
 
-// app.use('/', indexRouter);
+app.use('/', indexRouter);
+app.use('/admin', adminRouter);
 
-// app.use('/api/user', userRouter);
+// app.use('/api/user', userRouter);  
 // app.use('/api/product', productRouter);
 // app.use('/api/category', categoryRouter);
 
-app.use('/', userRouter);
-app.use('/product', productRouter);
-app.use('/category', categoryRouter);
+            // v.0.1
+// app.use('/', userRouter);
+// app.use('/product', productRouter);
+// app.use('/category', categoryRouter);
  
 
 // Handlebars.registerHelper("inc", function(value, options)

@@ -5,6 +5,9 @@ const { generateRefreshToken } = require('../config/refreshToken');
 const { getAllProducts } = require('../controllers/productCtrl');
 const twilio = require('twilio');
 const { send_otp, verifying_otp } = require('../middlewares/twilio');
+// const { allProducts } = require('../helpers/productHelpers');
+const productHelpers = require("../helpers/productHelpers");
+
 
 const accountSid = process.env.ACCOUNT_SID;
 const authToken = process.env.AUTH_TOKEN;
@@ -128,7 +131,11 @@ const loginUserPost = asyncHandler(async (req, res) => {
         // console.log(findUser.firstname);
         // res.render('user/home',{findUser, user:true});
         let username = findUser.firstname;  //working
-        res.render('user/home',{username, user:true});  // working
+
+        let prods = productHelpers.allProducts();
+        console.log('prods:',prods);
+
+        res.render('user/home',{username, allProducts: prods, user:true});  // working
 
         // res.render('user/home',{allProducts,user:true});
 
@@ -173,18 +180,45 @@ const loginAdminPost = asyncHandler(async (req, res) => {
         //     _id: findAdmin ?. _id,
         //     firstname: findAdmin ?. firstname,
         //     lastname: findAdmin ?. lastname,
-        //     email: findAdmin ?. email,
+        //     email: findAdmin ?. email, 
         //     mobile: findAdmin ?. mobile,
         //     token: generateToken(findAdmin ?. _id),
         //     // role: findUser ?. role
         // });
+
+        // res.cookie("adminId", findAdmin?._id, {
+        //     httpOnly: true,
+        //     maxAge: 72 * 60 * 60 * 1000,
+        //   });
+          
+        // res.cookie("adminToken", generateToken(findAdmin?._id), {
+        //     httpOnly: true,
+        //     maxAge: 72 * 60 * 60 * 1000,
+        //   }); 
+
+        const token = generateToken(findAdmin?._id);
+        // console.log(token);
+        res.set('Authorization', `Bearer ${token}`);
+        // console.log(res);
+// can send newDetails while rendering 
+//         const newDetails =  {
+//           _id: findAdmin ?. _id,
+//              firstname: findAdmin ?. firstname,
+//              lastname: findAdmin ?. lastname,
+//              email: findAdmin ?. email, 
+//              mobile: findAdmin ?. mobile,
+//              token: generateToken(findAdmin ?. _id),
+//          role: findUser ?. role
+//          };
+
+
         // const allAdminProducts = getAllProducts();
         // res.render('admin/dashboard',{allAdminProducts,admin:true});
         res.render('admin/dashboard',{admin:true});
         // getAllProducts();
        
     } else {
-        res.redirect('/admin-login');
+        res.redirect('/admin');
         throw new Error('Invalid Credentials.');
     }
 });

@@ -17,7 +17,6 @@
                     <th scope="col">Brand</th>
                     <th scope="col">Quantity</th>
                     <th scope="col">Color</th>
-
                     <th scope="col">Image</th>
                     {{!-- {{#if admin}}
                     <th scope="col">Options</th>
@@ -25,17 +24,18 @@
                 </tr>
             </thead>
             <tbody>
-                {{#each findAllProducts}}
+                {{#each allProducts}}
                 <tr>
                     <td>{{this.title}}</td>
                     <td>{{this.slug}}</td>
                     <td>{{this.description}}</td>
-                    <td>Rs. {{this.price}}</td>
+                    <td>₹ {{this.price}}</td>
                     <td>{{this.category}}</td>
                     <td>{{this.brand}}</td>
                     <td>{{this.quantity}}</td>
                     <td>{{this.color}}</td>
                     {{!-- <td><img src="/images/products/{{this._id}}.jpg" style="width:50px;height:35px;" alt=""></td> --}}
+                    <td><img src="/uploads/products/{{this.images}}" style="width:50px;height:35px;" alt=""></td>
                     {{!-- {{#if admin}}
                     <td>
                         <a href="/admin/edit-product" class="btn btn-primary">Edit</a>
@@ -47,4 +47,27 @@
             </tbody> 
         </table>
     </div>
+
+    {{!-- <div class="pagination-area mt-30 mb-50">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-start">
+                <li class="page-item active"><a class="page-link" href="#">01</a></li>
+                <li class="page-item"><a class="page-link" href="#">02</a></li>
+                <li class="page-item"><a class="page-link" href="#">03</a></li>
+                <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                <li class="page-item"><a class="page-link" href="#">16</a></li>
+                <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
+            </ul>
+        </nav>
+    </div> --}}
 </section>
+<br>
+<br>
+<br>
+
+{{!-- data table for products
+    <script>
+    $(document).ready( function () {
+    $('#productTable').DataTable();
+    } );
+    </script>   --}}
