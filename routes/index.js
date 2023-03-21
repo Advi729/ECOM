@@ -1,6 +1,6 @@
 const express = require("express");
 const User = require("../models/userModel");
-const { getAllProducts, getProduct } = require("../controllers/productCtrl");
+const { getAllProducts, getProduct, getAllProductsUser } = require("../controllers/productCtrl");
 const { 
     getAllUsers, 
     getaUser, 
@@ -49,24 +49,25 @@ const router = express.Router();
 
 // router.get('/:id', getProduct); // edit  
 
-router.get('/', (req, res) => {
-    res.render("index");
+router.get('/', getAllProductsUser, (req, res) => {
+    let products = req.productsAll;
+    res.render('index',{allProducts: products});
 });
 
 router.route("/signup")
 .get(createUserGet)  
-.post(createUserPost);  
+.post(getAllProductsUser, createUserPost);  
 // router.post("/signup", createUser);
 
 router.route("/login")
 .get(loggedInSession, loginUserGet)  
-.post(loggedInSession, loginUserPost);  
+.post(loggedInSession, getAllProductsUser, loginUserPost);  
 // router.post("/login", loginUser); 
 router.route("/login-otp")
 .get(loggedInSession, loginUserGetOTP)
 .post(loggedInSession, loginUserPostOTP);
 
-router.post("/verify", verifyOtp);
+router.post("/verify", getAllProductsUser, verifyOtp);
 
 router.get("/all-users", getAllUsers);   // i think this should be in admin route
 router.get("/refresh", handleRefreshToken); 

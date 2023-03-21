@@ -1,4 +1,5 @@
 const User = require('../models/userModel');
+const Product = require('../models/productModel');
 const asyncHandler = require('express-async-handler');
 const { generateToken } = require('../config/jwtToken');
 const { generateRefreshToken } = require('../config/refreshToken');
@@ -30,9 +31,12 @@ const createUserPost = asyncHandler(async(req, res) => {
         //create new user
         const newUser = await User.create(req.body);
         // res.json(newUser);
-        let newusername = newUser.firstname;
-        res.render('user/home',{newusername,user:true});
 
+        let newusername = newUser.firstname;
+        // res.render('user/home',{newusername,user:true});
+        let products = req.productsAll;
+        // console.log(products);
+        res.render('user/home',{newusername, allProducts: products, user: true});
         
     } else {
         //user already exists
@@ -91,7 +95,9 @@ const verifyOtp = async (req, res) => {
     const otp = req.body.otp;
     // Verify the OTP
     verifying_otp(mobileNumber, otp).then((verification) => {
-        res.render('user/home',{user:true});
+        
+        let products = req.productsAll;
+        res.render('user/home',{allProducts: products, user: true});
         // here we need to send username
     })
   };
@@ -132,12 +138,14 @@ const loginUserPost = asyncHandler(async (req, res) => {
         // res.render('user/home',{findUser, user:true});
         let username = findUser.firstname;  //working
 
-        let prods = productHelpers.allProducts();
-        console.log('prods:',prods);
+        // let prods = productHelpers.allProducts();
+        // console.log('prods:',prods);
 
-        res.render('user/home',{username, allProducts: prods, user:true});  // working
+        // res.render('user/home',{username, allProducts: prods, user:true});  // working
 
-        // res.render('user/home',{allProducts,user:true});
+        let products = req.productsAll;
+        // console.log(products);
+        res.render('user/home',{username, allProducts: products, user: true});
 
     } else {
         res.redirect('/login');

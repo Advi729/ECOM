@@ -58,7 +58,7 @@ const getAllProducts = asyncHandler(async (req, res) => {
 
         // res.json({findAllProducts});
         // res.render('index',{findAllProducts});
-        console.log('0000000000000000000000000000000000000000000000000000000000000000');
+        // console.log('0000000000000000000000000000000000000000000000000000000000000000');
         // console.log(findAllProducts);
 
         const products = [];
@@ -85,7 +85,7 @@ const getAllProducts = asyncHandler(async (req, res) => {
 });
 
 // get all products user side
-const getAllProductsUser = asyncHandler(async (req, res) => {
+const getAllProductsUser = asyncHandler(async (req, res, next) => {
     try {
         const findAllProducts = await Product.find();
 
@@ -109,7 +109,10 @@ const getAllProductsUser = asyncHandler(async (req, res) => {
             };
             products.push(product);
         }
-        res.render('user/home',{allProducts: products, user: true});
+        req.productsAll = products;
+        // console.log(req.productsAll);
+        next();
+        // res.render('user/home',{allProducts: products, user: true});
     } catch (error) {
         throw new Error(error); 
     }
