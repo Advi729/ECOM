@@ -1,14 +1,16 @@
 const express = require('express');
-const { createProduct, getProduct, getAllProducts, updateProduct, deleteProduct } = require('../controllers/productCtrl');
-const { authMiddleware, isAdmin } = require("../middlewares/authMiddleware");
+const {
+  createProduct, getProduct, getAllProducts, updateProduct, deleteProduct,
+} = require('../controllers/productController');
+const { authMiddleware, isAdmin } = require('../middlewares/authMiddleware');
+
 const router = express.Router();
 
-             
-router.route('/add-product')  
-.get((req, res) => {
-    res.render('admin/add-product',{admin:true});
-})
-.post(authMiddleware, isAdmin, createProduct);
+router.route('/add-product')
+  .get((req, res) => {
+    res.render('admin/add-product', { admin: true });
+  })
+  .post(authMiddleware, isAdmin, createProduct);
 
 // router.post("/dashboard", authMiddleware, isAdmin, (req, res) => {
 //     res.render("admin/dashboard");

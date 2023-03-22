@@ -1,67 +1,71 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt'); 
+const bcrypt = require('bcrypt');
 
 // Declare the Schema of the Mongo model
-var userSchema = new mongoose.Schema({
-    firstname:{
-        type:String,
-        required:true,
-    }, 
-    lastname:{
-        type:String,
-        required:true,
+const userSchema = new mongoose.Schema(
+  {
+    firstname: {
+      type: String,
+      required: true,
     },
-    email:{
-        type:String,
-        required:true,
-        unique:true,
+    lastname: {
+      type: String,
+      required: true,
     },
-    mobile:{
-        type:String,
-        required:true,
-        unique:true,
+    email: {
+      type: String,
+      required: true,
+      unique: true,
     },
-    password:{
-        type:String,
-        required:true,
+    mobile: {
+      type: String,
+      required: true,
+      unique: true,
     },
-    role:{
-        type:String,
-        default:"user",
-        required:true,
+    password: {
+      type: String,
+      required: true,
     },
-    isBlocked:{
-        type:Boolean,
-        default:false,
+    role: {
+      type: String,
+      default: 'user',
+      required: true,
     },
-    cart:{
-        type:Array,
-        default:[]
+    isBlocked: {
+      type: Boolean,
+      default: false,
     },
-    address:[{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Address"
+    cart: {
+      type: Array,
+      default: [],
+    },
+    address: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Address',
     }],
-    wishlist:[{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Product"
+    wishlist: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Product',
     }],
-    refreshToken:{
-        type:String
+    refreshToken: {
+      type: String,
     },
-},
-{
-    timestamps:true
+  },
+  {
+    timestamps: true,
+  },
+);
+
+// eslint-disable-next-line func-names
+userSchema.pre('save', async function () {
+  const salt = await bcrypt.genSaltSync(10);
+  this.password = await bcrypt.hashSync(this.password, salt);
 });
 
-userSchema.pre("save",async function(next) {
-    const salt = await bcrypt.genSaltSync(10);
-    this.password = await bcrypt.hashSync(this.password, salt);
-});
+// eslint-disable-next-line func-names
+userSchema.methods.isPasswordMatched = async function (enteredPassword) {
+  return bcrypt.compare(enteredPassword, this.password);
+};
 
-userSchema.methods.isPasswordMatched = async function(enteredPassword) {
-    return await bcrypt.compare(enteredPassword, this.password);
-}
-
-//Export the model
+// Export the model
 module.exports = mongoose.model('User', userSchema);

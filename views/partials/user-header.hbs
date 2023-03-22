@@ -16,9 +16,9 @@
     <meta property="og:url" content="">
     <meta property="og:image" content="">
     <!-- Favicon -->
-    {{!-- <link rel="shortcut icon" type="image/x-icon" href="assets-user/imgs/theme/favicon.svg"> --}}
-    <link rel="shortcut icon" type="image/x-icon" href="/assets-user/img/theme/heats_favicon.png">
-    {{!-- <link rel="shortcut icon" type="image/x-icon" href="/ECOM/public/assets-user/imgs/theme/heats_favicon.png"> --}}
+   
+    <link rel="shortcut icon" type="image/x-icon" href="/assets-user/imgs/theme/heats_favicon.png">
+    
     <!-- Template CSS -->
     {{!-- <link rel="stylesheet" href="assets-user/css/main.css"> --}}
     <link rel="stylesheet" href="/assets-user/css/main.css">
@@ -650,16 +650,15 @@
                                         {{/if}}
                                     </a>
                                 </li>
-
-                                        <li><a href="/login">Log In</a><i class="fi-rs-angle-down"></i>
+                                        {{!-- {{#if }} here if user loggedin then display logout  --}}
+                                        <li><a href="/login">Log In</a>
                                     {{!-- <li><i class="fi-rs-user"></i><a href="/login">Log In</a><i class="fi-rs-angle-down"></i> --}}
-                                        <ul class="sub-menu">
-                                                <li><a href="/login">User</a></li>
-                                                <li><a href="/admin">Admin</a></li>
-                                                <li><a href="/logout">Log out</a></li>
-                                        </ul>
-                                    </li> 
+                                        
+                                        <li><a href="/logout">Log out</a></li>
+                                        
+                        
                                     <li><a href="/signup">Sign Up</a></li>
+                                    <li><a href="/prod-dummy">prod dummy</a></li>
                                 </ul>
                             </nav>
                         </div>
