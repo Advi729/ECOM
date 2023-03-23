@@ -1,5 +1,5 @@
 const express = require('express');
-const User = require('../models/userModel');
+const User = require('../models/user-model');
 const {
   createProduct,
   getProduct,
@@ -7,7 +7,7 @@ const {
   updateProduct,
   deleteProduct,
   uploadImages,
-} = require('../controllers/productController');
+} = require('../controllers/product-controller');
 
 const {
   getAllUsers,
@@ -26,13 +26,21 @@ const {
   loginUserPostOTP,
   loginUserGetOTP,
   verifyOtp,
-} = require('../controllers/userController');
-const { authMiddleware, isAdmin, loggedInSession } = require('../middlewares/authMiddleware');
-const { productImgResize, uploadMultiplePhoto } = require('../middlewares/uploadImagesMiddleware');
+} = require('../controllers/user-controller');
+const {
+  authMiddleware,
+  isAdmin,
+  loggedInSession,
+} = require('../middlewares/auth-middleware');
+const {
+  productImgResize,
+  uploadMultiplePhoto,
+} = require('../middlewares/uploadImages-middleware');
 
 const router = express.Router();
 
-router.route('/')
+router
+  .route('/')
   .get(loggedInSession, loginAdminGet)
   .post(loggedInSession, loginAdminPost);
 
@@ -44,14 +52,15 @@ router.get('/dashboard', (req, res) => {
 });
 
 // product management in admin side
-router.route('/add-product')
+router
+  .route('/add-product')
   .get((req, res) => {
     res.render('admin/add-product', { admin: true });
   })
-// .post(createProduct);
-// .post(authMiddleware, isAdmin, createProduct);
-// .post( uploadMultiplePhoto, productImgResize, uploadImages, createProduct);
-// .post( uploadMultiplePhoto, uploadImages, createProduct);
+  // .post(createProduct);
+  // .post(authMiddleware, isAdmin, createProduct);
+  // .post( uploadMultiplePhoto, productImgResize, uploadImages, createProduct);
+  // .post( uploadMultiplePhoto, uploadImages, createProduct);
   .post(uploadMultiplePhoto, createProduct);
 
 // router.put('/upload/:id', authMiddleware, isAdmin, uploadPhoto.array('images',10), productImgResize, uploadImages);

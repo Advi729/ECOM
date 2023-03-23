@@ -1,13 +1,13 @@
 const asyncHandler = require('express-async-handler');
 const twilio = require('twilio');
-const User = require('../models/userModel');
-const Product = require('../models/productModel');
-const { generateToken } = require('../config/jwtToken');
-const { generateRefreshToken } = require('../config/refreshToken');
-const { getAllProducts } = require('./productController');
-const { send_otp, verifying_otp } = require('../middlewares/twilioMiddleware');
+const User = require('../models/user-model');
+const Product = require('../models/product-model');
+const { generateToken } = require('../config/jwt-token');
+const { generateRefreshToken } = require('../config/refresh-token');
+const { getAllProducts } = require('./product-controller');
+const { send_otp, verifying_otp } = require('../middlewares/twilio-middleware');
 // const { allProducts } = require('../helpers/productHelpers');
-const productHelpers = require('../helpers/productHelper');
+const productHelpers = require('../helpers/product-helper');
 
 const accountSid = process.env.ACCOUNT_SID;
 const authToken = process.env.AUTH_TOKEN;
@@ -110,16 +110,12 @@ const loginUserPost = asyncHandler(async (req, res) => {
       {
         refreshToken,
       },
-      { new: true },
+      { new: true }
     );
-    res.cookie(
-      'refreshToken',
-      refreshToken,
-      {
-        httpOnly: true,
-        maxAge: 72 * 60 * 60 * 1000,
-      },
-    );
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      maxAge: 72 * 60 * 60 * 1000,
+    });
     // res.json({
     //     _id: findUser ?. _id,
     //     firstname: findUser ?. firstname,
@@ -173,16 +169,12 @@ const loginAdminPost = asyncHandler(async (req, res) => {
       {
         refreshToken,
       },
-      { new: true },
+      { new: true }
     );
-    res.cookie(
-      'refreshToken',
-      refreshToken,
-      {
-        httpOnly: true,
-        maxAge: 72 * 60 * 60 * 1000,
-      },
-    );
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      maxAge: 72 * 60 * 60 * 1000,
+    });
     // res.json({
     //     _id: findAdmin ?. _id,
     //     firstname: findAdmin ?. firstname,
@@ -237,7 +229,8 @@ const handleRefreshToken = asyncHandler(async (req, res) => {
   const user = await User.findOne({ refreshToken });
   if (!user) throw new Error('No refresh token present in db or not matched.');
   jwt.verify(refreshToken, process.env.JWT_SECRET, (err, decoded) => {
-    if (err || user.id !== decoded.id) throw new Error('There is something wrong with refresh token.');
+    if (err || user.id !== decoded.id)
+      throw new Error('There is something wrong with refresh token.');
     const accessToken = generateToken(user?.id);
     res.json({ accessToken });
   });
@@ -251,26 +244,17 @@ const logoutUser = asyncHandler(async (req, res) => {
   const { refreshToken } = cookie;
   const user = await User.findOne({ refreshToken });
   if (!user) {
-    res.clearCookie(
-      'refreshToken',
-      {
-        httpOnly: true,
-        secure: true,
-      },
-    );
-    res.sendStatus(204); // forbidden
-  }
-  await User.findOneAndUpdate(
-    refreshToken,
-    { refreshToken: ' ' },
-  );
-  res.clearCookie(
-    'refreshToken',
-    {
+    res.clearCookie('refreshToken', {
       httpOnly: true,
       secure: true,
-    },
-  );
+    });
+    res.sendStatus(204); // forbidden
+  }
+  await User.findOneAndUpdate(refreshToken, { refreshToken: ' ' });
+  res.clearCookie('refreshToken', {
+    httpOnly: true,
+    secure: true,
+  });
   // res.redirect('/user/home');
   res.redirect('/');
   res.sendStatus(204);
@@ -323,7 +307,7 @@ const blockUser = asyncHandler(async (req, res) => {
       },
       {
         new: true,
-      },
+      }
     );
     res.json({
       message: 'User Blocked.',
@@ -344,7 +328,7 @@ const unblockUser = asyncHandler(async (req, res) => {
       },
       {
         new: true,
-      },
+      }
     );
     res.json({
       message: 'User Un-Blocked.',

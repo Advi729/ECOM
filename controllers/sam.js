@@ -21,7 +21,6 @@
 //     });
 //   },
 
-
 //   postOtpVarification: async (req, res) => {
 //     try {
 //       console.log("postotp verificationnnn");
@@ -46,23 +45,17 @@
 //     }
 //   },
 
-
-
-
-
-
-
-// res.cookie("refreshToken", refreshToken, 
+// res.cookie("refreshToken", refreshToken,
 //         {
 //             httpOnly:true,
 //             maxAge: 72 * 60 * 60 * 1000
-//         });  
-        
+//         });
+
 //         const newDetails =  {
 //           _id: findAdmin ?. _id,
 //              firstname: findAdmin ?. firstname,
 //              lastname: findAdmin ?. lastname,
-//              email: findAdmin ?. email, 
+//              email: findAdmin ?. email,
 //              mobile: findAdmin ?. mobile,
 //              token: generateToken(findAdmin ?. _id),
 //          role: findUser ?. role
@@ -74,6 +67,5 @@
 //                 maxAge: 72 * 60 * 60 * 1000
 //             }
 //          );
-     
-//         res.render('admin/dashboard',{admin:true});
 
+//         res.render('admin/dashboard',{admin:true});

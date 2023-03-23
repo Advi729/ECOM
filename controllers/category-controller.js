@@ -1,5 +1,5 @@
 const asyncHandler = require('express-async-handler');
-const Category = require('../models/categoryModel');
+const Category = require('../models/category-model');
 
 // Create a category
 const createCategory = asyncHandler(async (req, res) => {
@@ -16,11 +16,9 @@ const createCategory = asyncHandler(async (req, res) => {
 const updateCategory = asyncHandler(async (req, res) => {
   const { id } = req.params;
   try {
-    const editCategory = await Category.findByIdAndUpdate(
-      id,
-      req.body,
-      { new: true },
-    );
+    const editCategory = await Category.findByIdAndUpdate(id, req.body, {
+      new: true,
+    });
     res.json(editCategory);
   } catch (error) {
     throw new Error(error);
@@ -60,5 +58,9 @@ const getAllCategories = asyncHandler(async (req, res) => {
 });
 
 module.exports = {
-  createCategory, updateCategory, deleteCategory, getaCategory, getAllCategories,
+  createCategory,
+  updateCategory,
+  deleteCategory,
+  getaCategory,
+  getAllCategories,
 };

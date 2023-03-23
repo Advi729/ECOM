@@ -1,6 +1,10 @@
 const express = require('express');
-const User = require('../models/userModel');
-const { getAllProducts, getProduct, getAllProductsUser } = require('../controllers/productController');
+const User = require('../models/user-model');
+const {
+  getAllProducts,
+  getProduct,
+  getAllProductsUser,
+} = require('../controllers/product-controller');
 const {
   getAllUsers,
   getaUser,
@@ -18,8 +22,12 @@ const {
   loginUserPostOTP,
   loginUserGetOTP,
   verifyOtp,
-} = require('../controllers/userController');
-const { authMiddleware, isAdmin, loggedInSession } = require('../middlewares/authMiddleware');
+} = require('../controllers/user-controller');
+const {
+  authMiddleware,
+  isAdmin,
+  loggedInSession,
+} = require('../middlewares/auth-middleware');
 
 const router = express.Router();
 
@@ -55,23 +63,26 @@ router.get('/', getAllProductsUser, (req, res) => {
   res.render('index', { allProducts: products });
 });
 
-router.route('/signup')
+router
+  .route('/signup')
   .get(createUserGet)
   .post(getAllProductsUser, createUserPost);
 // router.post("/signup", createUser);
 
-router.route('/login')
+router
+  .route('/login')
   .get(loggedInSession, loginUserGet)
   .post(loggedInSession, getAllProductsUser, loginUserPost);
 // router.post("/login", loginUser);
-router.route('/login-otp')
+router
+  .route('/login-otp')
   .get(loggedInSession, loginUserGetOTP)
   .post(loggedInSession, loginUserPostOTP);
 
 router.post('/verify', getAllProductsUser, verifyOtp);
 
 // router.get('/pr/:slug', getProduct, (req, res) => {
-  router.get('/:slug', getProduct, (req, res) => {
+router.get('/:slug', getProduct, (req, res) => {
   const productDetails = req.oneProduct;
   console.log(productDetails);
   res.render('user/product-details', { product: productDetails });

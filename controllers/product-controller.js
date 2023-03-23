@@ -1,6 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const slugify = require('slugify');
-const Product = require('../models/productModel');
+const Product = require('../models/product-model');
 
 // Create product
 const createProduct = asyncHandler(async (req, res) => {
@@ -143,11 +143,9 @@ const getAllProductsUser = asyncHandler(async (req, res, next) => {
 const updateProduct = asyncHandler(async (req, res) => {
   const { id } = req.params;
   try {
-    const updateProd = await Product.findOneAndUpdate(
-      id,
-      req.body,
-      { new: true },
-    );
+    const updateProd = await Product.findOneAndUpdate(id, req.body, {
+      new: true,
+    });
     res.json(updateProd);
   } catch (error) {
     throw new Error(error);

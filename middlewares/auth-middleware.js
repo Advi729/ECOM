@@ -1,7 +1,7 @@
 /* eslint-disable linebreak-style */
 const jwt = require('jsonwebtoken');
 const asyncHandler = require('express-async-handler');
-const User = require('../models/userModel');
+const User = require('../models/user-model');
 
 // const authMiddleware = asyncHandler(async (req, res, next) => {
 //     console.log('i love u');

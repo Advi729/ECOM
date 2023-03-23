@@ -10,7 +10,7 @@ const categorySchema = new mongoose.Schema(
       index: true,
     },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 // Export the model

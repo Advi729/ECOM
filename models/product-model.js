@@ -62,7 +62,7 @@ const productSchema = new mongoose.Schema(
       default: false,
     },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 // Export the model

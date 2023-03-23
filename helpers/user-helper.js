@@ -1,10 +1,10 @@
 const asyncHandler = require('express-async-handler');
-const User = require('../models/userModel');
+const User = require('../models/user-model');
 
-//check
+// check
 // const { email } = req.body;
 // const adUser = await User.findOne({email});
-// if(adUser ?. role === "admin") { 
+// if(adUser ?. role === "admin") {
 //     res.render('admin/dashboard',{findAllProducts,admin:true});
 // } else {
 //     // next();

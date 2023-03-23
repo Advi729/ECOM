@@ -21,7 +21,7 @@ const multerFilter = (req, file, cb) => {
       {
         message: 'Unsupported file format',
       },
-      false,
+      false
     );
   }
 };
@@ -32,7 +32,9 @@ const uploadPhoto = multer({
   limits: { fieldSize: 2000000 },
 });
 
-const uploadMultiplePhoto = uploadPhoto.fields([{ name: 'images', maxCount: 10 }]);
+const uploadMultiplePhoto = uploadPhoto.fields([
+  { name: 'images', maxCount: 10 },
+]);
 
 // const productImgResize = async(req, res, next) => {
 //     if(!req.files) return next();

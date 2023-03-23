@@ -18,17 +18,24 @@ const nocache = require('nocache');
 const indexRouter = require('./routes/index');
 const adminRouter = require('./routes/admin');
 
-const dbConnect = require('./config/dbConnect');
-const { notFound, errorHandler } = require('./middlewares/errorMiddleware');
+const dbConnect = require('./config/db-connection');
+const { notFound, errorHandler } = require('./middlewares/error-middleware');
 
 const app = express();
+app.use(nocache());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
-app.engine('hbs', hbs.engine({
-  extname: 'hbs', defaultLayout: 'layout', layoutsDir: `${__dirname}/views/layout/`, partialsDir: `${__dirname}/views/partials`,
-}));
+app.engine(
+  'hbs',
+  hbs.engine({
+    extname: 'hbs',
+    defaultLayout: 'layout',
+    layoutsDir: `${__dirname}/views/layout/`,
+    partialsDir: `${__dirname}/views/partials`,
+  })
+);
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -37,14 +44,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(session({
-  secret: 'secretkey',
-  saveUninitialized: true,
-  cookie: { maxAge: 1000 * 60 * 60 * 24 },
-  resave: false,
-}));
-
-// app.use(nocache());
+app.use(
+  session({
+    secret: 'secretkey',
+    saveUninitialized: true,
+    cookie: { secure: true, maxAge: 1000 * 60 * 60 * 24 },
+    resave: false,
+  })
+);
 
 dbConnect();
 
