@@ -24,6 +24,15 @@
                                     <div class="form-group">
                                         <input type="tel" required="" name="mobileNumber" placeholder="Your mobile number">
                                     </div>
+                                    <div>
+                                        {{#if accountError}}
+                                        <p style="color: red;">{{accountError}}</p>
+                                        {{/if}}
+
+                                        {{#if statusError}}
+                                        <p style="color: red;">{{statusError}}</p>
+                                        {{/if}}
+                                    </div>
                                     <div class="form-group">
                                         <button type="submit" class="btn btn-fill-out btn-block hover-up" name="login">Log in</button>
                                     </div>

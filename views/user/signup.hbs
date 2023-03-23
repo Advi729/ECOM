@@ -14,7 +14,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-lg-10 m-auto">
-                        <div class="row">
+                        <div class="row justify-content-center">
                             
                             <div class="col-lg-6">
                                 <div class="login_wrap widget-taber-content p-30 background-white border-radius-5">
@@ -41,6 +41,9 @@
                                             <div class="form-group">
                                                 <input required="" type="password" name="password" placeholder="Password">
                                             </div>
+                                            {{#if userExist}}
+                                            <p style="color: red;">{{userExist}}</p>
+                                            {{/if}}
                                             {{!-- <div class="form-group">
                                                 <input required="" type="password" name="password" placeholder="Confirm password">
                                             </div> --}}
@@ -64,7 +67,7 @@
                                             <li><a href="#" class="btn btn-facebook hover-up mb-lg-0 mb-sm-4">Login With Facebook</a></li>
                                             <li><a href="#" class="btn btn-google hover-up">Login With Google</a></li>
                                         </ul> --}}
-                                        <div class="text-muted text-center">Already have an account? <a href="/login">Log in now</a></div>
+                                        <div class="text-muted text-center"><a href="/login">Already have an account? </a></div>
                                     </div>
                                 </div>
                             </div>

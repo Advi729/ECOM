@@ -4,11 +4,9 @@
 /**
  * Module dependencies.
  */
-
-import { createServer } from 'http';
-import app, { set } from '../app';
-
-const debug = require('debug')('ecom:server');
+let app = require('../app');
+let debug = require('debug')('ecom:server');
+let http = require('http');
 
 const dotenv = require('dotenv').config();
 
@@ -17,13 +15,13 @@ const dotenv = require('dotenv').config();
  */
 
 const port = normalizePort(process.env.PORT || '5000');
-set('port', port);
+app.set('port', port);
 
 /**
  * Create HTTP server.
  */
 
-const server = createServer(app);
+const server = http.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.

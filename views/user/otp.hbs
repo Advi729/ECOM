@@ -27,18 +27,22 @@
                         <div class="login_wrap widget-taber-content p-30 background-white border-radius-10 mb-md-5 mb-lg-0 mb-sm-5">
                             <div class="padding_eight_all bg-white">
                                 <div class="heading_s1">
-                                    <h3 class="mb-30">{{title}}</h3>
+                                    <h3 class="mb-30">OTP Verification</h3>
                                 </div>
                                 <p>Please enter the OTP sent to {{mobileNumber}}:</p>
-                                <form method="post" action="/verify">
+                                <form method="post" action="/verify-otp">
                                     <div class="form-group">
                                         <input type="hidden" required="" name="mobileNumber" value="{{mobileNumber}}">
                                     </div>
                                     <div class="form-group">
                                         <input type="text" name="otp" maxlength="6">
                                     </div>
+                                    
                                     <div class="form-group">
                                         <button type="submit" class="btn btn-fill-out btn-block hover-up" name="verify">Verify</button>
+                                    </div>
+                                    <div class="login_footer form-group">
+                                        <div class="text-muted text-center"><a href="/login-otp">Resend OTP</a></div>
                                     </div>
                                 </form>
                             </div>

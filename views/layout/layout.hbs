@@ -1,5 +1,5 @@
 
-    {{#if admin}}
+    {{#if isAdmin}}
     {{>admin-header}}
     {{else}}
     {{>user-header}}
@@ -7,7 +7,7 @@
 
     {{{body}}}
 
-    {{#if admin}}
+    {{#if isAdmin}}
     {{>admin-footer}}
     {{else}}
     {{>user-footer}}

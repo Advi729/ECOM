@@ -4,7 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const hbs = require('express-handlebars');
-// const Handlebars= require('handlebars');
+const Handlebars = require('handlebars');
 const dotenv = require('dotenv').config();
 const bodyParser = require('body-parser');
 const session = require('express-session');
@@ -37,6 +37,9 @@ app.engine(
   })
 );
 
+// Helper function for HBS files
+Handlebars.registerHelper('first', (array) => array[0]);
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -48,7 +51,7 @@ app.use(
   session({
     secret: 'secretkey',
     saveUninitialized: true,
-    cookie: { secure: true, maxAge: 1000 * 60 * 60 * 24 },
+    cookie: { maxAge: 1000 * 60 * 60 * 24 },
     resave: false,
   })
 );

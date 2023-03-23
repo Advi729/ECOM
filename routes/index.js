@@ -28,6 +28,7 @@ const {
   isAdmin,
   loggedInSession,
 } = require('../middlewares/auth-middleware');
+const userControllers = require('../controllers/user-controller');
 
 const router = express.Router();
 
@@ -58,28 +59,38 @@ const router = express.Router();
 
 // router.get('/:id', getProduct); // edit
 
-router.get('/', getAllProductsUser, (req, res) => {
-  const products = req.productsAll;
-  res.render('index', { allProducts: products });
-});
+// working code
+// router.get('/', getAllProductsUser, (req, res) => {
+//   const products = req.productsAll;
+//   res.render('index', { allProducts: products });
+// });
+
+router.get('/', userControllers.getHomePage);
 
 router
   .route('/signup')
-  .get(createUserGet)
-  .post(getAllProductsUser, createUserPost);
-// router.post("/signup", createUser);
+  .get(userControllers.createUserGet)
+  // .post(getAllProductsUser, createUserPost);
+  .post(userControllers.createUserPost);
 
 router
   .route('/login')
-  .get(loggedInSession, loginUserGet)
-  .post(loggedInSession, getAllProductsUser, loginUserPost);
+  // .get(loggedInSession, loginUserGet)
+  .get(userControllers.loginUserGet)
+  // .post(loggedInSession, getAllProductsUser, loginUserPost);
+  .post(userControllers.loginUserPost);
 // router.post("/login", loginUser);
+
+router.get('/logout', userControllers.logoutUser);
+
 router
   .route('/login-otp')
-  .get(loggedInSession, loginUserGetOTP)
-  .post(loggedInSession, loginUserPostOTP);
+  .get(userControllers.loginUserGetOTP)
+  .post(userControllers.loginUserPostOTP);
 
-router.post('/verify', getAllProductsUser, verifyOtp);
+router
+.get('/verify-otp', userControllers.verifyOtpGet)
+.post('/verify-otp', userControllers.verifyOtpPost);
 
 // router.get('/pr/:slug', getProduct, (req, res) => {
 router.get('/:slug', getProduct, (req, res) => {
@@ -90,6 +101,5 @@ router.get('/:slug', getProduct, (req, res) => {
 
 router.get('/all-users', getAllUsers); // i think this should be in admin route
 router.get('/refresh', handleRefreshToken);
-router.get('/logout', loggedInSession, logoutUser);
 
 module.exports = router;
