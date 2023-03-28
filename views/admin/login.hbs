@@ -22,13 +22,22 @@
                                     <div class="heading_s1">
                                         <h3 class="mb-30">Login</h3>
                                     </div>
-                                    <form method="post" action="/admin">
+                                    <form method="post" action="/admin/login">
                                         <div class="form-group">
                                             <input type="text" required="" name="email" placeholder="Username or email">
                                         </div>
+                                        {{#if emailError}}
+                                        <p style="color: red;">{{emailError}}</p><br>
+                                        {{/if}}
                                         <div class="form-group">
                                             <input required="" type="password" name="password" placeholder="Password">
                                         </div>
+                                        {{#if passwordError}}
+                                        <p style="color: red;">{{passwordError}}</p><br>
+                                        {{/if}}
+                                        {{#if validationError}}
+                                        <p style="color: red;">{{validationError}}</p><br>
+                                        {{/if}}
                                         {{!-- <div class="login_footer form-group">
                                             <div class="text-muted text-center">Don't have an account? <a href="#">Sign
                                                     Up</a></div>

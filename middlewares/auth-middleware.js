@@ -93,4 +93,28 @@ const loggedInSession = asyncHandler(async (req, res, next) => {
   next();
 });
 
-module.exports = { authMiddleware, isAdmin, loggedInSession };
+// To check admin is logged in
+const adminCheck = asyncHandler(async (req, res, next) => {
+  if (req.session.admin) {
+    next();
+  } else {
+    res.redirect('/admin/login');
+  }
+});
+
+// To check admin is present, else login
+const adminAuthentication = asyncHandler(async (req, res, next) => {
+  if (req.session.admin) {
+    res.redirect('/admin');
+  } else {
+    next();
+  }
+});
+
+module.exports = {
+  adminCheck,
+  adminAuthentication,
+  authMiddleware,
+  isAdmin,
+  loggedInSession,
+};

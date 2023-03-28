@@ -1,97 +1,77 @@
 const asyncHandler = require('express-async-handler');
+const { validationResult } = require('express-validator');
 const User = require('../models/user-model');
 const Product = require('../models/product-model');
 const productHelpers = require('../helpers/product-helper');
+const adminHelpers = require('../helpers/admin-helper');
+
+// Admin Dashboard
+const dashboardAdmin = asyncHandler(async (req, res) => {
+  const { admin } = req.session;
+  res.render('admin/dashboard', { admin, isAdmin: true });
+});
 
 // Admin-login GET
 const loginAdminGet = asyncHandler(async (req, res) => {
-  res.render('admin/login');
+  res.render('admin/login', {
+    isUser: true,
+    emailError: req.session.emailError,
+    passwordError: req.session.passwordError,
+    validationError: req.session.validationError,
+  });
+  req.session.emailError = false;
+  req.session.passwordError = false;
+  req.session.validationError = false;
   // res.render('admin/login', { admin: true });
 });
-// Admin login POST
+
+// Admin-login POST
 const loginAdminPost = asyncHandler(async (req, res) => {
-  // res.redirect('/admin/login-admin');
-  // res.redirect('/admin/login')
-
-  const { email, password } = req.body;
-  // console.log(email,password);
-  // admin validation
-  const findAdmin = await User.findOne({ email });
-  // console.log(req.body);
-  if (findAdmin.role !== 'admin') throw new Error('You are not authorized.');
-  if (findAdmin && (await findAdmin.isPasswordMatched(password))) {
-    // res.json(findAdmin);
-    const refreshToken = await generateRefreshToken(findAdmin?.id);
-    const updateAdmin = await User.findByIdAndUpdate(
-      findAdmin.id,
-      {
-        refreshToken,
-      },
-      { new: true }
-    );
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      maxAge: 72 * 60 * 60 * 1000,
-    });
-    // res.json({
-    //     _id: findAdmin ?. _id,
-    //     firstname: findAdmin ?. firstname,
-    //     lastname: findAdmin ?. lastname,
-    //     email: findAdmin ?. email,
-    //     mobile: findAdmin ?. mobile,
-    //     token: generateToken(findAdmin ?. _id),
-    //     // role: findUser ?. role
-    // });
-
-    // res.cookie("adminId", findAdmin?._id, {
-    //     httpOnly: true,
-    //     maxAge: 72 * 60 * 60 * 1000,
-    //   });
-
-    // res.cookie("adminToken", generateToken(findAdmin?._id), {
-    //     httpOnly: true,
-    //     maxAge: 72 * 60 * 60 * 1000,
-    //   });
-
-    const token = generateToken(findAdmin?._id);
-    // console.log(token);
-    res.set('Authorization', `Bearer ${token}`);
-    // console.log(res);
-    // can send newDetails while rendering
-    //         const newDetails =  {
-    //           _id: findAdmin ?. _id,
-    //              firstname: findAdmin ?. firstname,
-    //              lastname: findAdmin ?. lastname,
-    //              email: findAdmin ?. email,
-    //              mobile: findAdmin ?. mobile,
-    //              token: generateToken(findAdmin ?. _id),
-    //          role: findUser ?. role
-    //          };
-
-    // const allAdminProducts = getAllProducts();
-    // res.render('admin/dashboard',{allAdminProducts,admin:true});
-    res.render('admin/dashboard', { admin: true });
-    // getAllProducts();
-  } else {
-    res.redirect('/admin');
-    throw new Error('Invalid Credentials.');
+  try {
+    const errors = validationResult(req);
+    const err = errors.errors;
+    console.log('err::-?',err);
+    if (!errors.isEmpty()) {
+      req.session.validationError = err[0].msg;
+      res.redirect('/admin');
+    } else {
+      const adminStatus = await adminHelpers.adminLogin(req.body);
+      if (adminStatus.status) {
+        req.session.adminLoggedIn = true;
+        req.session.admin = adminStatus.admin;
+        res.redirect('/admin');
+      } else if (adminStatus.notExist) {
+        req.session.emailError = 'Username is invalid!';
+        res.redirect('/admin');
+      } else {
+        req.session.passwordError = 'Password is invalid!';
+        res.redirect('/admin');
+      }
+    }
+  } catch (error) {
+    throw new Error();
   }
 });
 
-// Handle refresh token
-const handleRefreshToken = asyncHandler(async (req, res) => {
-  const cookie = req.cookies;
-  // console.log(cookie);
-  if (!cookie?.refreshToken) throw new Error('No refresh token in cookie.');
-  const { refreshToken } = cookie;
-  const user = await User.findOne({ refreshToken });
-  if (!user) throw new Error('No refresh token present in db or not matched.');
-  jwt.verify(refreshToken, process.env.JWT_SECRET, (err, decoded) => {
-    if (err || user.id !== decoded.id)
-      throw new Error('There is something wrong with refresh token.');
-    const accessToken = generateToken(user?.id);
-    res.json({ accessToken });
-  });
+// Admin LOG OUT
+const adminLogOut = async (req, res) => {
+  req.session.admin = false;
+  res.redirect('/admin');
+};
+
+// new get all products admin side
+const getAllProducts = asyncHandler(async (req, res) => {
+  try {
+    const foundProducts = await productHelpers.findProducts();
+    if (foundProducts) {
+      res.render('admin/view-products', {
+        allProducts: foundProducts,
+        isAdmin: true,
+      });
+    }
+  } catch (error) {
+    throw new Error();
+  }
 });
 
 // Update a user
@@ -99,8 +79,8 @@ const handleRefreshToken = asyncHandler(async (req, res) => {
 // Get details of all users
 const getAllUsers = asyncHandler(async (req, res) => {
   try {
-    const getUsers = await User.find();
-    res.json({ getUsers });
+    const users = await adminHelpers.findAllUsers();
+    res.render('admin/view-users', { users, isAdmin: true });
   } catch (error) {
     throw new Error(error);
   }
@@ -122,18 +102,15 @@ const deleteaUser = asyncHandler(async (req, res) => {
 const blockUser = asyncHandler(async (req, res) => {
   const { id } = req.params;
   try {
-    const block = await User.findByIdAndUpdate(
-      id,
-      {
-        isBlocked: true,
-      },
-      {
-        new: true,
-      }
-    );
-    res.json({
-      message: 'User Blocked.',
-    });
+    const blockStatus = await adminHelpers.updateBlockStatus(id);
+    console.log('blocvk:::', blockStatus);
+    if (blockStatus.status) {
+      // req.session.active = true;
+      res.redirect('/admin/view-users');
+    } else {
+      // req.session.active = false;
+      res.redirect('/admin/view-users');
+    }
   } catch (error) {
     throw new Error(error);
   }
@@ -143,19 +120,27 @@ const blockUser = asyncHandler(async (req, res) => {
 const unblockUser = asyncHandler(async (req, res) => {
   const { id } = req.params;
   try {
-    const unblock = await User.findByIdAndUpdate(
-      id,
-      {
-        isBlocked: false,
-      },
-      {
-        new: true,
-      }
-    );
-    res.json({
-      message: 'User Un-Blocked.',
-    });
+    const unBlockStatus = await adminHelpers.updateUnBlockStatus(id);
+    if (unBlockStatus.status) {
+      // req.session.active = true;
+      res.redirect('/admin/view-users');
+    } else {
+      // req.session.active = false;
+      res.redirect('/admin/view-users');
+    }
   } catch (error) {
     throw new Error(error);
   }
 });
+
+module.exports = {
+  dashboardAdmin,
+  loginAdminGet,
+  loginAdminPost,
+  adminLogOut,
+  getAllProducts,
+  deleteaUser,
+  blockUser,
+  unblockUser,
+  getAllUsers,
+};

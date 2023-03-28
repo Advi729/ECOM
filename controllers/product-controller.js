@@ -1,41 +1,44 @@
 const asyncHandler = require('express-async-handler');
-const slugify = require('slugify');
 const Product = require('../models/product-model');
+const productHelpers = require('../helpers/product-helper');
 
-// Create product
-const createProduct = asyncHandler(async (req, res) => {
-  console.log(req.body);
-  console.log(req.files);
-  console.log('req.files.images:::--', req.files.images);
-  // const {filename} = req.files;
+// create product get
+const createProductGet = asyncHandler(async (req, res) => {
+  res.render('admin/add-product', {
+    isAdmin: true,
+    productSuccess: req.session.productSuccess,
+  });
+  req.productSuccess = false;
+});
+
+// Create product post
+const createProductPost = asyncHandler(async (req, res) => {
+  // console.log(req.body);
+  // console.log(req.files);
+  // console.log('req.files.images:::--', req.files.images);
+  // // const {filename} = req.files;
 
   try {
-    // Extract filenames from images array
-    // const filenames = req.files.images.map(image => image.filename);
-    // const [img1, img2] = req.files.images;
-    // const filenames = images.map(({ filename }) => filename);
+    const addedProduct = await productHelpers.createProduct(req);
+    // const imagesFromReq = req.files.images;
+    // let imageFiles;
+    // const imageNames = [];
+    // imagesFromReq.forEach((element) => {
+    //   [imageFiles] = [element];
+    //   imageNames.push(imageFiles.filename);
+    // });
 
-    // const productData = { ...req.body, images: filenames };
+    // const productTitle = req.body.title;
+    // let productSlug = slugify(productTitle, { lower: true, replacement: '_' });
+    // // check if slug is not already taken
+    // const checkSlug = await Product.findOne({ slug: productSlug });
+    // if (checkSlug) {
+    //   productSlug += `-${Math.floor(Math.random() * 1000)}`;
+    // }
 
-    const imagesFromReq = req.files.images;
-    let imageFiles;
-    const imageNames = [];
-    imagesFromReq.forEach((element) => {
-      [imageFiles] = [element];
-      imageNames.push(imageFiles.filename);
-    });
+    // const productData = { ...req.body, images: imageNames, slug: productSlug };
 
-    const productTitle = req.body.title;
-    let productSlug = slugify(productTitle, { lower: true });
-    // check if slug is not already taken
-    const checkSlug = await Product.findOne({ slug: productSlug });
-    if (checkSlug) {
-      productSlug += `-${Math.floor(Math.random() * 1000)}`;
-    }
-
-    const productData = { ...req.body, images: imageNames, slug: productSlug };
-
-    const newProduct = await Product.create(productData);
+    // await Product.create(productData);
 
     // const newProduct = await Product.create(req.body);
 
@@ -44,63 +47,51 @@ const createProduct = asyncHandler(async (req, res) => {
     // console.log('vor:',req.body);
 
     // res.render('admin/view-products',{newProduct,admin:true});  //working except display
-
-    res.redirect('/admin/products-list');
+    if (addedProduct) {
+      req.session.productSuccess = 'Product created successfully.';
+      req.session.productStatus = true;
+      res.redirect('/admin/products-list');
+      // res.redirect('/admin/add-product'); // to display message
+    } else {
+      req.session.productSuccess = false;
+      res.redirect('/admin/add-product');
+    }
   } catch (error) {
     throw new Error(error);
   }
-});
-
-const uploadImages = asyncHandler(async (req, res) => {
-  console.log(req.files);
 });
 
 // Get a product
-const getProduct = asyncHandler(async (req, res, next) => {
-  const { slug } = req.params;
-  console.log(slug);
+// const getProduct = asyncHandler(async (req, res, next) => {
+//   const { slug } = req.params;
+//   console.log(slug);
+//   try {
+//     const findProduct = await Product.findOne({ slug });
+//     console.log('controller:', findProduct);
+//     const foundProduct = JSON.parse(JSON.stringify(findProduct));
+//     // res.json(findProduct);
+//     req.oneProduct = foundProduct;
+//     next();
+//   } catch (error) {
+//     throw new Error(error);
+//   }
+// });
+
+// new get a product
+const getProduct = asyncHandler(async (req, res) => {
   try {
-    const findProduct = await Product.findOne({ slug });
-    console.log('controller:', findProduct);
-    const foundProduct = JSON.parse(JSON.stringify(findProduct));
-    // res.json(findProduct);
-    req.oneProduct = foundProduct;
-    next();
-  } catch (error) {
-    throw new Error(error);
-  }
-});
-
-// get all products admin side
-const getAllProducts = asyncHandler(async (req, res) => {
-  try {
-    const findAllProducts = await Product.find();
-
-    // res.json({findAllProducts});
-    // res.render('index',{findAllProducts});
-    // console.log('0000000000000000000000000000000000000000000000000000000000000000');
-    // console.log(findAllProducts);
-
-    const products = [];
-    for (let i = 0; i < findAllProducts.length; i++) {
-      // console.log(findAllProducts[i].images);
-      const product = {
-        title: findAllProducts[i].title,
-        slug: findAllProducts[i].slug,
-        description: findAllProducts[i].description,
-        price: findAllProducts[i].price,
-        category: findAllProducts[i].category,
-        brand: findAllProducts[i].brand,
-        quantity: findAllProducts[i].quantity,
-        sold: findAllProducts[i].sold,
-        images: findAllProducts[i].images[0],
-        color: findAllProducts[i].color,
-      };
-      products.push(product);
+    const { slug } = req.params;
+    // console.log('slu:  ', slug);
+    const productDetails = await productHelpers.findSingleProduct(slug);
+    // console.log(productDetails);
+    if (productDetails) {
+      res.render('user/product-details', {
+        product: productDetails,
+        isUser: true,
+      });
     }
-    res.render('admin/view-products', { allProducts: products, admin: true });
   } catch (error) {
-    throw new Error(error);
+    throw new Error();
   }
 });
 
@@ -164,11 +155,10 @@ const deleteProduct = asyncHandler(async (req, res) => {
 });
 
 module.exports = {
-  createProduct,
+  createProductGet,
+  createProductPost,
   getProduct,
-  getAllProducts,
   getAllProductsUser,
   updateProduct,
   deleteProduct,
-  uploadImages,
 };

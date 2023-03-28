@@ -30,6 +30,10 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    subCategory: {
+      type: String,
+      required: true,
+    },
     // brand:{
     //     type:String,
     //     enum: ["Adidas", "Nike", "Lee Cooper"],

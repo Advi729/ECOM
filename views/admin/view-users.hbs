@@ -13,12 +13,13 @@
                     {{#each users}}
                     <tbody>
                         <tr>
+                            
                             <td>
                                 <div class="d-flex align-items-center">
-                                    <img src="https://mdbootstrap.com/img/new/avatars/6.jpg" class="rounded-circle"
+                                    <img src="/assets-admin/imgs/people/avatar2.jpg" class="rounded-circle"
                                         alt="" style="width: 45px; height: 45px" />
                                     <div class="ms-3">
-                                        <p class="fw-bold mb-1">{{name}}</p>
+                                        <p class="fw-bold mb-1">{{firstname}} {{lastname}}</p>
                                         <p class="text-muted mb-0">{{email}}</p>
                                     </div>
                                 </div>
@@ -27,30 +28,48 @@
                                 <p class="fw-normal mb-1">{{mobile}}</p>
                             </td>
                             <td>
-                                {{#if active}}
+                                {{#if isBlocked}}
                                 <div class="col-lg-2 col-sm-2 col-4 col-status">
-                                    <span class="badge rounded-pill alert-success">Active</span>
+                                    <span class="badge rounded-pill alert-success">Blocked</span>
                                 </div>
                                 {{else}}
                                 <div class="col-lg-2 col-sm-2 col-4 col-status">
-                                    <span class="badge rounded-pill alert-danger">Blocked</span>
+                                    <span class="badge rounded-pill alert-danger">Active</span>
                                 </div>
                                 {{/if}}
                             </td>
                             <td>
                                 <div class="col-lg-4 col-sm-4 col-4 col-action text-center ">
-                                   
-                                    {{#if active}}
-                                    <button id="block-btn" style="width:90px;"  onclick="blockAndUnblockUsers('{{_id}}',{{active}})" class="btn  font-sm rounded btn-danger  ">Block<i class="fa fa-ban " aria-hidden="true" style="margin-left:5px ;"></i>
-                                    </button>
+                                    {{#if isBlocked}}
+                                    <a href="/admin/unblock-user/{{_id}}" class="btn  font-sm rounded btn-danger">
+                                        UnBlock
+                                        <i class="fa fa-ban" aria-hidden="true" style="margin-left:5px;"></i>
+                                    </a>
                                     {{else}}
-                                    <button id="block-btn2" style="width:90px;"   onclick="blockAndUnblockUsers('{{_id}}',{{active}})" class="btn   font-sm btn-success rounded text-white mt-2">Unblock<i class="fa fa-unlock " aria-hidden="true" style="margin-left:5px ;"></i>                               
-                                        </button>
+                                    <a href="/admin/block-user/{{_id}}" class="btn  font-sm btn-success rounded text-white mt-2">
+                                        Block
+                                        <i class="fa fa-unlock" aria-hidden="true" style="margin-left:5px;"></i>
+                                    </a>
                                     {{/if}}
+                                    {{!-- {{#if isBlocked}} --}}
+                                    {{!-- <button id="block-btn" style="width:90px;"  onclick="blockAndUnblockUsers('{{_id}}',{{active}})" class="btn  font-sm rounded btn-danger  ">Block<i class="fa fa-ban " aria-hidden="true" style="margin-left:5px ;"></i>
+                                    </button> --}}
+                                    {{!-- <button id="block-btn" style="width:90px;"  href ="/unblock-user/:{{_id}}" onclick="/unblock-user/:{{_id}}" class="btn  font-sm rounded btn-danger  ">UnBlock<i class="fa fa-ban " aria-hidden="true" style="margin-left:5px ;"></i>
+                                    </button> --}}
+                                    {{!-- {{else}} --}}
+                                    {{!-- <button id="block-btn2" style="width:90px;"   onclick="blockAndUnblockUsers('{{_id}}',{{active}})" class="btn   font-sm btn-success rounded text-white mt-2">Unblock<i class="fa fa-unlock " aria-hidden="true" style="margin-left:5px ;"></i>                               
+                                    </button> --}}
+                                    {{!-- <button id="block-btn2" style="width:90px;"  href ="/block-user/:{{_id}}" class="btn   font-sm btn-success rounded text-white mt-2">Block<i class="fa fa-unlock " aria-hidden="true" style="margin-left:5px ;"></i>                               
+                                    </button> --}}
+                                    {{!-- {{/if}} --}}
                                 </div>
                             </td>
                         </tr>
+
                     </tbody>
                     {{/each}}
                 </table>
+                <br>
+                <br>
+                <br>
  </div> <!-- card end// -->

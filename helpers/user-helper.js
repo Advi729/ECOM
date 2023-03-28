@@ -6,16 +6,20 @@ const userSignUp = asyncHandler(async (data) => {
   try {
     const { email, mobile } = data;
     let response = {};
+    console.log('email&number:-> ', email, mobile);
     const findUser = await User.findOne({
       $or: [{ email }, { mobile }],
     });
+    console.log('findUser:::', findUser);
     if (findUser) {
-      response = { status: true };
-      return response;
+      return { status: true };
     }
-    await User.create(data);
-    response = { status: false };
-    return response;
+    const userCreated = await User.create(data);
+    // console.log('userCreated:::', userCreated);
+    response = userCreated;
+    if (userCreated) {
+      return { response, status: false };
+    }
   } catch (error) {
     throw new Error();
   }

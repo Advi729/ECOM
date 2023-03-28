@@ -32,7 +32,7 @@
     <div class="screen-overlay"></div>
     <aside class="navbar-aside" id="offcanvas_aside">
         <div class="aside-top">
-            <a href="index.html" class="brand-wrap">
+            <a href="/admin" class="brand-wrap">
                 <img src="/assets-admin/imgs/theme/Heats.png" class="logo" alt="Heats Dashboard">
             </a>
             <div>
@@ -42,19 +42,17 @@
         <nav>
             <ul class="menu-aside">
                 <li class="menu-item">     {{!--  correction needed below   --}}
-                    <a class="menu-link" href="/dashboard"> <i class="icon material-icons md-home"></i>
+                    <a class="menu-link" href="/admin/dashboard"> <i class="icon material-icons md-home"></i>
                         <span class="text">Dashboard</span>
                     </a>
                 </li>
                 <li class="menu-item has-submenu">
-                    <a class="menu-link" href="/product"> <i class="icon material-icons md-shopping_bag"></i>
+                    <a class="menu-link" href=""> <i class="icon material-icons md-shopping_bag"></i>
                         <span class="text">Products</span>
                     </a>
                     <div class="submenu">
-                        <a href="admin/products-list">Product List123</a>
-                        <a href="page-products-grid.html">Product grid</a>
-                        <a href="page-products-grid-2.html">Product grid 2</a>
-                        <a href="admin/add-product">Add Product</a>
+                        <a href="/admin/products-list">Product List</a>
+                        <a href="/admin/add-product">Add Product</a>
                     </div>
                 </li>
                 <li class="menu-item has-submenu">
@@ -68,13 +66,11 @@
                     </div>
                 </li>
                 <li class="menu-item has-submenu">
-                    <a class="menu-link" href="page-sellers-cards.html"> <i class="icon material-icons md-store"></i>
-                        <span class="text">Sellers</span>
+                    <a class="menu-link" href="#"> <i class="icon material-icons md-person"></i>
+                        <span class="text">Users</span>
                     </a>
                     <div class="submenu">
-                        <a href="page-sellers-cards.html">Sellers cards</a>
-                        <a href="page-sellers-list.html">Sellers list</a>
-                        <a href="page-seller-detail.html">Seller profile</a>
+                        <a href="/admin/view-users">Users List</a>
                     </div>
                 </li>
                 <li class="menu-item has-submenu">
@@ -97,15 +93,16 @@
                         <a href="page-transactions-2.html">Transaction 2</a>
                     </div>
                 </li> --}}
-                <li class="menu-item has-submenu">
-                    <a class="menu-link" href="#"> <i class="icon material-icons md-person"></i>
-                        <span class="text">Account</span>
+                <li class="menu-item">
+                    <a class="menu-link" href="/admin/logout"> <i class="icon material-icons md-power_settings_new"></i>
+                        <span class="text">Log Out</span>
                     </a>
-                    <div class="submenu">
-                        <a href="/admin-login">User login</a>
-                        <a href="page-account-register.html">User registration</a>
-                        <a href="page-error-404.html">Error 404</a>
-                    </div>
+                    {{!-- <div class="submenu"> --}}
+                        {{!-- <a href="/admin-login">User login</a> --}}
+                        {{!-- <a href="/admin/logout">Log out</a> --}}
+                        {{!-- <a href="page-account-register.html">User registration</a>
+                        <a href="page-error-404.html">Error 404</a> --}}
+                    {{!-- </div> --}}
                 </li>
                 {{!-- <li class="menu-item">
                     <a class="menu-link" href="page-reviews.html"> <i class="icon material-icons md-comment"></i>
@@ -162,19 +159,19 @@
             <div class="col-nav">
                 <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"> <i class="material-icons md-apps"></i> </button>
                 <ul class="nav">
-                    <li class="nav-item">
+                    {{!-- <li class="nav-item">
                         <a class="nav-link btn-icon" href="#">
                             <i class="material-icons md-notifications animation-shake"></i>
                             <span class="badge rounded-pill">3</span>
                         </a>
-                    </li>
+                    </li> --}}
                     <li class="nav-item">
                         <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
                     </li>
                     <li class="nav-item">
                         <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
                     </li>
-                    <li class="dropdown nav-item">
+                    {{!-- <li class="dropdown nav-item">
                         <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage" aria-expanded="false"><i class="material-icons md-public"></i></a>
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
                             <a class="dropdown-item text-brand" href="#"><img src="/assets-admin/imgs/theme/flag-us.png" alt="English">English</a>
@@ -182,10 +179,10 @@
                             <a class="dropdown-item" href="#"><img src="/assets-admin/imgs/theme/flag-jp.png" alt="Français">日本語</a>
                             <a class="dropdown-item" href="#"><img src="/assets-admin/imgs/theme/flag-cn.png" alt="Français">中国人</a>
                         </div>
-                    </li>
+                    </li> --}}
                     <li class="dropdown nav-item">
-                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="/assets-admin/imgs/people/avatar2.jpg" alt="User"></a>
-                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="/assets-admin/imgs/people/avatar1.jpg" alt="User"></a>
+                        {{!-- <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
                             <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit Profile</a>
                             <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account Settings</a>
                             <a class="dropdown-item" href="#"><i class="material-icons md-account_balance_wallet"></i>Wallet</a>
@@ -193,7 +190,7 @@
                             <a class="dropdown-item" href="#"><i class="material-icons md-help_outline"></i>Help center</a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item text-danger" href="#"><i class="material-icons md-exit_to_app"></i>Logout</a>
-                        </div>
+                        </div> --}}
                     </li>
                 </ul>
             </div>

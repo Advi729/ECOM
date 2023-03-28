@@ -22,17 +22,17 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-10 m-auto">
-                <div class="row">
+                <div class="row justify-content-center">
                     <div class="col-lg-5">
                         <div class="login_wrap widget-taber-content p-30 background-white border-radius-10 mb-md-5 mb-lg-0 mb-sm-5">
                             <div class="padding_eight_all bg-white">
                                 <div class="heading_s1">
                                     <h3 class="mb-30">OTP Verification</h3>
                                 </div>
-                                <p>Please enter the OTP sent to {{mobileNumber}}:</p>
+                                <p>Please enter the OTP sent to {{mobile}}:</p>
                                 <form method="post" action="/verify-otp">
                                     <div class="form-group">
-                                        <input type="hidden" required="" name="mobileNumber" value="{{mobileNumber}}">
+                                        <input type="hidden" required="" name="mobileNumber" value="{{mobile}}">
                                     </div>
                                     <div class="form-group">
                                         <input type="text" name="otp" maxlength="6">

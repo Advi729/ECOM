@@ -3,9 +3,9 @@
         <div class="page-header breadcrumb-wrap">
             <div class="container">
                 <div class="breadcrumb">
-                    <a href="index.html" rel="nofollow">Home</a>
-                    <span></span> Fashion
-                    <span></span> Abstract Print Patchwork Dress
+                    <a href="#" rel="nofollow">Home</a>
+                    <span></span> Products
+                    <span></span> {{product.title}}
                 </div>
             </div>
         </div>
@@ -59,15 +59,15 @@
                                         </div>
                                     </div>
                                     <!-- End Gallery -->
-                                    <div class="social-icons single-share">
+                                    {{!-- <div class="social-icons single-share">
                                         <ul class="text-grey-5 d-inline-block">
                                             <li><strong class="mr-10">Share this:</strong></li>
-                                            <li class="social-facebook"><a href="#"><img src="assets-user/imgs/theme/icons/icon-facebook.svg" alt=""></a></li>
-                                            <li class="social-twitter"> <a href="#"><img src="assets-user/imgs/theme/icons/icon-twitter.svg" alt=""></a></li>
-                                            <li class="social-instagram"><a href="#"><img src="assets-user/imgs/theme/icons/icon-instagram.svg" alt=""></a></li>
-                                            <li class="social-linkedin"><a href="#"><img src="assets-user/imgs/theme/icons/icon-pinterest.svg" alt=""></a></li>
+                                            <li class="social-facebook"><a href="#"><img src="/assets-user/imgs/theme/icons/icon-facebook.svg" alt=""></a></li>
+                                            <li class="social-twitter"> <a href="#"><img src="/assets-user/imgs/theme/icons/icon-twitter.svg" alt=""></a></li>
+                                            <li class="social-instagram"><a href="#"><img src="/assets-user/imgs/theme/icons/icon-instagram.svg" alt=""></a></li>
+                                            <li class="social-linkedin"><a href="#"><img src="/assets-user/imgs/theme/icons/icon-pinterest.svg" alt=""></a></li>
                                         </ul>
-                                    </div>
+                                    </div> --}}
                                 </div>
                                 <div class="col-md-6 col-sm-12 col-xs-12">
                                     <div class="detail-info">
@@ -76,13 +76,13 @@
                                             <div class="pro-details-brand">
                                                 <span> Brand: <a href="#">{{product.brand}}</a></span>
                                             </div>
-                                            <div class="product-rate-cover text-end">
+                                            {{!-- <div class="product-rate-cover text-end">
                                                 <div class="product-rate d-inline-block">
                                                     <div class="product-rating" style="width:90%">
                                                     </div>
                                                 </div>
                                                 <span class="font-small ml-5 text-muted"> (25 reviews)</span>
-                                            </div>
+                                            </div> --}}
                                         </div>
                                         <div class="clearfix product-price-cover">
                                             <div class="product-price primary-color float-left">
@@ -102,7 +102,7 @@
                                                 <li><i class="fi-rs-credit-card mr-5"></i> Cash on Delivery available</li>
                                             </ul>
                                         </div>
-                                        <div class="attr-detail attr-color mb-15">
+                                        {{!-- <div class="attr-detail attr-color mb-15">
                                             <strong class="mr-10">Color</strong>
                                             <ul class="list-filter color-filter">
                                                 <li><a href="#" data-color="Red"><span class="product-color-red"></span></a></li>
@@ -113,15 +113,19 @@
                                                 <li><a href="#" data-color="Green"><span class="product-color-green"></span></a></li>
                                                 <li><a href="#" data-color="Purple"><span class="product-color-purple"></span></a></li>
                                             </ul>
-                                        </div>
+                                        </div> --}}
                                         <div class="attr-detail attr-size">
                                             <strong class="mr-10">Size</strong>
                                             <ul class="list-filter size-filter font-small">
-                                                <li><a href="#">S</a></li>
-                                                <li class="active"><a href="#">M</a></li>
-                                                <li><a href="#">L</a></li>
-                                                <li><a href="#">XL</a></li>
-                                                <li><a href="#">XXL</a></li>
+                                                <li><a href="#">6</a></li>
+                                                {{!-- <li class="active"><a href="#">M</a></li> --}}
+                                                <li><a href="#">7</a></li>
+                                                <li><a href="#">8</a></li>
+                                                <li><a href="#">9</a></li>
+                                                <li><a href="#">10</a></li>
+                                                <li><a href="#">11</a></li>
+                                                <li><a href="#">12</a></li>
+                                                <li><a href="#">13</a></li>
                                             </ul>
                                         </div>
                                         <div class="bt-1 border-color-1 mt-30 mb-30"></div>
@@ -134,13 +138,13 @@
                                             <div class="product-extra-link2">
                                                 <button type="submit" class="button button-add-to-cart">Add to cart</button>
                                                 <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                {{!-- <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a> --}}
                                             </div>
                                         </div>
                                         <ul class="product-meta font-xs color-grey mt-50">
                                             <li class="mb-5">SKU: <a href="#">{{product.slug}}</a></li>
-                                            <li class="mb-5">Tags: <a href="#" rel="tag">Cloth</a>, <a href="#" rel="tag">Women</a>, <a href="#" rel="tag">Dress</a> </li>
-                                            <li>Availability:<span class="in-stock text-success ml-5">8 Items In Stock</span></li>
+                                            <li class="mb-5">Tags: <a href="#" rel="tag">{{product.brand}}</a>, <a href="#" rel="tag">{{product.category}}</a>, <a href="#" rel="tag">{{product.subCategory}}</a> </li>
+                                            <li>Availability:<span class="in-stock text-success ml-5">{{product.quantity}} Items In Stock</span></li>
                                         </ul>
                                     </div>
                                     <!-- Detail Info -->
