@@ -296,7 +296,10 @@
                      <h3 class="section-title mb-20"><span>Featured</span> Products</h3>
                     <div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="tab-one">
                         <div class="row product-grid-4">
+                            
                             {{#each allProducts}}
+                            {{#if this.isDeleted}}
+                            {{else}}
                             <div class="col-lg-3 col-md-4 col-12 col-sm-6">
                                 <div class="product-cart-wrap mb-30">
                                     <div class="product-img-action-wrap">
@@ -328,6 +331,10 @@
                                                 <span>90%</span>
                                             </span>
                                         </div> --}}
+                                        <div>
+                                            <a href="#">{{this.category}}'s </a>
+                                            <a href="#">{{this.subCategory}}</a>
+                                        </div>
                                         <div class="product-price">
                                             <span>₹ {{this.price}} </span>
                                             {{!-- <span class="old-price">$245.8</span> --}}
@@ -338,6 +345,7 @@
                                     </div>
                                 </div>
                             </div>   
+                            {{/if}}
                             {{/each}}
                         </div>
                         <!--End product-grid-4-->

@@ -1,38 +1,7 @@
 const express = require('express');
-// const {
-//   createProduct,
-//   getProduct,
-//   getAllProducts,
-//   updateProduct,
-//   deleteProduct,
-//   uploadImages,
-// } = require('../controllers/product-controller');
 const productControllers = require('../controllers/product-controller');
-
-// const {
-//   getAllUsers,
-//   getaUser,
-//   deleteaUser,
-//   blockUser,
-//   unblockUser,
-//   handleRefreshToken,
-//   logoutUser,
-//   loginAdminGet,
-//   loginAdminPost,
-//   loginUserGet,
-//   loginUserPost,
-//   createUserGet,
-//   createUserPost,
-//   loginUserPostOTP,
-//   loginUserGetOTP,
-//   verifyOtp,
-// } = require('../controllers/user-controller');
 const userControllers = require('../controllers/user-controller');
 const authMiddlewares = require('../middlewares/auth-middleware');
-// const {
-//   productImgResize,
-//   uploadMultiplePhoto,
-// } = require('../middlewares/uploadImages-middleware');
 const uploadMiddlewares = require('../middlewares/uploadImages-middleware');
 const adminControllers = require('../controllers/admin-controller');
 const adminValidators = require('../validation/admin-validation');
@@ -65,10 +34,7 @@ router.get(
 router
   .route('/add-product')
   .get(authMiddlewares.adminCheck, productControllers.createProductGet)
-  // .post(createProduct);
-  // .post(authMiddleware, isAdmin, createProduct);
   // .post( uploadMultiplePhoto, productImgResize, uploadImages, createProduct);
-  // .post( uploadMultiplePhoto, uploadImages, createProduct);
   .post(
     uploadMiddlewares.uploadMultiplePhoto,
     productControllers.createProductPost
@@ -88,8 +54,7 @@ router.get(
   adminControllers.getAllUsers
 );
 
-router.delete('/:id', adminControllers.deleteaUser);
-// put changed to get
+// Block user (put changed to get)
 router.get(
   '/block-user/:id',
   authMiddlewares.adminCheck,
@@ -102,33 +67,32 @@ router.get(
 );
 
 // old apis
-router.get(
-  '/:id',
-  authMiddlewares.authMiddleware,
-  authMiddlewares.isAdmin,
-  productControllers.getProduct
-);
 
-// router.get('/products-list', getAllProducts);
-router.put(
-  '/:id',
-  authMiddlewares.authMiddleware,
-  authMiddlewares.isAdmin,
-  productControllers.updateProduct
-);
-router.delete(
-  '/:id',
-  authMiddlewares.authMiddleware,
-  authMiddlewares.isAdmin,
+// Edit product
+router
+  .route('/edit-product/:slug')
+  .get(authMiddlewares.adminCheck, productControllers.editProductGet)
+  .post(authMiddlewares.adminCheck, productControllers.editProductPost);
+
+// Soft Delete product
+router.get(
+  '/delete-product/:slug',
+  authMiddlewares.adminCheck,
   productControllers.deleteProduct
 );
 
-// user manipulation in admin panel
 router.get(
-  '/:id',
-  authMiddlewares.authMiddleware,
-  authMiddlewares.isAdmin,
-  userControllers.getaUser
+  '/undelete-product/:slug',
+  authMiddlewares.adminCheck,
+  productControllers.unDeleteProduct
 );
+
+// user manipulation in admin panel
+// router.get(
+//   '/:id',
+//   authMiddlewares.authMiddleware,
+//   authMiddlewares.isAdmin,
+//   userControllers.getaUser
+// );
 
 module.exports = router;

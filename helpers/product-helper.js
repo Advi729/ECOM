@@ -54,4 +54,53 @@ const createProduct = asyncHandler(async (data) => {
   }
 });
 
-module.exports = { findProducts, findSingleProduct, createProduct };
+const updateProduct = asyncHandler(async (slug, data) => {
+  try {
+    const updated = await Product.findOneAndUpdate(slug, data.body, {
+      new: true,
+    });
+    console.log('updatedP:->', updated);
+    return updated;
+  } catch (error) {
+    throw new Error();
+  }
+});
+
+const markDelete = asyncHandler(async (slug) => {
+  try {
+    const markedProduct = await Product.findOneAndUpdate(
+      { slug },
+      { isDeleted: true },
+      { new: true }
+    );
+    if (markedProduct) {
+      return markedProduct;
+    }
+  } catch (error) {
+    throw new Error();
+  }
+});
+
+const restoreProduct = asyncHandler(async (slug) => {
+  try {
+    const markedProduct = await Product.findOneAndUpdate(
+      { slug },
+      { isDeleted: false },
+      { new: true }
+    );
+    if (markedProduct) {
+      return markedProduct;
+    }
+  } catch (error) {
+    throw new Error();
+  }
+});
+
+module.exports = {
+  findProducts,
+  findSingleProduct,
+  createProduct,
+  updateProduct,
+  markDelete,
+  restoreProduct,
+};

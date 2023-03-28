@@ -14,13 +14,14 @@
                     {{!-- <th scope="col">Description</th> --}}
                     <th scope="col">Price</th>
                     <th scope="col">Category</th>
-                    <th scope="col">Brand</th>
+                    {{!-- <th scope="col">Brand</th> --}}
                     <th scope="col">Quantity</th>
-                    <th scope="col">Color</th>
+                    {{!-- <th scope="col">Color</th> --}}
                     <th scope="col">Image</th>
-                    {{!-- {{#if admin}}
-                    <th scope="col">Options</th>
-                    {{/if}} --}}
+                    {{!-- {{#if admin}} --}}
+                    <th scope="col">Edit</th>
+                    <th scope="col">Unlist</th>
+                    {{!-- {{/if}} --}}
                 </tr>
             </thead>
             <tbody>
@@ -35,13 +36,28 @@
                     <td>{{this.quantity}}</td>
                     {{!-- <td>{{this.color}}</td> --}}
                     {{!-- <td><img src="/images/products/{{this._id}}.jpg" style="width:50px;height:35px;" alt=""></td> --}}
-                    <td><img src="/uploads/products/{{first this.images}}" style="width:50px;height:40px;" alt=""></td>
-                    {{!-- {{#if admin}}
+                    <td><img src="/uploads/products/{{first this.images}}" style="width:50px;height:35px;" alt=""></td>
+                    {{!-- {{#if admin}} --}}
                     <td>
-                        <a href="/admin/edit-product" class="btn btn-primary">Edit</a>
-                        <a href="/admin/delete-product" class="btn btn-danger">Delete</a>
+                        <a href="/admin/edit-product/{{this.slug}}" class="btn btn-primary">Edit</a>
                     </td>
-                    {{/if}} --}}
+                    <td>
+                        {{!-- <a href="/admin/delete-product/{{this.slug}}" class="btn btn-danger">Delete</a> --}}
+                        {{!-- <div class="col-lg-4 col-sm-4 col-4 col-action text-center "> --}}
+                                    {{#if this.isDeleted}}
+                                    <a href="/admin/undelete-product/{{this.slug}}" class="btn btn-success">
+                                        List
+                                        {{!-- <i class="fa fa-ban" aria-hidden="true" style="margin-left:5px;"></i> --}}
+                                    </a>
+                                    {{else}}
+                                    <a href="/admin/delete-product/{{this.slug}}" class="btn btn-danger text-white">
+                                        Delete
+                                        {{!-- <i class="fa fa-unlock" aria-hidden="true" style="margin-left:5px;"></i> --}}
+                                    </a>
+                                    {{/if}}
+                                {{!-- </div> --}}
+                    </td>
+                    {{!-- {{/if}} --}}
                 </tr>
                 {{/each}}
             </tbody> 

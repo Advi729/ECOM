@@ -30,7 +30,7 @@ const loginAdminPost = asyncHandler(async (req, res) => {
   try {
     const errors = validationResult(req);
     const err = errors.errors;
-    console.log('err::-?',err);
+    console.log('err::-?', err);
     if (!errors.isEmpty()) {
       req.session.validationError = err[0].msg;
       res.redirect('/admin');
@@ -63,8 +63,10 @@ const adminLogOut = async (req, res) => {
 const getAllProducts = asyncHandler(async (req, res) => {
   try {
     const foundProducts = await productHelpers.findProducts();
+    const { admin } = req.session;
     if (foundProducts) {
       res.render('admin/view-products', {
+        admin,
         allProducts: foundProducts,
         isAdmin: true,
       });
@@ -80,7 +82,8 @@ const getAllProducts = asyncHandler(async (req, res) => {
 const getAllUsers = asyncHandler(async (req, res) => {
   try {
     const users = await adminHelpers.findAllUsers();
-    res.render('admin/view-users', { users, isAdmin: true });
+    const { admin } = req.session;
+    res.render('admin/view-users', { admin, users, isAdmin: true });
   } catch (error) {
     throw new Error(error);
   }

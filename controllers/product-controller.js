@@ -13,40 +13,8 @@ const createProductGet = asyncHandler(async (req, res) => {
 
 // Create product post
 const createProductPost = asyncHandler(async (req, res) => {
-  // console.log(req.body);
-  // console.log(req.files);
-  // console.log('req.files.images:::--', req.files.images);
-  // // const {filename} = req.files;
-
   try {
     const addedProduct = await productHelpers.createProduct(req);
-    // const imagesFromReq = req.files.images;
-    // let imageFiles;
-    // const imageNames = [];
-    // imagesFromReq.forEach((element) => {
-    //   [imageFiles] = [element];
-    //   imageNames.push(imageFiles.filename);
-    // });
-
-    // const productTitle = req.body.title;
-    // let productSlug = slugify(productTitle, { lower: true, replacement: '_' });
-    // // check if slug is not already taken
-    // const checkSlug = await Product.findOne({ slug: productSlug });
-    // if (checkSlug) {
-    //   productSlug += `-${Math.floor(Math.random() * 1000)}`;
-    // }
-
-    // const productData = { ...req.body, images: imageNames, slug: productSlug };
-
-    // await Product.create(productData);
-
-    // const newProduct = await Product.create(req.body);
-
-    // res.json(newProduct);
-    // here we have to give successfully added message
-    // console.log('vor:',req.body);
-
-    // res.render('admin/view-products',{newProduct,admin:true});  //working except display
     if (addedProduct) {
       req.session.productSuccess = 'Product created successfully.';
       req.session.productStatus = true;
@@ -62,22 +30,6 @@ const createProductPost = asyncHandler(async (req, res) => {
 });
 
 // Get a product
-// const getProduct = asyncHandler(async (req, res, next) => {
-//   const { slug } = req.params;
-//   console.log(slug);
-//   try {
-//     const findProduct = await Product.findOne({ slug });
-//     console.log('controller:', findProduct);
-//     const foundProduct = JSON.parse(JSON.stringify(findProduct));
-//     // res.json(findProduct);
-//     req.oneProduct = foundProduct;
-//     next();
-//   } catch (error) {
-//     throw new Error(error);
-//   }
-// });
-
-// new get a product
 const getProduct = asyncHandler(async (req, res) => {
   try {
     const { slug } = req.params;
@@ -95,49 +47,43 @@ const getProduct = asyncHandler(async (req, res) => {
   }
 });
 
-// get all products user side
-const getAllProductsUser = asyncHandler(async (req, res, next) => {
+// Update a product GET
+const editProductGet = asyncHandler(async (req, res) => {
   try {
-    const findAllProducts = await Product.find();
-
-    // res.json({findAllProducts});
-    // res.render('index',{findAllProducts});
-
-    const products = [];
-    for (let i = 0; i < findAllProducts.length; i++) {
-      // console.log(findAllProducts[i].images);
-      const product = {
-        title: findAllProducts[i].title,
-        slug: findAllProducts[i].slug,
-        description: findAllProducts[i].description,
-        price: findAllProducts[i].price,
-        category: findAllProducts[i].category,
-        brand: findAllProducts[i].brand,
-        quantity: findAllProducts[i].quantity,
-        sold: findAllProducts[i].sold,
-        images: findAllProducts[i].images[0],
-        color: findAllProducts[i].color,
-      };
-      products.push(product);
+    const { slug } = req.params;
+    const productDetails = await productHelpers.findSingleProduct(slug);
+    // console.log('productDetails:::->', productDetails);
+    if (productDetails) {
+      res.render('admin/edit-product', {
+        product: productDetails,
+        isAdmin: true,
+        editProductSuccess: req.session.editProductSuccess,
+      });
+      req.session.editProductSuccess = false;
+    } else {
+      res.redirect('/admin/products-list');
     }
-
-    req.productsAll = products;
-    // console.log(req.productsAll);
-    next();
-    // res.render('user/home',{allProducts: products, user: true});
   } catch (error) {
-    throw new Error(error);
+    throw new Error();
   }
 });
 
-// Update a product
-const updateProduct = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+// Update a product POST
+const editProductPost = asyncHandler(async (req, res) => {
+  const { slug } = req.params;
   try {
-    const updateProd = await Product.findOneAndUpdate(id, req.body, {
-      new: true,
-    });
-    res.json(updateProd);
+    console.log('postSlug:', slug);
+    console.log('req.body:->', req.body);
+    const edited = await productHelpers.updateProduct(slug, req);
+    console.log('editedProdut::->', edited);
+    if (edited) {
+      req.session.editProductSuccess = 'Product edited successfully.';
+      req.session.editProductStatus = true;
+      res.redirect('/admin/products-list');
+    } else {
+      req.session.editProductSuccess = false;
+      res.redirect('/admin/edit-product');
+    }
   } catch (error) {
     throw new Error(error);
   }
@@ -145,10 +91,29 @@ const updateProduct = asyncHandler(async (req, res) => {
 
 // Delete a product
 const deleteProduct = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const { slug } = req.params;
   try {
-    const deleteProd = await Product.findByIdAndDelete(id);
-    res.json(deleteProd);
+    const deleteProd = await productHelpers.markDelete(slug);
+    if (deleteProd) {
+      res.redirect('/admin/products-list');
+    } else {
+      res.redirect('/admin/products-list');
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+// Restore a deleted product
+const unDeleteProduct = asyncHandler(async (req, res) => {
+  const { slug } = req.params;
+  try {
+    const deleteProd = await productHelpers.restoreProduct(slug);
+    if (deleteProd) {
+      res.redirect('/admin/products-list');
+    } else {
+      res.redirect('/admin/products-list');
+    }
   } catch (error) {
     throw new Error(error);
   }
@@ -158,7 +123,8 @@ module.exports = {
   createProductGet,
   createProductPost,
   getProduct,
-  getAllProductsUser,
-  updateProduct,
+  editProductGet,
+  editProductPost,
   deleteProduct,
+  unDeleteProduct,
 };
