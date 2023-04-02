@@ -4,6 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const hbs = require('express-handlebars');
+const handlebarsIntl = require('handlebars-intl');
 const Handlebars = require('handlebars');
 const dotenv = require('dotenv').config();
 const bodyParser = require('body-parser');
@@ -39,6 +40,10 @@ app.engine(
 
 // Helper function for HBS files
 Handlebars.registerHelper('first', (array) => array[0]);
+Handlebars.registerHelper('second', (array) => array[1]);
+
+// Register handlebars-intl with the handlebars instance
+handlebarsIntl.registerWith(Handlebars);
 
 app.use(logger('dev'));
 app.use(express.json());

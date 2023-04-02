@@ -1,0 +1,117 @@
+<section class="content-main">
+    {{#if subCategoryEditedSuccess}}
+    <div id="sub-category-edited-success-alert" class="alert alert-success">
+        {{subCategoryEditedSuccess}}
+    </div>
+    {{/if}}
+
+    {{#if subCategoryEditValidationError}}
+    {{#each subCategoryEditValidationError}}
+    <div class="alert alert-danger sub-category-edit-validation-alert">
+        {{this}}
+    </div>
+    {{/each}}
+    {{/if}}
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Edit Sub-category</h2>
+                    {{!-- <p>Add, edit or delete a sub-category</p> --}}
+                </div>
+                <div>
+                    <input type="text" placeholder="Search Sub-Categories" class="form-control bg-white">
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            
+                            <form id="subCategoryForm" action="/admin/edit-sub-category/{{subCategory.slug}}" method="POST">
+                                <div class="mb-4">
+                                    <label for="product_name" class="form-label">Title</label>
+                                    <input type="text" value="{{subCategory.title}}" name="title" class="form-control" id="product_name" />
+                                </div>
+                                {{!-- <div class="mb-4">
+                                    <label for="product_description" class="form-label">Slug</label>
+                                    <input type="text" placeholder="Type here" class="form-control" id="product_slug" />
+                                </div> --}}
+                                {{!-- <div class="mb-4">
+                                    <label for="parent" class="form-label">Parent</label>
+                                    <select name="parent[]" class="form-select" multiple>
+                                        <option value="Men">Men</option>
+                                        <option value="Women">Women</option>
+                                    </select>
+                                </div> --}}
+                                <div class="mb-4">
+                                <fieldset>
+                                    <legend>Parent</legend>
+                                    {{#each categories}}
+                                    <div class="parent-light">
+                                        <input type="checkbox" id="{{this}}" name="parent[]" value="{{this}}">
+                                        <label for="{{this}}">{{this}}</label>
+                                    </div>
+                                    {{/each}}
+                                </fieldset>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Description</label>
+                                    <textarea type="text" name="description" class="form-control">{{subCategory.description}}</textarea>
+                                </div>
+                                <div class="d-grid">
+                                    <button class="btn btn-primary" type="submit">Edit sub-category</button>
+                                </div>
+                            </form>
+                        </div>
+                        {{!-- table was here --}}
+                    </div> <!-- .row // -->
+                </div> <!-- card body .// -->
+            </div> <!-- card .// -->
+        </section> <!-- content-main end// -->
+
+<script>
+
+// swal for confirming the edit of Sub-category
+const subCategoryForm = document.getElementById('subCategoryForm');
+subCategoryForm.addEventListener('submit', (event) => {
+  event.preventDefault(); // prevent the form from submitting normally
+  
+  Swal.fire({
+    icon: 'warning',
+    title: 'Are you sure?',
+    text: 'Do you want to edit the sub-category?',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes, edit it!'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // User confirmed the action, submit the form
+      subCategoryForm.submit();
+    }
+  });
+});
+
+
+
+    
+  
+    // disappear category added message
+    setTimeout(function() {
+    var alert = document.getElementById('sub-category-edited-success-alert');
+    if (alert) {
+        alert.style.display = 'none';
+    }
+    }, 5000); 
+
+    // disappear sub-category edit validation error messages
+    // Select all the error alerts
+    const errorAlerts = document.querySelectorAll('.sub-category-edit-validation-alert');
+    // Loop through the error alerts
+    errorAlerts.forEach(alert => {
+        // Set a timeout of 5 seconds to remove the alert
+        setTimeout(() => {
+        alert.remove();
+        }, 5000);
+    });
+
+</script>

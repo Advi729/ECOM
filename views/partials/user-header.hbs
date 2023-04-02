@@ -21,7 +21,14 @@
     
     <!-- Template CSS -->
     {{!-- <link rel="stylesheet" href="assets-user/css/main.css"> --}}
-    <link rel="stylesheet" href="/assets-user/css/main.css">
+    <link rel="stylesheet" href="/assets-user/css/main.css" type="text/css">
+    {{!-- <link href="/assets-admin/css/main.css" rel="stylesheet" type="text/css" /> --}}
+
+    {{!-- <link rel="stylesheet" href="path/to/uicons-regular-straight/css/uicons-regular-straight.min.css"> --}}
+    {{!-- <link rel="stylesheet" href="/assets-user/css/vendors/uicons-regular-straight.css"> --}}
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+
+
 </head>    
 
 <body>
@@ -330,21 +337,19 @@
                                             <div class="dropdown-menu dropdown-menu-end"
                                                 aria-labelledby="dropdownAccount">
                                                 {{#if user}}
-                                                <a class="dropdown-item text-dark" href=""><i class="icon material-icons md-person"></i>{{user.response.firstname}} {{user.response.lastname}}</a>
+                                                <a class="dropdown-item text-dark" href=""><i class="fi fi-rr-user"></i>{{user.response.firstname}} {{user.response.lastname}}</a>
                                                 {{!-- {{else}}
                                                 <a class="dropdown-item text-dark" href=""><i class="icon material-icons md-person"></i>User</a> --}}
                                                 <div class="dropdown-divider"></div>
                                                 {{/if}}
                                                 {{#if user}}
-                                                <a class="dropdown-item text-dark" href="/profile?id={{user.response._id}}"><i
-                                                        class="material-icons md-exit_to_app"></i>Profile</a>
+                                                <a class="dropdown-item text-dark" href="/profile?id={{user.response._id}}"><i class="fi fi-rr-book-user"></i>Profile</a>
                                                 <div class="dropdown-divider"></div>
                                                 {{/if}}
                                                 {{#if user}}
-                                                <a class="dropdown-item text-dark" href="/logout"><i class="icon material-icons md-power_settings_new"></i>Log out</a>
+                                                <a class="dropdown-item text-dark" href="/logout"><i class="fi fi-rr-power"></i>Log out</a>
                                                 {{else}}
-                                                <a class="dropdown-item text-dark" href="/login"><i
-                                                        class="material-icons md-exit_to_app"></i>Log in </a>
+                                                <a class="dropdown-item text-dark" href="/login"><i class="fi fi-rr-power"></i>Log in </a>
                                                 {{/if}}
                                             </div>
                                         </li>
@@ -560,6 +565,9 @@
                                     <li>
                                         <a href="#">About</a>
                                     </li>
+                                    <li>
+                                        <a href="/shop">Shop</a>
+                                    </li>
                                     {{!-- <li><a href="shop-grid-right.html">Shop <i class="fi-rs-angle-down"></i></a>
                                         <ul class="sub-menu">
                                             <li><a href="shop-grid-right.html">Shop Grid – Right Sidebar</a></li>
@@ -582,21 +590,21 @@
                                         </ul>
                                     </li> --}}
                                     <li class="position-static"><a href="#">Categories <i class="fi-rs-angle-down"></i></a>
-                                        <ul class="mega-menu">
+                                        <ul class="mega-menu position-absolute">
                                             <li class="sub-mega-menu sub-mega-menu-width-22">
-                                                <a class="menu-title" href="#">Women's</a>
+                                                <a class="menu-title" href="/categories/womens-footwear">Women's</a>
                                                 <ul>
-                                                    <li><a href="#">Sneakers</a></li>
-                                                    <li><a href="#">Classics</a></li>
-                                                    <li><a href="#">Slides</a></li>
+                                                    <li><a href="/sub-categories/womens-sneakers">Sneakers</a></li>
+                                                    <li><a href="/sub-categories/womens-classics">Classics</a></li>
+                                                    <li><a href="/sub-categories/womens-slides">Slides</a></li>
                                                 </ul>
                                             </li>
                                             <li class="sub-mega-menu sub-mega-menu-width-22">
-                                                <a class="menu-title" href="#">Men's</a>
+                                                <a class="menu-title" href="/categories/mens-footwear">Men's</a>
                                                 <ul>
-                                                    <li><a href="#">Sneakers</a></li>
-                                                    <li><a href="#">Classics</a></li>
-                                                    <li><a href="#">Slides</a></li>
+                                                    <li><a href="/sub-categories/mens-sneakers">Sneakers</a></li>
+                                                    <li><a href="/sub-categories/mens-classics">Classics</a></li>
+                                                    <li><a href="/sub-categories/mens-slides">Slides</a></li>
                                                 </ul>
                                             </li>
                                             {{!-- <li class="sub-mega-menu sub-mega-menu-width-22">

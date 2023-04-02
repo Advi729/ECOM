@@ -1,6 +1,6 @@
 const multer = require('multer');
 const path = require('path');
-const sharp = require('sharp');
+// const sharp = require('sharp');
 
 const multerStorage = multer.diskStorage({
   destination(req, file, cb) {
@@ -12,16 +12,39 @@ const multerStorage = multer.diskStorage({
   },
 });
 
+// const multerFilter = (req, file, cb) => {
+//   if (file.mimetype.startsWith('image')) {
+//     cb(null, true);
+//   } else {
+//     cb(
+//       {
+//         message: 'Unsupported file format',
+//       },
+//       false
+//     );
+//   }
+// };
+
+// const multerFilter = (req, file, cb) => {
+//   const images = req.files && req.files.images;
+//   if (!images || images.length === 0) {
+//     req.session.imageValidationError = 'No image file uploaded.';
+//     cb(null, false);
+//   } else if (file.mimetype.startsWith('image')) {
+//     cb(null, true);
+//   } else {
+//     req.session.imageValidationError = 'Unsupported image file format.';
+//     cb(null, false);
+//   }
+// };
+
 const multerFilter = (req, file, cb) => {
   if (file.mimetype.startsWith('image')) {
     cb(null, true);
   } else {
-    cb(
-      {
-        message: 'Unsupported file format',
-      },
-      false
-    );
+    req.session.imageValidationError = 'Unsupported image file format.';
+    // cb(err, false);
+    cb(null, false);
   }
 };
 

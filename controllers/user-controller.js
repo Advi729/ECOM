@@ -1,21 +1,17 @@
 const asyncHandler = require('express-async-handler');
 const { validationResult } = require('express-validator');
 const User = require('../models/user-model');
-const Product = require('../models/product-model');
 const twilioMiddlewares = require('../middlewares/twilio-middleware');
-// const { allProducts } = require('../helpers/productHelpers');
 const productHelpers = require('../helpers/product-helper');
 const userHelpers = require('../helpers/user-helper');
+const categoryHelpers = require('../helpers/category-helper');
+const subCategoryHelpers = require('../helpers/sub-category-helper');
 
 // Get home page
 const getHomePage = asyncHandler(async (req, res) => {
   const data = await productHelpers.findProducts();
   const { user } = req.session;
   const products = JSON.parse(JSON.stringify(data));
-  // console.log('user:::',user);
-  // console.log(products);
-  // res.render('user/view-products', { user, products, itsUser: true });
-  // res.render('index', { allProducts: products });
   res.render('user/home', { user, allProducts: products, isUser: true });
 });
 
@@ -35,18 +31,18 @@ const createUserPost = asyncHandler(async (req, res) => {
   try {
     const errors = validationResult(req);
     const err = errors.errors;
-    console.log('errorsignup:', err);
+    // console.log('errorsignup:', err);
     if (!errors.isEmpty()) {
       req.session.signUpError = err[0].msg;
       res.redirect('/signup');
     } else {
-      console.log('req.body::::', req.body);
+      // console.log('req.body::::', req.body);
       const existingUser = await userHelpers.userSignUp(req.body);
       if (existingUser.status) {
         req.session.userExist = 'Username or phone already exist!!';
         res.redirect('/signup');
       } else {
-        console.log('existing:::', existingUser);
+        // console.log('existing:::', existingUser);
         req.session.user = existingUser;
         res.redirect('/');
         // res.redirect('/login');
@@ -88,10 +84,12 @@ const loginUserPost = asyncHandler(async (req, res) => {
       if (loginStatus.status) {
         res.redirect('/');
       } else if (loginStatus.blockedStatus) {
-        req.session.statusError = 'The user is blocked!';
+        req.session.statusError = 'You are blocked!';
+        req.session.user = false;
         res.redirect('/login');
       } else {
         req.session.loginError = 'Invalid username or password!';
+        req.session.user = false;
         res.redirect('/login');
       }
     }
@@ -196,6 +194,85 @@ const getaUser = asyncHandler(async (req, res) => {
   }
 });
 
+// Render shop
+const getShop = asyncHandler(async (req, res) => {
+  try {
+    const data = await productHelpers.findProducts();
+    const categories = await categoryHelpers.allCategories();
+    const subCategories = await subCategoryHelpers.allSubCategories();
+    const { user } = req.session;
+    const products = JSON.parse(JSON.stringify(data));
+    res.render('user/shop', {
+      user,
+      allProducts: products,
+      allCategories: categories,
+      allSubCategories: subCategories,
+      isUser: true,
+    });
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+// filter products using category slug
+const filterCategory = asyncHandler(async (req, res) => {
+  try {
+    const { categorySlug } = req.params;
+    // console.log('filterparamss:', req.params);
+    const { user } = req.session;
+    const categories = await categoryHelpers.allCategories();
+    const subCategories = await subCategoryHelpers.allSubCategories();
+    const filteredCategory = await productHelpers.findProductsByCategorySlug(
+      categorySlug
+    );
+    // console.log('fiiiiiiiiiiiiiiiiii', filteredCategory);
+    const heading = filteredCategory[0].category;
+    if (filteredCategory) {
+      res.render('user/shop-category', {
+        user,
+        isUser: true,
+        heading,
+        allProducts: filteredCategory,
+        allCategories: categories,
+        allSubCategories: subCategories,
+      });
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+// filter products using category slug
+const filterSubCategory = asyncHandler(async (req, res) => {
+  try {
+    const { subCategorySlug } = req.params;
+    // console.log('filterparamss:', req.params);
+    const { user } = req.session;
+    const categories = await categoryHelpers.allCategories();
+    const subCategories = await subCategoryHelpers.allSubCategories();
+    const filteredSubCategory =
+      await productHelpers.findProductsBySubCategorySlug(subCategorySlug);
+    // console.log('fiiiiiiiiiiiiiiiiii', filteredCategory);
+    const heading = filteredSubCategory[0].category;
+    const subHeading = filteredSubCategory[0].subCategory;
+    const { categorySlug } = filteredSubCategory[0];
+    if (filteredSubCategory) {
+      res.render('user/shop-sub-category', {
+        user,
+        isUser: true,
+        heading,
+        subHeading,
+        categorySlug,
+        allProducts: filteredSubCategory,
+        allCategories: categories,
+        allSubCategories: subCategories,
+      });
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
 module.exports = {
   getHomePage,
   createUserGet,
@@ -208,4 +285,7 @@ module.exports = {
   loginUserPostOTP,
   verifyOtpGet,
   verifyOtpPost,
+  getShop,
+  filterCategory,
+  filterSubCategory,
 };

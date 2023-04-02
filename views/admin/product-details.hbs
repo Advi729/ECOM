@@ -1,0 +1,203 @@
+<section class="content-main">
+    {{#if editProductSuccess}}
+    <div class="alert alert-success">
+        {{editProductSuccess}}
+    </div>
+    {{/if}}
+                <form disabled="" id="all-forms">
+
+            <div class="row">
+                    <div class="col-9">
+                        <div class="content-header">
+                            <h2 class="content-title">Product</h2>
+                            <div>
+                                {{!-- <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button> --}}
+                                {{!-- <button class="btn btn-md rounded font-sm hover-up">Publich</button> --}}
+                                {{!-- <a href="/admin/edit-product/{{product.slug}}"><button class="btn btn-md rounded font-sm hover-up">Edit</button></a> --}}
+                                <a href="/admin/edit-product/{{product.slug}}" class="btn btn-md rounded font-sm hover-up">Edit</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h4>Basic</h4>
+                            </div>
+                            <div class="card-body">
+                                {{!-- <form id="form1"> --}}
+                                {{!-- <input type="hidden" name="form1" value="true"> --}}
+                                    <div class="mb-4">
+                                        <label for="product_name" class="form-label">Product title</label>
+                                        <input disabled="" type="text" value="{{product.title}}" name="title" class="form-control" id="product_name">
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="form-label">Full description</label>
+                                        <textarea disabled="" name="description" class="form-control" rows="4">{{product.description}}</textarea>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-4">
+                                            <div class="mb-4">
+                                                <label class="form-label">Price</label>
+                                                <div class="row gx-2">
+                                                    <input disabled="" value="{{product.price}}" type="number" name="price" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="mb-4">
+                                                <label class="form-label">Quantity</label>
+                                                <input disabled="" value="{{product.quantity}}" type="number" name="quantity" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <label class="form-label">Color</label>
+                                            <input disabled="" type="text" value="{{product.color}}" name="color" class="form-control">
+                                        </div>
+                                    </div>
+                                    {{!-- <div class="mb-4">
+                                        <label class="form-label">Tax rate</label>
+                                        <input type="text" placeholder="%" class="form-control" id="product_name">
+                                    </div> --}}
+                            
+                                {{!-- </form> --}}
+                            </div>
+                        </div> <!-- card end// -->
+                        {{!-- <div class="card mb-4">
+                            <div class="card-header">
+                                <h4>Shipping</h4>
+                            </div>
+                            <div class="card-body">
+                                <form>
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="mb-4">
+                                                <label for="product_name" class="form-label">Width</label>
+                                                <input type="text" placeholder="inch" class="form-control" id="product_name">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="mb-4">
+                                                <label for="product_name" class="form-label">Height</label>
+                                                <input type="text" placeholder="inch" class="form-control" id="product_name">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="product_name" class="form-label">Weight</label>
+                                        <input type="text" placeholder="gam" class="form-control" id="product_name">
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="product_name" class="form-label">Shipping fees</label>
+                                        <input type="text" placeholder="$" class="form-control" id="product_name">
+                                    </div>
+                                </form>
+                            </div>
+                        </div> <!-- card end// --> --}}
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h4>Media</h4>
+                            </div>
+                            {{!-- <div class="card-body">
+                                
+                                    <div class="detail-gallery">                                      
+                                         <div class="pl-15 pr-15">
+                                            {{#each product.images}}
+                                            <figure class="border-radius-10">
+                                                <img src="/uploads/products/{{this}}" alt="product image">
+                                            </figure>
+                                            {{/each}}                          
+                                        </div>
+                                    </div>
+                                
+                            </div> --}}
+                            <div class="card-body">
+                                {{!-- <div class="detail-gallery"> --}}
+                                    <div class="swiper-container">
+                                        <div class="swiper-wrapper">
+                                    
+                                        {{#each product.images}}
+                                        <div class="swiper-slide">
+                                            <figure class="border-radius-10">
+                                                <img src="/uploads/products/{{this}}" alt="product image">
+                                            </figure>
+                                        </div>
+                                        {{/each}}
+                                    </div>                                   
+                                    <div class="swiper-pagination"></div>
+                                    </div>
+                                {{!-- </div> --}}
+                                </div>
+                            {{!-- <div class="card-body">
+                                <div class="detail-gallery">
+                                        <span class="zoom-icon"><i class="fi-rs-search"></i></span>
+                                        <!-- MAIN SLIDES -->
+                                        <div class="product-image-slider">
+                                            {{#each product.images}}
+                                            <figure class="border-radius-10">
+                                                <img src="/uploads/products/{{this}}" alt="product image">
+                                            </figure>
+                                            {{/each}}                          
+                                        </div>
+                                        <!-- THUMBNAILS -->
+                                        <div class="slider-nav-thumbnails pl-15 pr-15">
+                                            {{#each product.images}}
+                                            <div><img src="/uploads/products/{{this}}" alt="product image"></div>
+                                            {{/each}}
+                                        </div>
+                                    </div>
+                            </div> --}}
+                        </div> <!-- card end// -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h4>Organization</h4>
+                            </div>
+                            <div class="card-body">
+                                {{!-- <form id="form3"> --}}
+                                    <div class="row gx-2">
+                                        <div class="col-sm-6 mb-3">
+                                            <label class="form-label">Category</label>
+                                            <input disabled="" type="text" value="{{product.category}}" name="category" class="form-control">
+                                            {{!-- <select name="category" class="form-select">
+                                                <option value="{{product.category}}">Select a category</option>
+                                                <option value="Men">Men</option>
+                                                <option value="Women">Women</option>
+                                            </select> --}}
+                                        </div>
+                                        <div class="col-sm-6 mb-3">
+                                            <label class="form-label">Sub-category</label>
+                                            <input disabled="" type="text" value="{{product.subCategory}}" name="subCategory" class="form-control">
+                                            {{!-- <select name="subCategory" class="form-select">
+                                                <option value="{{product.subCategory}}">Select a Sub category</option>
+                                                <option value="Sneakers">Sneakers</option>
+                                                <option value="Classics">Classics</option>
+                                                <option value="Slides">Slides</option>
+                                            </select> --}}
+                                        </div>
+                                        <div class="mb-4">
+                                            <label for="product_name" class="form-label">Brand</label>
+                                            <input disabled="" type="text" value="{{product.brand}}" name="brand" class="form-control">
+                                        </div>
+                                    </div> <!-- row.// -->
+                                {{!-- </form> --}}
+                            </div>
+                        </div> <!-- card end// -->
+                    </div>
+                    {{!-- <button id="publish-btn" type="button">Publish</button> --}}
+                    {{!-- <button id="publish-btn" class="btn btn-md rounded font-sm hover-up" type="submit">Submit</button> --}}
+
+            </div>
+        </form>
+
+        </section> <!-- content-main end// -->
+
+    <script src="https://unpkg.com/swiper@8/swiper-bundle.min.js"></script>
+    <script>
+        var mySwiper = new Swiper('.swiper-container', {
+            loop: true,
+            pagination: {
+            el: '.swiper-pagination',
+            },
+        });
+    </script>

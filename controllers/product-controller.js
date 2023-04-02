@@ -1,14 +1,29 @@
 const asyncHandler = require('express-async-handler');
-const Product = require('../models/product-model');
+// const { validationResult } = require('express-validator');
 const productHelpers = require('../helpers/product-helper');
+const categoryHelpers = require('../helpers/category-helper');
+const subCategoryHelpers = require('../helpers/sub-category-helper');
 
 // create product get
 const createProductGet = asyncHandler(async (req, res) => {
-  res.render('admin/add-product', {
-    isAdmin: true,
-    productSuccess: req.session.productSuccess,
-  });
-  req.productSuccess = false;
+  try {
+    const { admin } = req.session;
+    const findAllCategories = await categoryHelpers.allCategories();
+    const findSubCategories = await subCategoryHelpers.allSubCategories();
+    res.render('admin/add-product', {
+      admin,
+      isAdmin: true,
+      categories: findAllCategories,
+      subCategories: findSubCategories,
+      productSuccess: req.session.productSuccess,
+      validationError: req.session.productValidationError,
+    });
+    req.session.productSuccess = false;
+    req.session.productValidationError = false;
+    req.session.imageValidationError = false;
+  } catch (error) {
+    throw new Error(error);
+  }
 });
 
 // Create product post
@@ -18,8 +33,8 @@ const createProductPost = asyncHandler(async (req, res) => {
     if (addedProduct) {
       req.session.productSuccess = 'Product created successfully.';
       req.session.productStatus = true;
-      res.redirect('/admin/products-list');
-      // res.redirect('/admin/add-product'); // to display message
+      // res.redirect('/admin/products-list');
+      res.redirect('/admin/add-product'); // to display message
     } else {
       req.session.productSuccess = false;
       res.redirect('/admin/add-product');
@@ -33,11 +48,13 @@ const createProductPost = asyncHandler(async (req, res) => {
 const getProduct = asyncHandler(async (req, res) => {
   try {
     const { slug } = req.params;
+    const { user } = req.session;
     // console.log('slu:  ', slug);
     const productDetails = await productHelpers.findSingleProduct(slug);
     // console.log(productDetails);
     if (productDetails) {
       res.render('user/product-details', {
+        user,
         product: productDetails,
         isUser: true,
       });
@@ -51,15 +68,20 @@ const getProduct = asyncHandler(async (req, res) => {
 const editProductGet = asyncHandler(async (req, res) => {
   try {
     const { slug } = req.params;
+    const { admin } = req.session;
     const productDetails = await productHelpers.findSingleProduct(slug);
     // console.log('productDetails:::->', productDetails);
     if (productDetails) {
       res.render('admin/edit-product', {
+        admin,
         product: productDetails,
         isAdmin: true,
         editProductSuccess: req.session.editProductSuccess,
+        editValidationError: req.session.editValidationError,
       });
       req.session.editProductSuccess = false;
+      req.session.editValidationError = false;
+      req.session.imageValidationError = false;
     } else {
       res.redirect('/admin/products-list');
     }
@@ -72,29 +94,31 @@ const editProductGet = asyncHandler(async (req, res) => {
 const editProductPost = asyncHandler(async (req, res) => {
   const { slug } = req.params;
   try {
-    console.log('postSlug:', slug);
-    console.log('req.body:->', req.body);
+    // console.log('postSlug:', slug);
+    // console.log('req.body:->', req.body);
     const edited = await productHelpers.updateProduct(slug, req);
-    console.log('editedProdut::->', edited);
+    // console.log('editedProdut::->', edited);
     if (edited) {
       req.session.editProductSuccess = 'Product edited successfully.';
       req.session.editProductStatus = true;
-      res.redirect('/admin/products-list');
+      // res.redirect('/admin/products-list');
+      res.redirect(`/admin/edit-product/${slug}`);
     } else {
       req.session.editProductSuccess = false;
-      res.redirect('/admin/edit-product');
+      res.redirect(`/admin/edit-product/${slug}`);
     }
   } catch (error) {
     throw new Error(error);
   }
 });
 
-// Delete a product
+// Unlist a product
 const deleteProduct = asyncHandler(async (req, res) => {
   const { slug } = req.params;
   try {
     const deleteProd = await productHelpers.markDelete(slug);
     if (deleteProd) {
+      req.session.unlistSuccess = `You have successfully unlisted  ${deleteProd.title}`;
       res.redirect('/admin/products-list');
     } else {
       res.redirect('/admin/products-list');
@@ -104,12 +128,29 @@ const deleteProduct = asyncHandler(async (req, res) => {
   }
 });
 
-// Restore a deleted product
+// Restore a Unlisted product
 const unDeleteProduct = asyncHandler(async (req, res) => {
   const { slug } = req.params;
   try {
-    const deleteProd = await productHelpers.restoreProduct(slug);
+    const deleteProd = await productHelpers.unMarkDelete(slug);
     if (deleteProd) {
+      req.session.restoreSuccess = `You have successfully restored  ${deleteProd.title}`;
+      res.redirect('/admin/products-list');
+    } else {
+      res.redirect('/admin/products-list');
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+// Permanent delete a product
+const permanentDeleteProduct = asyncHandler(async (req, res) => {
+  const { slug } = req.params;
+  try {
+    const deleteProd = await productHelpers.markPermanentDeleted(slug);
+    if (deleteProd) {
+      req.session.deleteSuccess = `You have permanently deleted  ${deleteProd.title}.`;
       res.redirect('/admin/products-list');
     } else {
       res.redirect('/admin/products-list');
@@ -127,4 +168,5 @@ module.exports = {
   editProductPost,
   deleteProduct,
   unDeleteProduct,
+  permanentDeleteProduct,
 };

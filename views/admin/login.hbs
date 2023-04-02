@@ -24,13 +24,13 @@
                                     </div>
                                     <form method="post" action="/admin/login">
                                         <div class="form-group">
-                                            <input type="text" required="" name="email" placeholder="Username or email">
+                                            <input type="text" name="email" placeholder="Username or email">
                                         </div>
                                         {{#if emailError}}
                                         <p style="color: red;">{{emailError}}</p><br>
                                         {{/if}}
                                         <div class="form-group">
-                                            <input required="" type="password" name="password" placeholder="Password">
+                                            <input type="password" name="password" placeholder="Password">
                                         </div>
                                         {{#if passwordError}}
                                         <p style="color: red;">{{passwordError}}</p><br>

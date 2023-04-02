@@ -305,10 +305,10 @@
                                     <div class="product-img-action-wrap">
                                         <div class="product-img product-img-zoom">
                                              {{!-- <a href="/pr/{{this.slug}}">  --}}
-                                             <a href="/product/{{this.slug}}"> 
+                                             <a href="/products/{{this.slug}}"> 
                                              {{!-- getaproduct route link --}}
                                                 <img class="default-img" src="/uploads/products/{{first this.images}}" alt="">
-                                                {{!-- <img class="hover-img" src="assets-user/imgs/shop/product-1-2.jpg" alt=""> --}}
+                                                <img class="hover-img" src="/uploads/products/{{second this.images}}" alt="">
                                             </a>
                                         </div>
                                         {{!-- <div class="product-action-1"> --}}
@@ -336,7 +336,8 @@
                                             <a href="#">{{this.subCategory}}</a>
                                         </div>
                                         <div class="product-price">
-                                            <span>₹ {{this.price}} </span>
+                                            <span> {{formatNumber this.price style="currency" currency="INR" minimumFractionDigits=2}} </span>
+
                                             {{!-- <span class="old-price">$245.8</span> --}}
                                         </div>
                                         <div class="product-action-1 show">

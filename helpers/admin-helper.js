@@ -39,7 +39,7 @@ const findAllUsers = asyncHandler(async () => {
 // update block status of user
 const updateBlockStatus = asyncHandler(async (id) => {
   try {
-    const response = {};
+    // const response = {};
     const block = await User.findByIdAndUpdate(
       id,
       {
@@ -50,8 +50,8 @@ const updateBlockStatus = asyncHandler(async (id) => {
       }
     );
     if (block) {
-      response.status = true;
-      return response;
+      // response.status = true;
+      return { block, status: true };
     }
     return { status: false };
   } catch (error) {
@@ -62,7 +62,7 @@ const updateBlockStatus = asyncHandler(async (id) => {
 // update block status of user
 const updateUnBlockStatus = asyncHandler(async (id) => {
   try {
-    const response = {};
+    // const response = {};
     const unBlock = await User.findByIdAndUpdate(
       id,
       {
@@ -73,8 +73,8 @@ const updateUnBlockStatus = asyncHandler(async (id) => {
       }
     );
     if (unBlock) {
-      response.status = true;
-      return response;
+      // response.status = true;
+      return { unBlock, status: true };
     }
     return { status: false };
   } catch (error) {

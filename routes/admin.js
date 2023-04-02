@@ -1,16 +1,19 @@
 const express = require('express');
 const productControllers = require('../controllers/product-controller');
-const userControllers = require('../controllers/user-controller');
 const authMiddlewares = require('../middlewares/auth-middleware');
-const uploadMiddlewares = require('../middlewares/uploadImages-middleware');
+const uploadMiddlewares = require('../middlewares/upload-images-middleware');
 const adminControllers = require('../controllers/admin-controller');
 const adminValidators = require('../validation/admin-validation');
+const productValidators = require('../validation/product-validation');
+const categoryValidators = require('../validation/category-validation');
+const subCategoryValidators = require('../validation/sub-category-validation');
+const categoryControllers = require('../controllers/category-controller');
+const subCategoryControllers = require('../controllers/sub-category-controller');
 
 const router = express.Router();
 
 // admin home page
 router.get('/', authMiddlewares.adminCheck, adminControllers.dashboardAdmin);
-// router.get('/', adminControllers.dashboardAdmin);
 // router.get('/', async (req, res) => {
 //   res.render('admin/login');
 // });
@@ -37,14 +40,53 @@ router
   // .post( uploadMultiplePhoto, productImgResize, uploadImages, createProduct);
   .post(
     uploadMiddlewares.uploadMultiplePhoto,
+    productValidators.validateProduct,
+    productValidators.validateAdd,
     productControllers.createProductPost
   );
+
+// router
+//   .route('/add-product')
+//   .get(authMiddlewares.adminCheck, productControllers.createProductGet)
+//   .post(
+//     async (req, res, next) => {
+//       try {
+//         await uploadMiddlewares.uploadMultiplePhoto(req, res, (err) => {
+//           if (
+//             err instanceof multer.MulterError &&
+//             err.code === 'LIMIT_UNEXPECTED_FILE'
+//           ) {
+//             return next({
+//               status: 400,
+//               message: 'Too many files uploaded',
+//             });
+//           }
+//           if (err) {
+//             // handle the error here, for example:
+//             req.imageValidationError = err.message;
+//           }
+//           next();
+//         });
+//       } catch (err) {
+//         return next(err);
+//       }
+//     },
+//     productValidators.validateProduct,
+//     productValidators.validate,
+//     productControllers.createProductPost
+//   );
 
 // router.get('/products-list', authMiddleware, isAdmin , getAllProducts);
 router.get(
   '/products-list',
   authMiddlewares.adminCheck,
   adminControllers.getAllProducts
+);
+
+router.get(
+  '/products/:slug',
+  authMiddlewares.adminCheck,
+  adminControllers.getProduct
 );
 
 // view user list
@@ -72,7 +114,12 @@ router.get(
 router
   .route('/edit-product/:slug')
   .get(authMiddlewares.adminCheck, productControllers.editProductGet)
-  .post(authMiddlewares.adminCheck, productControllers.editProductPost);
+  .post(
+    uploadMiddlewares.uploadMultiplePhoto,
+    productValidators.validateProduct,
+    productValidators.validateEdit,
+    productControllers.editProductPost
+  );
 
 // Soft Delete product
 router.get(
@@ -87,12 +134,83 @@ router.get(
   productControllers.unDeleteProduct
 );
 
-// user manipulation in admin panel
-// router.get(
-//   '/:id',
-//   authMiddlewares.authMiddleware,
-//   authMiddlewares.isAdmin,
-//   userControllers.getaUser
-// );
+// Permanent delete Product
+router.get(
+  '/permanent-delete/:slug',
+  authMiddlewares.adminCheck,
+  productControllers.permanentDeleteProduct
+);
+
+// Category management
+
+// display categories page and add category
+router
+  .route('/add-category')
+  .get(authMiddlewares.adminCheck, categoryControllers.getAllCategories)
+  .post(
+    authMiddlewares.adminCheck,
+    categoryValidators.validateCategory,
+    categoryValidators.validateAdd,
+    categoryControllers.createCategory
+  );
+
+// edit category
+router
+  .route('/edit-category/:slug')
+  .get(authMiddlewares.adminCheck, categoryControllers.getEditCategory)
+  .post(
+    authMiddlewares.adminCheck,
+    categoryValidators.validateCategory,
+    categoryValidators.validateEdit,
+    categoryControllers.postEditCategory
+  );
+
+// delete category
+router
+  .route('/delete-category/:slug')
+  .get(authMiddlewares.adminCheck, categoryControllers.getDeleteCategory);
+
+// restore category
+router
+  .route('/restore-category/:slug')
+  .get(authMiddlewares.adminCheck, categoryControllers.getRestoreCategory);
+
+//--------------------------------------------------------------------------------------------------------------
+// Sub-Category management
+
+// display sub-categories page and add category
+router
+  .route('/add-sub-category')
+  .get(authMiddlewares.adminCheck, subCategoryControllers.getAllSubCategories)
+  .post(
+    authMiddlewares.adminCheck,
+    subCategoryValidators.validateSubCategory,
+    subCategoryValidators.validateAdd,
+    subCategoryControllers.createSubCategory
+  );
+
+// edit sub-category
+router
+  .route('/edit-sub-category/:slug')
+  .get(authMiddlewares.adminCheck, subCategoryControllers.getEditSubCategory)
+  .post(
+    authMiddlewares.adminCheck,
+    subCategoryValidators.validateSubCategory,
+    subCategoryValidators.validateEdit,
+    subCategoryControllers.postEditSubCategory
+  );
+
+// delete sub-category
+router
+  .route('/delete-sub-category/:slug')
+  .get(authMiddlewares.adminCheck, subCategoryControllers.getDeleteSubCategory);
+
+// restore sub-category
+router
+  .route('/restore-sub-category/:slug')
+  .get(
+    authMiddlewares.adminCheck,
+    subCategoryControllers.getRestoreSubCategory
+  );
 
 module.exports = router;

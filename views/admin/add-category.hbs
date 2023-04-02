@@ -1,0 +1,265 @@
+<section class="content-main">
+    {{#if categoryAddedSuccess}}
+    <div id="category-success-alert" class="alert alert-success">
+        {{categoryAddedSuccess}}
+    </div>
+    {{/if}}
+
+    {{#if categoryDeletedSuccess}}
+    <div id="category-deleted-success-alert" class="alert alert-success">
+        {{categoryDeletedSuccess}}
+    </div>
+    {{/if}}
+
+    {{#if categoryRestoredSuccess}}
+    <div id="category-restored-success-alert" class="alert alert-success">
+        {{categoryRestoredSuccess}}
+    </div>
+    {{/if}}
+
+    {{#if categoryAddValidationError}}
+    {{#each categoryAddValidationError}}
+    <div class="alert alert-danger category-add-validation-alert">
+        {{this}}
+    </div>
+    {{/each}}
+    {{/if}}
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Categories </h2>
+                    <p>Add, edit or delete a category</p>
+                </div>
+                <div>
+                    <input type="text" placeholder="Search Categories" class="form-control bg-white">
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            
+                            <form id="categoryForm" action="/admin/add-category" method="POST">
+                                <div class="mb-4">
+                                    <label for="product_name" class="form-label">Title</label>
+                                    <input type="text" placeholder="Type here" name="title" class="form-control" id="product_name" />
+                                </div>
+                                {{!-- <div class="mb-4">
+                                    <label for="product_description" class="form-label">Slug</label>
+                                    <input type="text" placeholder="Type here" class="form-control" id="product_slug" />
+                                </div> --}}
+                                <div class="mb-4">
+                                    <fieldset>
+                                        <legend>Sub-Catagories</legend>
+                                        {{#each subCategories}}
+                                        <div class="parent-light">
+                                            <input type="checkbox" id="{{this.title}}" name="subCategory[]" value="{{this.title}}">
+                                            <label for="{{this.title}}">{{this.title}}</label>
+                                        </div>
+                                        {{/each}}
+                                    </fieldset>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Description</label>
+                                    <textarea placeholder="Type here" type="text" name="description" class="form-control"></textarea>
+                                </div>
+                                <div class="d-grid">
+                                    <button class="btn btn-primary" type="submit">Create category</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            {{!-- <th class="text-center">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="" />
+                                                </div>
+                                            </th> --}}
+                                            {{!-- <th>ID</th> --}}
+                                            <th>Title</th>
+                                            <th>Description</th>
+                                            <th>Slug</th>
+                                            <th>Sub-categories</th>
+                                            <th>Edit</th>
+                                            <th>Delete</th>
+                                            {{!-- <th class="text-end">Action</th> --}}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {{#each categories}}
+                                        <tr>
+                                            {{!-- <td class="text-center">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="" />
+                                                </div>
+                                            </td> --}}
+                                            {{!-- <td>21</td> --}}
+                                            <td><b>{{this.title}}</b></td>
+                                            <td>{{this.description}}</td>
+                                            <td>{{this.slug}}</td>
+                                            <td>
+                                                <div class="dropdown">
+                                                    <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
+                                                    <div class="dropdown-menu">
+                                                        <ul>
+                                                            {{#each subCategory}}
+                                                            <li>{{this}}</li>
+                                                            {{/each}}
+                                                        </ul>
+                                                    </div>
+                                                </div> <!-- dropdown //end -->
+                                            </td>
+                                            <td>
+                                                <a href="/admin/edit-category/{{this.slug}}" onclick="event.preventDefault(); editConfirmation(this)" data-slug="{{this.slug}}">
+                                                    <img src="/assets-admin/imgs/icons/edit.png" width="33em">
+                                                </a>
+                                            </td>
+                                            <td>
+                                                {{#if this.isDeleted}}
+                                                <a href="/admin/restore-category/{{this.slug}}" onclick="event.preventDefault(); restoreConfirmation(this)" data-slug="{{this.slug}}">
+                                                    <img src="/assets-admin/imgs/icons/undo-arrow.png" width="33em">
+                                                </a>
+                                                {{else}}
+                                                <a href="/admin/delete-category/{{this.slug}}" onclick="event.preventDefault(); deleteConfirmation(this)" data-slug="{{this.slug}}">
+                                                    <img src="/assets-admin/imgs/icons/delete.png" width="33em">
+                                                </a>
+                                                {{/if}}
+                                            </td>
+                                            {{!-- <td class="text-end">
+                                                <div class="dropdown">
+                                                    <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
+                                                    <div class="dropdown-menu">
+                                                        <a class="dropdown-item" href="#">View detail</a>
+                                                        <a class="dropdown-item" href="#">Edit info</a>
+                                                        <a class="dropdown-item text-danger" href="#">Delete</a>
+                                                    </div>
+                                                </div> <!-- dropdown //end -->
+                                            </td> --}}
+                                        </tr>
+                                        {{/each}}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div> <!-- .col// -->
+                    </div> <!-- .row // -->
+                </div> <!-- card body .// -->
+            </div> <!-- card .// -->
+        </section> <!-- content-main end// -->
+
+<script>
+    const categoryForm = document.getElementById('categoryForm');
+
+categoryForm.addEventListener('submit', (event) => {
+  event.preventDefault(); // prevent the form from submitting normally
+  
+  Swal.fire({
+    icon: 'warning',
+    title: 'Are you sure?',
+    text: 'Do you want to add the category?',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes, add it!'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // User confirmed the action, submit the form
+      categoryForm.submit();
+    }
+  });
+});
+
+// swal for editing the category
+    function editConfirmation(anchor) {
+        const slug = anchor.getAttribute('data-slug');
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you want to edit this category?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Redirect to the unlist URL
+                window.location.href = anchor.href;
+            }
+        });
+    }
+
+    // swal to delete a category
+    function deleteConfirmation(anchor) {
+        const slug = anchor.getAttribute('data-slug');
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you want to delete this category?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Redirect to the delete URL
+                window.location.href = anchor.href;
+            }
+        });
+    }
+
+    // swal to restore a category
+    function restoreConfirmation(anchor) {
+        const slug = anchor.getAttribute('data-slug');
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you want to restore this category?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, restore it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Redirect to the restore URL
+                window.location.href = anchor.href;
+            }
+        });
+    }
+
+    // disappear category added message
+    setTimeout(function() {
+    var alert = document.getElementById('category-success-alert');
+    if (alert) {
+        alert.style.display = 'none';
+    }
+    }, 5000);
+
+    // disappear category deleted message
+    setTimeout(function() {
+    var alert = document.getElementById('category-deleted-success-alert');
+    if (alert) {
+        alert.style.display = 'none';
+    }
+    }, 5000);
+
+     // disappear category restored message
+    setTimeout(function() {
+    var alert = document.getElementById('category-restored-success-alert');
+    if (alert) {
+        alert.style.display = 'none';
+    }
+    }, 5000); 
+
+    // disappear category add validation error messages
+    // Select all the error alerts
+    const errorAlerts = document.querySelectorAll('.category-add-validation-alert');
+    // Loop through the error alerts
+    errorAlerts.forEach(alert => {
+        // Set a timeout of 5 seconds to remove the alert
+        setTimeout(() => {
+        alert.remove();
+        }, 5000);
+    });
+
+</script>

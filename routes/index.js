@@ -1,32 +1,4 @@
 const express = require('express');
-// const {
-//   getAllProducts,
-//   getProduct,
-//   getAllProductsUser,
-// } = require('../controllers/product-controller');
-// const {
-//   getAllUsers,
-//   getaUser,
-//   deleteaUser,
-//   blockUser,
-//   unblockUser,
-//   handleRefreshToken,
-//   logoutUser,
-//   loginAdminGet,
-//   loginAdminPost,
-//   loginUserGet,
-//   loginUserPost,
-//   createUserGet,
-//   createUserPost,
-//   loginUserPostOTP,
-//   loginUserGetOTP,
-//   verifyOtp,
-// } = require('../controllers/user-controller');
-// const {
-//   authMiddleware,
-//   isAdmin,
-//   loggedInSession,
-// } = require('../middlewares/auth-middleware');
 const userControllers = require('../controllers/user-controller');
 const productControllers = require('../controllers/product-controller');
 const userValidators = require('../validation/user-validation');
@@ -57,6 +29,15 @@ router
   .get('/verify-otp', userControllers.verifyOtpGet)
   .post('/verify-otp', userControllers.verifyOtpPost);
 
-router.get('/product/:slug', productControllers.getProduct);
+router.get('/products/:slug', productControllers.getProduct);
+
+router.get('/shop', userControllers.getShop);
+
+router.get('/categories/:categorySlug', userControllers.filterCategory);
+
+router.get(
+  '/sub-categories/:subCategorySlug',
+  userControllers.filterSubCategory
+);
 
 module.exports = router;

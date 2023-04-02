@@ -1,15 +1,29 @@
 <section class="content-main">
+    {{#if editProductSuccess}}
+    <div id="edit-success-alert" class="alert alert-success">
+        {{editProductSuccess}}
+    </div>
+    {{/if}}
+    {{#if editValidationError}}
+    {{#each editValidationError}}
+    <div class="alert alert-danger edit-validation-alert">
+        {{this}}
+    </div>
+    {{/each}}
+    {{/if}}
+                <form id="editForm" action="/admin/edit-product/{{product.slug}}" method="POST" enctype="multipart/form-data">
+
             <div class="row">
                 {{!-- <form id="all-forms" method="POST" action="/submit-all-forms"> --}}
-                <form id="all-forms" action="/admin/edit-product/{{product.slug}}" method="POST" enctype="multipart/form-data">
 
                     <div class="col-9">
                         <div class="content-header">
                             <h2 class="content-title">Edit Product</h2>
-                            {{!-- <div>
-                                <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
-                                <button class="btn btn-md rounded font-sm hover-up">Publich</button>
-                            </div> --}}
+                            <div>
+                                {{!-- <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button> --}}
+                                {{!-- <button class="btn btn-md rounded font-sm hover-up">Publich</button> --}}
+                                <button class="btn btn-md rounded font-sm hover-up" type="submit">Publish</button>
+                            </div>
                         </div>
                     </div>
                     <div class="col-lg-6">
@@ -18,7 +32,7 @@
                                 <h4>Basic</h4>
                             </div>
                             <div class="card-body">
-                                <form id="form1">
+                                {{!-- <form id="form1"> --}}
                                 {{!-- <input type="hidden" name="form1" value="true"> --}}
                                     <div class="mb-4">
                                         <label for="product_name" class="form-label">Product title</label>
@@ -45,7 +59,7 @@
                                         </div>
                                         <div class="col-lg-4">
                                             <label class="form-label">Color</label>
-                                            <input type="text" value="{{product.color}}" required="" name="color" class="form-control">
+                                            <input type="text" value="{{product.color}}" name="color" class="form-control">
                                         </div>
                                     </div>
                                     {{!-- <div class="mb-4">
@@ -53,7 +67,7 @@
                                         <input type="text" placeholder="%" class="form-control" id="product_name">
                                     </div> --}}
                             
-                                </form>
+                                {{!-- </form> --}}
                             </div>
                         </div> <!-- card end// -->
                         {{!-- <div class="card mb-4">
@@ -94,12 +108,13 @@
                                 <h4>Media</h4>
                             </div>
                             <div class="card-body">
-                                <form id="form2">
+                                {{!-- <form id="form2"> --}}
                                     <div class="input-upload">
-                                        <img src="/assets-admin/imgs/theme/upload.svg" alt="">
-                                        <input class="form-control" type="file" required="" name="images" multiple="" >
+                                        {{!-- <img src="/assets-admin/imgs/theme/upload.svg" alt=""> --}}
+                                        <img src="/uploads/products/{{first product.images}}" alt="">
+                                        <input class="form-control" required="" type="file" name="images" multiple="" >
                                     </div>
-                                </form>
+                                {{!-- </form> --}}
                             </div>
                         </div> <!-- card end// -->
                         <div class="card mb-4">
@@ -107,12 +122,12 @@
                                 <h4>Organization</h4>
                             </div>
                             <div class="card-body">
-                                <form id="form3">
+                                {{!-- <form id="form3"> --}}
                                     <div class="row gx-2">
                                         <div class="col-sm-6 mb-3">
                                             <label class="form-label">Category</label>
                                             <select name="category" class="form-select">
-                                                <option value="">Select a category</option>
+                                                <option value="{{product.category}}">Select a category</option>
                                                 <option value="Men">Men</option>
                                                 <option value="Women">Women</option>
                                             </select>
@@ -120,33 +135,66 @@
                                         <div class="col-sm-6 mb-3">
                                             <label class="form-label">Sub-category</label>
                                             <select name="subCategory" class="form-select">
-                                                <option value="">Select a Sub category</option>
+                                                <option value="{{product.subCategory}}">Select a Sub category</option>
                                                 <option value="Sneakers">Sneakers</option>
-                                                <option value="Casuals">Classics</option>
-                                                <option value="Casuals">Slides</option>
+                                                <option value="Classics">Classics</option>
+                                                <option value="Slides">Slides</option>
                                             </select>
                                         </div>
                                         <div class="mb-4">
                                             <label for="product_name" class="form-label">Brand</label>
-                                            <input type="text" value="{{product.brand}}" required="" name="brand" class="form-control">
+                                            <input type="text" value="{{product.brand}}" name="brand" class="form-control">
                                         </div>
                                     </div> <!-- row.// -->
-                                </form>
+                                {{!-- </form> --}}
                             </div>
                         </div> <!-- card end// -->
                     </div>
                     {{!-- <button id="publish-btn" type="button">Publish</button> --}}
-                    <button id="publish-btn" class="btn btn-md rounded font-sm hover-up" type="submit">Submit</button>
+                    {{!-- <button id="publish-btn" class="btn btn-md rounded font-sm hover-up" type="submit">Submit</button> --}}
 
-                </form>
             </div>
+        </form>
+
         </section> <!-- content-main end// -->
-
 <script>
-  const publishBtn = document.getElementById('publish-btn');
-  const allForms = document.getElementById('all-forms');
+const myForm = document.getElementById('editForm');
 
-  publishBtn.addEventListener('click', () => {
-    allForms.submit();
+myForm.addEventListener('submit', (event) => {
+  event.preventDefault(); // prevent the form from submitting normally
+  
+  Swal.fire({
+    icon: 'warning',
+    title: 'Are you sure?',
+    text: 'Do you want to Edit this content?',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes, Edit it!'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // User confirmed the action, submit the form
+      myForm.submit();
+    }
   });
+});
+
+
+// Hide the success alert after 5 seconds
+setTimeout(function() {
+    var alert = document.getElementById('edit-success-alert');
+    if (alert) {
+        alert.style.display = 'none';
+    }
+}, 5000);
+
+// Select all the error alerts
+const errorAlerts = document.querySelectorAll('.edit-validation-alert');
+// Loop through the error alerts
+errorAlerts.forEach(alert => {
+    // Set a timeout of 5 seconds to remove the alert
+    setTimeout(() => {
+    alert.remove();
+    }, 5000);
+});
 </script>

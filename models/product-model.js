@@ -34,6 +34,16 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    categorySlug: {
+      type: String,
+      required: true,
+      lowercase: true,
+    },
+    subCategorySlug: {
+      type: String,
+      required: true,
+      lowercase: true,
+    },
     // brand:{
     //     type:String,
     //     enum: ["Adidas", "Nike", "Lee Cooper"],
@@ -62,6 +72,10 @@ const productSchema = new mongoose.Schema(
       required: true,
     },
     isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+    isPermanentDeleted: {
       type: Boolean,
       default: false,
     },

@@ -1,7 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const { validationResult } = require('express-validator');
 const User = require('../models/user-model');
-const Product = require('../models/product-model');
 const productHelpers = require('../helpers/product-helper');
 const adminHelpers = require('../helpers/admin-helper');
 
@@ -30,7 +29,7 @@ const loginAdminPost = asyncHandler(async (req, res) => {
   try {
     const errors = validationResult(req);
     const err = errors.errors;
-    console.log('err::-?', err);
+    // console.log('err::-?', err);
     if (!errors.isEmpty()) {
       req.session.validationError = err[0].msg;
       res.redirect('/admin');
@@ -42,9 +41,11 @@ const loginAdminPost = asyncHandler(async (req, res) => {
         res.redirect('/admin');
       } else if (adminStatus.notExist) {
         req.session.emailError = 'Username is invalid!';
+        req.session.admin = false;
         res.redirect('/admin');
       } else {
         req.session.passwordError = 'Password is invalid!';
+        req.session.admin = false;
         res.redirect('/admin');
       }
     }
@@ -69,6 +70,32 @@ const getAllProducts = asyncHandler(async (req, res) => {
         admin,
         allProducts: foundProducts,
         isAdmin: true,
+        unlistSuccess: req.session.unlistSuccess,
+        restoreSuccess: req.session.restoreSuccess,
+        deleteSuccess: req.session.deleteSuccess,
+      });
+      req.session.unlistSuccess = false;
+      req.session.restoreSuccess = false;
+      req.session.deleteSuccess = false;
+    }
+  } catch (error) {
+    throw new Error();
+  }
+});
+
+// get a product admin side
+const getProduct = asyncHandler(async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const { admin } = req.session;
+    // console.log('slu:  ', slug);
+    const productDetails = await productHelpers.findSingleProduct(slug);
+    // console.log(productDetails);
+    if (productDetails) {
+      res.render('admin/product-details', {
+        admin,
+        product: productDetails,
+        isAdmin: true,
       });
     }
   } catch (error) {
@@ -83,7 +110,15 @@ const getAllUsers = asyncHandler(async (req, res) => {
   try {
     const users = await adminHelpers.findAllUsers();
     const { admin } = req.session;
-    res.render('admin/view-users', { admin, users, isAdmin: true });
+    res.render('admin/view-users', {
+      admin,
+      users,
+      isAdmin: true,
+      blockedSuccess: req.session.blockedSuccess,
+      unblockedSuccess: req.session.unblockedSuccess,
+    });
+    req.session.blockedSuccess = false;
+    req.session.unblockedSuccess = false;
   } catch (error) {
     throw new Error(error);
   }
@@ -92,7 +127,7 @@ const getAllUsers = asyncHandler(async (req, res) => {
 // Delete a user
 const deleteaUser = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  console.log(req.params);
+  // console.log(req.params);
   try {
     const deleteUser = await User.findByIdAndDelete(id);
     res.json({ deleteUser });
@@ -106,9 +141,9 @@ const blockUser = asyncHandler(async (req, res) => {
   const { id } = req.params;
   try {
     const blockStatus = await adminHelpers.updateBlockStatus(id);
-    console.log('blocvk:::', blockStatus);
+    // console.log('blocvk:::', blockStatus);
     if (blockStatus.status) {
-      // req.session.active = true;
+      req.session.blockedSuccess = `You have successfully blocked ${blockStatus.block.firstname} ${blockStatus.block.lastname}.`;
       res.redirect('/admin/view-users');
     } else {
       // req.session.active = false;
@@ -125,7 +160,7 @@ const unblockUser = asyncHandler(async (req, res) => {
   try {
     const unBlockStatus = await adminHelpers.updateUnBlockStatus(id);
     if (unBlockStatus.status) {
-      // req.session.active = true;
+      req.session.blockedSuccess = `You have successfully unblocked ${unBlockStatus.unBlock.firstname} ${unBlockStatus.unBlock.lastname}.`;
       res.redirect('/admin/view-users');
     } else {
       // req.session.active = false;
@@ -142,6 +177,7 @@ module.exports = {
   loginAdminPost,
   adminLogOut,
   getAllProducts,
+  getProduct,
   deleteaUser,
   blockUser,
   unblockUser,

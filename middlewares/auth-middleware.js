@@ -99,6 +99,7 @@ const adminCheck = asyncHandler(async (req, res, next) => {
     next();
   } else {
     res.redirect('/admin/login');
+    // res.redirect('/admin');
   }
 });
 
