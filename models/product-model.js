@@ -52,6 +52,11 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    brandSlug: {
+      type: String,
+      required: true,
+      lowercase: true,
+    },
     quantity: {
       type: Number,
       required: true,

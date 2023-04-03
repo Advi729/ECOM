@@ -40,4 +40,6 @@ router.get(
   userControllers.filterSubCategory
 );
 
+router.get('/brands/:brandSlug', userControllers.filterBrand);
+
 module.exports = router;

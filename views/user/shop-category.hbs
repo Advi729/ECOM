@@ -90,17 +90,17 @@
                                     </div>
                                     <div class="product-content-wrap">
                                         <div class="product-category">
-                                            <a href="shop-grid-right.html">{{this.brand}}</a>
+                                            <a href="/brands/{{this.brandSlug}}">{{this.brand}}</a>
                                         </div>
-                                        <h2><a href="shop-product-right.html">{{this.title}}</a></h2>
+                                        <h2><a href="/products/{{this.slug}}">{{this.title}}</a></h2>
                                         {{!-- <div class="rating-result" title="90%">
                                             <span>
                                                 <span>90%</span>
                                             </span>
                                         </div> --}}
                                         <div>
-                                            <a href="#">{{this.category}}'s </a>
-                                            <a href="#">{{this.subCategory}}</a>
+                                            <a href="/categories/{{this.categorySlug}}">{{this.category}}'s </a>
+                                            <a href="/sub-categories/{{this.subCategorySlug}}">{{this.subCategory}}</a>
                                         </div>
                                         <div class="product-price">
                                             <span> {{formatNumber this.price style="currency" currency="INR" minimumFractionDigits=2}} </span>
@@ -144,6 +144,15 @@
                             </ul>
                         </div>
                         {{/each}}
+
+                        <div class="widget-category mb-30">
+                            <h5 class="section-title style-1 mb-30 wow fadeIn animated">Brands</h5>                                                  
+                            <ul class="categories">
+                                {{#each allBrands}}
+                                <li><a href="/brands/{{this.slug}}">{{this.title}}</a></li>
+                                {{/each}}
+                            </ul>
+                        </div>
                         <!-- Fillter By Price -->
                         {{!-- <div class="sidebar-widget price_range range mb-30">
                             <div class="widget-header position-relative mb-20 pb-10">

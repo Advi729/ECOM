@@ -23,7 +23,7 @@ const getAllCategories = asyncHandler(async (req, res) => {
     req.session.categoryAddedSuccess = false;
     req.session.categoryDeletedSuccess = false;
     req.session.categoryRestoredSuccess = false;
-    req.session.categoryValidationError = false;
+    req.session.categoryAddValidationError = false;
     // } else {
     //   req.session.categoryAddedSuccess = false;
     //   res.redirect('/admin/add-category');

@@ -129,9 +129,7 @@
                                         <option value="">Select a category</option>
                                         {{#each categories}}
                                         <option value="{{this.title}}">{{this.title}}</option>
-                                        {{/each}}
-                                        {{!-- <option value="Men">Men</option>
-                                        <option value="Women">Women</option> --}}
+                                        {{/each}}                                     
                                     </select>
                                 </div>
                                 <div class="col-sm-6 mb-3">
@@ -154,7 +152,12 @@
                                 </div>
                                 <div class="mb-4">
                                     <label for="" class="form-label">Brand</label>
-                                    <input type="text" name="brand" class="form-control">
+                                    <select id="" name="brand" class="form-select brand">
+                                        <option value="">Select a brand</option>
+                                        {{#each brands}}
+                                        <option value="{{this.title}}">{{this.title}}</option>
+                                        {{/each}}                            
+                                    </select>
                                 </div>
                             </div> <!-- row.// -->
                         </div>

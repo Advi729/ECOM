@@ -6,6 +6,7 @@ const productHelpers = require('../helpers/product-helper');
 const userHelpers = require('../helpers/user-helper');
 const categoryHelpers = require('../helpers/category-helper');
 const subCategoryHelpers = require('../helpers/sub-category-helper');
+const brandHelpers = require('../helpers/brand-helper');
 
 // Get home page
 const getHomePage = asyncHandler(async (req, res) => {
@@ -200,6 +201,7 @@ const getShop = asyncHandler(async (req, res) => {
     const data = await productHelpers.findProducts();
     const categories = await categoryHelpers.allCategories();
     const subCategories = await subCategoryHelpers.allSubCategories();
+    const brands = await brandHelpers.allBrands();
     const { user } = req.session;
     const products = JSON.parse(JSON.stringify(data));
     res.render('user/shop', {
@@ -207,6 +209,7 @@ const getShop = asyncHandler(async (req, res) => {
       allProducts: products,
       allCategories: categories,
       allSubCategories: subCategories,
+      allBrands: brands,
       isUser: true,
     });
   } catch (error) {
@@ -222,6 +225,7 @@ const filterCategory = asyncHandler(async (req, res) => {
     const { user } = req.session;
     const categories = await categoryHelpers.allCategories();
     const subCategories = await subCategoryHelpers.allSubCategories();
+    const brands = await brandHelpers.allBrands();
     const filteredCategory = await productHelpers.findProductsByCategorySlug(
       categorySlug
     );
@@ -235,6 +239,7 @@ const filterCategory = asyncHandler(async (req, res) => {
         allProducts: filteredCategory,
         allCategories: categories,
         allSubCategories: subCategories,
+        allBrands: brands,
       });
     }
   } catch (error) {
@@ -250,6 +255,7 @@ const filterSubCategory = asyncHandler(async (req, res) => {
     const { user } = req.session;
     const categories = await categoryHelpers.allCategories();
     const subCategories = await subCategoryHelpers.allSubCategories();
+    const brands = await brandHelpers.allBrands();
     const filteredSubCategory =
       await productHelpers.findProductsBySubCategorySlug(subCategorySlug);
     // console.log('fiiiiiiiiiiiiiiiiii', filteredCategory);
@@ -266,6 +272,37 @@ const filterSubCategory = asyncHandler(async (req, res) => {
         allProducts: filteredSubCategory,
         allCategories: categories,
         allSubCategories: subCategories,
+        allBrands: brands,
+      });
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+// filter products using category slug
+const filterBrand = asyncHandler(async (req, res) => {
+  try {
+    const { brandSlug } = req.params;
+    // console.log('filterparamss:', req.params);
+    const { user } = req.session;
+    const categories = await categoryHelpers.allCategories();
+    const subCategories = await subCategoryHelpers.allSubCategories();
+    const brands = await brandHelpers.allBrands();
+    const filteredBrand = await productHelpers.findProductsByBrandSlug(
+      brandSlug
+    );
+    // console.log('fiiiiiiiiiiiiiiiiii', filteredCategory);
+    const heading = filteredBrand[0].brand;
+    if (filteredBrand) {
+      res.render('user/shop-brand', {
+        user,
+        isUser: true,
+        heading,
+        allProducts: filteredBrand,
+        allCategories: categories,
+        allSubCategories: subCategories,
+        allBrands: brands,
       });
     }
   } catch (error) {
@@ -288,4 +325,5 @@ module.exports = {
   getShop,
   filterCategory,
   filterSubCategory,
+  filterBrand,
 };

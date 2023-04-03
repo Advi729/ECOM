@@ -3,6 +3,7 @@ const asyncHandler = require('express-async-handler');
 const productHelpers = require('../helpers/product-helper');
 const categoryHelpers = require('../helpers/category-helper');
 const subCategoryHelpers = require('../helpers/sub-category-helper');
+const brandHelpers = require('../helpers/brand-helper');
 
 // create product get
 const createProductGet = asyncHandler(async (req, res) => {
@@ -10,11 +11,13 @@ const createProductGet = asyncHandler(async (req, res) => {
     const { admin } = req.session;
     const findAllCategories = await categoryHelpers.allCategories();
     const findSubCategories = await subCategoryHelpers.allSubCategories();
+    const findBrands = await brandHelpers.allBrands();
     res.render('admin/add-product', {
       admin,
       isAdmin: true,
       categories: findAllCategories,
       subCategories: findSubCategories,
+      brands: findBrands,
       productSuccess: req.session.productSuccess,
       validationError: req.session.productValidationError,
     });

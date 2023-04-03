@@ -3,6 +3,7 @@ const slugify = require('slugify');
 const Product = require('../models/product-model');
 const categoryHelpers = require('./category-helper');
 const subCategoryHelpers = require('./sub-category-helper');
+const brandHelpers = require('./brand-helper');
 
 // Find all products
 const findProducts = async () => {
@@ -65,12 +66,17 @@ const createProduct = asyncHandler(async (data) => {
     const combinedSlug = `${categorySlug}${separator}${subCategorySlug}`;
     const finalSubCategorySlug = slugify(combinedSlug, { lower: true });
 
+    // brand slug
+    const brandDetails = await brandHelpers.findBrandByTitle(data.body.brand);
+    const brandSlug = brandDetails.slug;
+
     const productData = {
       ...data.body,
       images: imageNames,
       slug: productSlug,
       categorySlug: finalCategorySlug,
       subCategorySlug: finalSubCategorySlug,
+      brandSlug,
     };
     const addedProduct = await Product.create(productData);
     return addedProduct;
@@ -188,6 +194,20 @@ const findProductsBySubCategorySlug = async (subCategorySlug) => {
   }
 };
 
+// Find all products by brand-slug
+const findProductsByBrandSlug = async (brandSlug) => {
+  try {
+    const productDetails = await Product.find({ brandSlug });
+    const foundProducts = JSON.parse(JSON.stringify(productDetails));
+    // console.log('foundProufufuf:->', foundProducts);
+
+    // res.json(productDetails);
+    return foundProducts;
+  } catch (error) {
+    throw new Error();
+  }
+};
+
 module.exports = {
   findProducts,
   findSingleProduct,
@@ -198,4 +218,5 @@ module.exports = {
   markPermanentDeleted,
   findProductsByCategorySlug,
   findProductsBySubCategorySlug,
+  findProductsByBrandSlug,
 };

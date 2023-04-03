@@ -1,0 +1,141 @@
+<section class="content-main">
+    {{#if brandEditedSuccess}}
+    <div id="edit-brand-success-alert" class="alert alert-success">
+        {{brandEditedSuccess}}
+    </div>
+    {{/if}}
+
+    {{#if brandEditValidationError}}
+    {{#each brandEditValidationError}}
+    <div class="alert alert-danger brand-edit-validation-alert">
+        {{this}}
+    </div>
+    {{/each}}
+    {{/if}}
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Edit Brand</h2>
+                    <p>Edit brand {{brand.title}}</p>
+                </div>
+                <div>
+                    <input type="text" placeholder="Search Brands" class="form-control bg-white">
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            
+                            <form id="editBrandForm" action="/admin/edit-brand/{{brand.slug}}" method="POST">
+                                <div class="mb-4">
+                                    <label for="product_name" class="form-label">Title</label>
+                                    <input type="text" value="{{brand.title}}" name="title" class="form-control" id="product_name" />
+                                </div>
+                                {{!-- <div class="mb-4">
+                                    <label for="product_description" class="form-label">Slug</label>
+                                    <input type="text" placeholder="Type here" class="form-control" id="product_slug" />
+                                </div> --}}
+                                {{!-- <div class="mb-4">
+                                    <fieldset>
+                                        <legend>Sub-Catagories</legend>
+                                        {{#each subCategories}}
+                                        <div class="parent-light">
+                                            <input type="checkbox" id="{{this.title}}" name="subCategory[]" value="{{this.title}}">
+                                            <label for="{{this.title}}">{{this.title}}</label>
+                                        </div>
+                                        {{/each}}
+                                    </fieldset>
+                                </div> --}}
+                                <div class="mb-4">
+                                    <label class="form-label">Description</label>
+                                    <textarea type="text" name="description" class="form-control">{{brand.description}}</textarea>
+                                </div>
+                                <div class="d-grid">
+                                    <button class="btn btn-primary" type="submit">Edit brand</button>
+                                </div>
+                            </form>
+                        </div>
+                       {{!-- <div class="col-md-9">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            
+                                            <th>Title</th>
+                                            <th>Description</th>
+                                            <th>Slug</th>
+                                            <th>Order</th>
+                                            <th>Edit</th>
+                                            <th>Delete</th>
+                                            
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {{#each categories}}
+                                        <tr>
+                                           
+                                            <td><b>{{this.title}}</b></td>
+                                            <td>{{this.description}}</td>
+                                            <td>{{this.slug}}</td>
+                                            <td>1</td>
+                                            <td>
+                                                <a href="#" onclick="event.preventDefault(); deleteConfirmation(this)" data-slug="{{this.slug}}">
+                                                    <img src="/assets-admin/imgs/icons/edit.png" width="33em">
+                                                </a>
+                                            </td>
+                                            <td><a href="#" onclick="event.preventDefault(); deleteConfirmation(this)" data-slug="{{this.slug}}">
+                                                    <img src="/assets-admin/imgs/icons/delete.png" width="33em">
+                                                </a>
+                                            </td>
+                                          
+                                        </tr>
+                                        {{/each}}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>  --}}
+                    </div> <!-- .row // -->
+                </div> <!-- card body .// -->
+            </div> <!-- card .// -->
+        </section> <!-- content-main end// -->
+
+<script>
+    const categoryForm = document.getElementById('editBrandForm');
+
+categoryForm.addEventListener('submit', (event) => {
+  event.preventDefault(); // prevent the form from submitting normally
+  
+  Swal.fire({
+    icon: 'warning',
+    title: 'Are you sure?',
+    text: 'Do you want to edit the brand?',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes, edit it!'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // User confirmed the action, submit the form
+      editBrandForm.submit();
+    }
+  });
+});
+
+    // disappear brand added message
+    setTimeout(function() {
+        var alert = document.getElementById('edit-brand-success-alert');
+        if (alert) {
+            alert.style.display = 'none';
+        }
+    }, 5000);
+
+    // disappear brand edit validation error messages
+    // Select all the error alerts
+    const errorAlerts = document.querySelectorAll('.brand-edit-validation-alert');
+    // Loop through the error alerts
+    errorAlerts.forEach(alert => {
+    // Set a timeout of 5 seconds to remove the alert
+    setTimeout(() => {
+    alert.remove();
+    }, 5000);
+</script>

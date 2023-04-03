@@ -7,8 +7,10 @@ const adminValidators = require('../validation/admin-validation');
 const productValidators = require('../validation/product-validation');
 const categoryValidators = require('../validation/category-validation');
 const subCategoryValidators = require('../validation/sub-category-validation');
+const brandValidators = require('../validation/brand-validation');
 const categoryControllers = require('../controllers/category-controller');
 const subCategoryControllers = require('../controllers/sub-category-controller');
+const brandControllers = require('../controllers/brand-controller');
 
 const router = express.Router();
 
@@ -141,6 +143,7 @@ router.get(
   productControllers.permanentDeleteProduct
 );
 
+//--------------------------------------------------------------------------------------------------------------------------------------
 // Category management
 
 // display categories page and add category
@@ -212,5 +215,40 @@ router
     authMiddlewares.adminCheck,
     subCategoryControllers.getRestoreSubCategory
   );
+
+//--------------------------------------------------------------------------------------------------------------------------------
+// Brand management
+
+// display brands page and add brand
+router
+  .route('/add-brand')
+  .get(authMiddlewares.adminCheck, brandControllers.getAllbrands)
+  .post(
+    authMiddlewares.adminCheck,
+    brandValidators.validateBrand,
+    brandValidators.validateAdd,
+    brandControllers.createBrand
+  );
+
+// edit brand
+router
+  .route('/edit-brand/:slug')
+  .get(authMiddlewares.adminCheck, brandControllers.getEditBrand)
+  .post(
+    authMiddlewares.adminCheck,
+    brandValidators.validateBrand,
+    brandValidators.validateEdit,
+    brandControllers.postEditBrand
+  );
+
+// delete brand
+router
+  .route('/delete-brand/:slug')
+  .get(authMiddlewares.adminCheck, brandControllers.getDeleteBrand);
+
+// restore brand
+router
+  .route('/restore-brand/:slug')
+  .get(authMiddlewares.adminCheck, brandControllers.getRestoreBrand);
 
 module.exports = router;

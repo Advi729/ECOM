@@ -10,8 +10,8 @@ const validateProduct = [
   check('description')
     .notEmpty()
     .withMessage('Description cannot be empty.')
-    .isLength({ max: 500 })
-    .withMessage('Description cannot exceed 500 characters.'),
+    .isLength({ max: 600 })
+    .withMessage('Description cannot exceed 600 characters.'),
   check('price')
     .notEmpty()
     .withMessage('Price cannot be empty.')
@@ -27,23 +27,11 @@ const validateProduct = [
   check('color')
     .notEmpty()
     .withMessage('Color cannot be empty.')
-    .isLength({ max: 20 })
-    .withMessage('Color cannot exceed 20 characters.'),
-  check('category')
-    .notEmpty()
-    .withMessage('Category cannot be empty.')
-    .isLength({ max: 20 })
-    .withMessage('Color cannot exceed 20 characters.'),
-  check('subCategory')
-    .notEmpty()
-    .withMessage('Sub-category cannot be empty.')
-    .isLength({ max: 20 })
-    .withMessage('Color cannot exceed 20 characters.'),
-  check('brand')
-    .notEmpty()
-    .withMessage('Brand cannot be empty.')
     .isLength({ max: 50 })
-    .withMessage('Brand cannot exceed 50 characters.'),
+    .withMessage('Color cannot exceed 50 characters.'),
+  check('category').notEmpty().withMessage('Category cannot be empty.'),
+  check('subCategory').notEmpty().withMessage('Sub-category cannot be empty.'),
+  check('brand').notEmpty().withMessage('Brand cannot be empty.'),
   // check('images')
   //   .notEmpty()
   //   .withMessage('Images cannot be empty.')
