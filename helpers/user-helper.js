@@ -6,11 +6,11 @@ const userSignUp = asyncHandler(async (data) => {
   try {
     const { email, mobile } = data;
     let response = {};
-    console.log('email&number:-> ', email, mobile);
+    // console.log('email&number:-> ', email, mobile);
     const findUser = await User.findOne({
       $or: [{ email }, { mobile }],
     });
-    console.log('findUser:::', findUser);
+    // console.log('findUser:::', findUser);
     if (findUser) {
       return { status: true };
     }
@@ -60,4 +60,92 @@ const findOtp = asyncHandler(async (enteredMobile) => {
   }
 });
 
-module.exports = { userSignUp, userLogin, findOtp };
+// find user details using id
+const findUser = asyncHandler(async (_id) => {
+  try {
+    const foundUser = await User.findOne({ _id });
+    return foundUser;
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+// add address of the user
+const addUserAddress = asyncHandler(async (_id, data) => {
+  try {
+    const { pincode, locality, area, district, state } = data.body;
+    // if (!pincode || !locality || !area || !district || !state) {
+    //   throw new Error('Missing required address fields');
+    // }
+
+    // Create new address object
+    const newAddress = {
+      pincode,
+      locality,
+      area,
+      district,
+      state,
+    };
+
+    // Find user by ID and add address array
+    const createdAddress = await User.findByIdAndUpdate(
+      _id,
+      { $push: { address: newAddress } },
+      { new: true }
+    );
+
+    return createdAddress;
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+// update address of the user
+const updateUserAddress = asyncHandler(async (userId, addressId, data) => {
+  try {
+    const { pincode, locality, area, district, state } = data.body;
+    const updated = await User.updateOne(
+      { _id: userId, 'address._id': addressId },
+      {
+        $set: {
+          'address.$.pincode': pincode,
+          'address.$.locality': locality,
+          'address.$.area': area,
+          'address.$.district': district,
+          'address.$.state': state,
+        },
+      }
+    );
+    return updated;
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+// delete address of the user
+const deleteUserAddress = asyncHandler(async (userId, addressId) => {
+  try {
+    const deleted = await User.updateOne(
+      { _id: userId },
+      { $pull: { address: { _id: addressId } } }
+    );
+
+    if (deleted.nModified === 0) {
+      throw new Error('Address not found.');
+    }
+
+    return deleted;
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+module.exports = {
+  userSignUp,
+  userLogin,
+  findOtp,
+  findUser,
+  addUserAddress,
+  updateUserAddress,
+  deleteUserAddress,
+};

@@ -195,6 +195,7 @@ const getaUser = asyncHandler(async (req, res) => {
   }
 });
 
+//------------------------------------------------------------------------------------------------------------------------------------------
 // Render shop
 const getShop = asyncHandler(async (req, res) => {
   try {
@@ -204,8 +205,10 @@ const getShop = asyncHandler(async (req, res) => {
     const brands = await brandHelpers.allBrands();
     const { user } = req.session;
     const products = JSON.parse(JSON.stringify(data));
+    const pageShop = true;
     res.render('user/shop', {
       user,
+      pageShop,
       allProducts: products,
       allCategories: categories,
       allSubCategories: subCategories,
@@ -230,12 +233,15 @@ const filterCategory = asyncHandler(async (req, res) => {
       categorySlug
     );
     // console.log('fiiiiiiiiiiiiiiiiii', filteredCategory);
-    const heading = filteredCategory[0].category;
+    const categoryHeading = filteredCategory[0].category;
+    const pageCategory = true;
     if (filteredCategory) {
-      res.render('user/shop-category', {
+      // res.render('user/shop-category', {
+      res.render('user/shop', {
         user,
+        pageCategory,
         isUser: true,
-        heading,
+        categoryHeading,
         allProducts: filteredCategory,
         allCategories: categories,
         allSubCategories: subCategories,
@@ -259,14 +265,17 @@ const filterSubCategory = asyncHandler(async (req, res) => {
     const filteredSubCategory =
       await productHelpers.findProductsBySubCategorySlug(subCategorySlug);
     // console.log('fiiiiiiiiiiiiiiiiii', filteredCategory);
-    const heading = filteredSubCategory[0].category;
+    const categoryHeading = filteredSubCategory[0].category;
     const subHeading = filteredSubCategory[0].subCategory;
     const { categorySlug } = filteredSubCategory[0];
+    const pageSubCategory = true;
     if (filteredSubCategory) {
-      res.render('user/shop-sub-category', {
+      // res.render('user/shop-sub-category', {
+      res.render('user/shop', {
         user,
         isUser: true,
-        heading,
+        pageSubCategory,
+        categoryHeading,
         subHeading,
         categorySlug,
         allProducts: filteredSubCategory,
@@ -293,17 +302,88 @@ const filterBrand = asyncHandler(async (req, res) => {
       brandSlug
     );
     // console.log('fiiiiiiiiiiiiiiiiii', filteredCategory);
-    const heading = filteredBrand[0].brand;
+    const brandHeading = filteredBrand[0].brand;
+    const pageBrand = true;
     if (filteredBrand) {
-      res.render('user/shop-brand', {
+      // res.render('user/shop-brand', {
+      res.render('user/shop', {
         user,
         isUser: true,
-        heading,
+        pageBrand,
+        brandHeading,
         allProducts: filteredBrand,
         allCategories: categories,
         allSubCategories: subCategories,
         allBrands: brands,
       });
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+// get user profile
+const getUserProfile = asyncHandler(async (req, res) => {
+  try {
+    const { _id } = req.params;
+    const { user } = req.session;
+    const resultUser = await userHelpers.findUser(_id);
+    const finalUser = JSON.parse(JSON.stringify(resultUser));
+    // console.log('user.res.address:',user.response.address);
+    // console.log('fouhnduser::->profiel::', resultUser);
+    if (resultUser) {
+      res.render('user/profile', { isUser: true, user, foundUser: finalUser });
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+// Add address
+const addAddress = asyncHandler(async (req, res) => {
+  try {
+    const { _id } = req.params;
+    const addressAdded = await userHelpers.addUserAddress(_id, req);
+    if (addressAdded) {
+      res.redirect(`/profile/${_id}`);
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+// Edit address
+const editAddress = asyncHandler(async (req, res) => {
+  try {
+    console.log('reached edit address>>>>>>>');
+    const { _id } = req.params;
+    const { user } = req.session;
+    // console.log('userId:',user.response._id);
+    const addressUpdated = await userHelpers.updateUserAddress(
+      user.response._id,
+      _id,
+      req
+    );
+    if (addressUpdated) {
+      res.redirect(`/profile/${user.response._id}`);
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+// Delete address
+const deleteAddress = asyncHandler(async (req, res) => {
+  try {
+    const { _id } = req.params;
+    const { user } = req.session;
+    // console.log('userId:',user.response._id);
+    const addressDeleted = await userHelpers.deleteUserAddress(
+      user.response._id,
+      _id
+    );
+    if (addressDeleted.acknowledged) {
+      res.redirect(`/profile/${user.response._id}`);
     }
   } catch (error) {
     throw new Error(error);
@@ -326,4 +406,8 @@ module.exports = {
   filterCategory,
   filterSubCategory,
   filterBrand,
+  getUserProfile,
+  addAddress,
+  editAddress,
+  deleteAddress,
 };

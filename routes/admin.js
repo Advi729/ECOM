@@ -47,37 +47,6 @@ router
     productControllers.createProductPost
   );
 
-// router
-//   .route('/add-product')
-//   .get(authMiddlewares.adminCheck, productControllers.createProductGet)
-//   .post(
-//     async (req, res, next) => {
-//       try {
-//         await uploadMiddlewares.uploadMultiplePhoto(req, res, (err) => {
-//           if (
-//             err instanceof multer.MulterError &&
-//             err.code === 'LIMIT_UNEXPECTED_FILE'
-//           ) {
-//             return next({
-//               status: 400,
-//               message: 'Too many files uploaded',
-//             });
-//           }
-//           if (err) {
-//             // handle the error here, for example:
-//             req.imageValidationError = err.message;
-//           }
-//           next();
-//         });
-//       } catch (err) {
-//         return next(err);
-//       }
-//     },
-//     productValidators.validateProduct,
-//     productValidators.validate,
-//     productControllers.createProductPost
-//   );
-
 // router.get('/products-list', authMiddleware, isAdmin , getAllProducts);
 router.get(
   '/products-list',

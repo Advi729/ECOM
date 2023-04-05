@@ -114,7 +114,7 @@ const updateProduct = asyncHandler(async (slug, data) => {
         },
       }
     );
-    console.log('updatedP:->', updated);
+    // console.log('updatedP:->', updated);
     return updated;
   } catch (error) {
     throw new Error();
@@ -171,7 +171,7 @@ const findProductsByCategorySlug = async (categorySlug) => {
   try {
     const productDetails = await Product.find({ categorySlug });
     const foundProducts = JSON.parse(JSON.stringify(productDetails));
-    console.log('foundProufufuf:->', foundProducts);
+    // console.log('foundProufufuf:->', foundProducts);
 
     // res.json(productDetails);
     return foundProducts;
@@ -185,7 +185,7 @@ const findProductsBySubCategorySlug = async (subCategorySlug) => {
   try {
     const productDetails = await Product.find({ subCategorySlug });
     const foundProducts = JSON.parse(JSON.stringify(productDetails));
-    console.log('foundProufufuf:->', foundProducts);
+    // console.log('foundProufufuf:->', foundProducts);
 
     // res.json(productDetails);
     return foundProducts;

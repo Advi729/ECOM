@@ -39,10 +39,38 @@ const userSchema = new mongoose.Schema(
       type: Array,
       default: [],
     },
+    // address: [
+    //   {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'Address',
+    //   },
+    // ],
     address: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Address',
+        pincode: {
+          type: Number,
+          required: true,
+        },
+        locality: {
+          type: String,
+          required: true,
+        },
+        area: {
+          type: String,
+          required: true,
+        },
+        district: {
+          type: String,
+          required: true,
+        },
+        state: {
+          type: String,
+          required: true,
+        },
+        // userId: {
+        //   type: mongoose.Schema.Types.ObjectId,
+        //   ref: 'User',
+        // },
       },
     ],
     wishlist: [

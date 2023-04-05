@@ -1,10 +1,38 @@
 <main class="main">
         <div class="page-header breadcrumb-wrap">
             <div class="container">
+                {{#if pageShop}}
                 <div class="breadcrumb">
                     <a href="/" rel="nofollow">Home</a>
                     <span></span> Shop
                 </div>
+                {{/if}} 
+
+                {{#if pageCategory}}
+                <div class="breadcrumb">
+                    <a href="/" rel="nofollow">Home</a>
+                    <a href="/shop"><span></span> Shop</a>
+                    <span></span> {{categoryHeading}}'s Footwear
+                </div>
+                {{/if}} 
+
+                {{#if pageSubCategory}}
+                <div class="breadcrumb">
+                    <a href="/" rel="nofollow">Home</a>
+                    <a href="/shop"><span></span> Shop</a>
+                    <a href="/categories/{{categorySlug}}"><span></span> {{categoryHeading}}'s Footwear</a>
+                    <span></span> {{subHeading}}
+                </div>
+                {{/if}}
+
+                {{#if pageBrand}}
+                <div class="breadcrumb">
+                    <a href="/" rel="nofollow">Home</a>
+                    <a href="/shop"><span></span> Shop</a>
+                    <span></span> {{brandHeading}}
+                </div>
+                {{/if}} 
+                
             </div>
         </div>
         <section class="mt-50 mb-50">
@@ -16,7 +44,19 @@
                                 <p> We found <strong class="text-brand">688</strong> items for you!</p>
                             </div> --}}
                             <div>
+                                {{#if pageShop}}
                                 <h3 class="section-title mb-20"><span>All</span> Products</h3>
+                                {{/if}} 
+                                {{#if pageCategory}}
+                                <h3 class="section-title mb-20"><span>{{categoryHeading}}'s</span> Footwear</h3>
+                                {{/if}} 
+                                {{#if pageSubCategory}}
+                                <h3 class="section-title mb-20"><span>{{categoryHeading}}'s</span> {{subHeading}}</h3>
+                                {{/if}}
+                                {{#if pageBrand}}
+                                <h3 class="section-title mb-20"><span>{{brandHeading}}</span></h3>
+                                {{/if}} 
+                            
                             </div>
                             <div class="sort-by-product-area">
                                 <div class="sort-by-cover mr-10">
@@ -132,23 +172,34 @@
                     </div>
                     <div class="col-lg-3 primary-sidebar sticky-sidebar">
                         {{#each allCategories}}
+                        {{#if this.isDeleted}}
+                        {{else}}
                         <div class="widget-category mb-30">
                             <a href="/categories/{{this.slug}}s-footwear">
                                 <h5 class="section-title style-1 mb-30 wow fadeIn animated">{{this.title}}'s Footwear</h5>
-                            </a>                            
+                            </a>
                             <ul class="categories">
                                 {{#each ../allSubCategories}}
+                                {{#if this.isDeleted}}
+                                {{else}}
                                 <li><a href="/sub-categories/{{../this.slug}}s-{{this.slug}}">{{this.title}}</a></li>
+                                {{/if}}
                                 {{/each}}
                             </ul>
                         </div>
+                        {{/if}}
                         {{/each}}
-
+                    
                         <div class="widget-category mb-30">
-                            <h5 class="section-title style-1 mb-30 wow fadeIn animated">Brands</h5>                                                  
+                            <h5 class="section-title style-1 mb-30 wow fadeIn animated">Brands</h5>
                             <ul class="categories">
                                 {{#each allBrands}}
+                                {{#if this.isDeleted}}
+                                {{else}}
+                                {{!-- {{#if (filter allProducts (fn p) (and (contains p.allCategories title) (contains p.allSubCategories title) (eq p.brand this.title)))}} --}}
                                 <li><a href="/brands/{{this.slug}}">{{this.title}}</a></li>
+                                {{/if}}
+                                {{!-- {{/if}} --}}
                                 {{/each}}
                             </ul>
                         </div>
@@ -239,7 +290,7 @@
                                 </div>
                             </div>
                         </div> --}}
-                        {{!-- Banner  --}}
+                        {{!-- Banner --}}
                         {{!-- <div class="banner-img wow fadeIn mb-45 animated d-lg-block d-none">
                             <img src="assets/imgs/banner/banner-11.jpg" alt="">
                             <div class="banner-text">

@@ -2,6 +2,7 @@ const express = require('express');
 const userControllers = require('../controllers/user-controller');
 const productControllers = require('../controllers/product-controller');
 const userValidators = require('../validation/user-validation');
+const authMiddlewares = require('../middlewares/auth-middleware');
 
 const router = express.Router();
 
@@ -41,5 +42,32 @@ router.get(
 );
 
 router.get('/brands/:brandSlug', userControllers.filterBrand);
+
+router.get(
+  '/profile/:_id',
+  authMiddlewares.isUser,
+  userControllers.getUserProfile
+);
+
+// Add address
+router.post(
+  '/add-address/:_id',
+  authMiddlewares.isUser,
+  userControllers.addAddress
+);
+
+// Edit Address
+router.post(
+  '/edit-address/:_id',
+  authMiddlewares.isUser,
+  userControllers.editAddress
+);
+
+// Delete Address
+router.get(
+  '/delete-address/:_id',
+  authMiddlewares.isUser,
+  userControllers.deleteAddress
+);
 
 module.exports = router;

@@ -41,6 +41,7 @@ app.engine(
 // Helper function for HBS files
 Handlebars.registerHelper('first', (array) => array[0]);
 Handlebars.registerHelper('second', (array) => array[1]);
+Handlebars.registerHelper('inc', (value) => parseInt(value) + 1);
 
 // Register handlebars-intl with the handlebars instance
 handlebarsIntl.registerWith(Handlebars);

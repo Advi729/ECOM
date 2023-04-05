@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const slugify = require('slugify');
 const Brand = require('../models/brand-model');
+const Product = require('../models/product-model');
 // const { Brand } = require('../models/brand-model');
 
 // GET all the Brands
@@ -97,6 +98,22 @@ const updateBrand = asyncHandler(async (slug, data) => {
   }
 });
 
+// soft delete all products in a brand
+const deleteBrandProducts = asyncHandler(async (brandSlug) => {
+  try {
+    const markedProducts = await Product.updateMany(
+      { brandSlug },
+      { isDeleted: true },
+      { new: true }
+    );
+    if (markedProducts) {
+      return markedProducts;
+    }
+  } catch (error) {
+    throw new Error();
+  }
+});
+
 // delete a brand
 const deleteBrand = asyncHandler(async (slug) => {
   try {
@@ -105,12 +122,28 @@ const deleteBrand = asyncHandler(async (slug) => {
       { isDeleted: true },
       { new: true }
     );
-    return delBrand;
+    const deletedBrand = await deleteBrandProducts(slug);
+    if (delBrand || deletedBrand) return delBrand;
   } catch (error) {
     throw new Error(error);
   }
 });
 
+// restore products of a brand
+const restoreBrandProducts = asyncHandler(async (brandSlug) => {
+  try {
+    const markedProduct = await Product.updateMany(
+      { brandSlug },
+      { isDeleted: false },
+      { new: true }
+    );
+    if (markedProduct) {
+      return markedProduct;
+    }
+  } catch (error) {
+    throw new Error();
+  }
+});
 // restore a brand
 const restoreBrand = asyncHandler(async (slug) => {
   try {
@@ -119,7 +152,9 @@ const restoreBrand = asyncHandler(async (slug) => {
       { isDeleted: false },
       { new: true }
     );
-    return resBrand;
+
+    const restoredProducts = await restoreBrandProducts(slug);
+    if (restoredProducts || resBrand) return resBrand;
   } catch (error) {
     throw new Error(error);
   }

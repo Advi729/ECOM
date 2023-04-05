@@ -2,6 +2,7 @@ const asyncHandler = require('express-async-handler');
 const slugify = require('slugify');
 // const Category = require('../models/category-model');
 const { Category } = require('../models/category-model');
+const Product = require('../models/product-model');
 
 // GET all the categories
 const allCategories = asyncHandler(async () => {
@@ -102,6 +103,25 @@ const updateCategory = asyncHandler(async (slug, data) => {
   }
 });
 
+// soft delete all products in a category
+const deleteCategoryProducts = asyncHandler(async (categorySlug) => {
+  try {
+    const markedProducts = await Product.updateMany(
+      { categorySlug },
+      { isDeleted: true },
+      { new: true }
+    );
+    const foundProducts = JSON.parse(JSON.stringify(markedProducts));
+    console.log('markedProducts:', markedProducts);
+    console.log('foundProducts:', foundProducts);
+    if (foundProducts) {
+      return foundProducts;
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
 // delete a category
 const deleteCategory = asyncHandler(async (slug) => {
   try {
@@ -110,12 +130,35 @@ const deleteCategory = asyncHandler(async (slug) => {
       { isDeleted: true },
       { new: true }
     );
-    return delCategory;
+
+    const footwear = 'footwear';
+    const separator = 's-';
+    const combinedCategorySlug = `${slug}${separator}${footwear}`;
+    const categorySlug = slugify(combinedCategorySlug, { lower: true });
+    console.log('categorySlug in products:', categorySlug);
+
+    const delProducts = await deleteCategoryProducts(categorySlug);
+    if (delProducts || delCategory) return delCategory;
   } catch (error) {
     throw new Error(error);
   }
 });
 
+// restore the products of a category
+const restoreCategoryProducts = asyncHandler(async (categorySlug) => {
+  try {
+    const markedProduct = await Product.updateMany(
+      { categorySlug },
+      { isDeleted: false },
+      { new: true }
+    );
+    if (markedProduct) {
+      return markedProduct;
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+});
 // restore a category
 const restoreCategory = asyncHandler(async (slug) => {
   try {
@@ -124,7 +167,14 @@ const restoreCategory = asyncHandler(async (slug) => {
       { isDeleted: false },
       { new: true }
     );
-    return resCategory;
+
+    const footwear = 'footwear';
+    const separator = 's-';
+    const combinedCategorySlug = `${slug}${separator}${footwear}`;
+    const categorySlug = slugify(combinedCategorySlug, { lower: true });
+
+    const restoreStatus = await restoreCategoryProducts(categorySlug);
+    if (resCategory || restoreStatus) return resCategory;
   } catch (error) {
     throw new Error(error);
   }

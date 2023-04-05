@@ -102,6 +102,7 @@ const getDeleteCategory = asyncHandler(async (req, res) => {
   const { slug } = req.params;
   try {
     const deletedCategory = await categoryHelpers.deleteCategory(slug);
+    console.log('deleted cat:::', deletedCategory);
     if (deletedCategory) {
       req.session.categoryDeletedSuccess = `You have successfully deleted category ${deletedCategory.title}`;
       res.redirect('/admin/add-category');

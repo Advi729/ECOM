@@ -3,31 +3,6 @@ const jwt = require('jsonwebtoken');
 const asyncHandler = require('express-async-handler');
 const User = require('../models/user-model');
 
-// const authMiddleware = asyncHandler(async (req, res, next) => {
-//     console.log('i love u');
-//     let token;
-//     if(req?.headers?.authorization?.startsWith("Bearer")) {
-//         token = req.headers.authorization.split(" ")[1];
-//         console.log('88888888888888888888888888888888888:\n',token);
-//         try {
-//             if(token) {
-//                 const decoded = jwt.verify(token, process.env.JWT_SECRET);
-//                 // console.log(decoded);
-//                 const user = await User.findById(decoded?.id);
-//                 if (!user) {
-//                     throw new Error("Not authorized. User associated with token not found.");
-//                 }
-//                 req.user = user;
-//                 next();
-//             }
-//         } catch (error) {
-//             throw new Error("Not Authorized, token expired. Please login again")
-//         }
-//     } else {
-//         throw new Error("There is no token attached to header.");
-//     }
-// });
-
 // tgp code
 const authMiddleware = asyncHandler(async (req, res, next) => {
   // extract the JWT token from the "Authorization" header
@@ -62,6 +37,14 @@ const isAdmin = asyncHandler(async (req, res, next) => {
     throw new Error('You are not an Admin.');
   } else {
     next();
+  }
+});
+
+const isUser = asyncHandler(async (req, res, next) => {
+  if (req.session.user) {
+    next();
+  } else {
+    res.redirect('/login');
   }
 });
 
@@ -117,5 +100,6 @@ module.exports = {
   adminAuthentication,
   authMiddleware,
   isAdmin,
+  isUser,
   loggedInSession,
 };
