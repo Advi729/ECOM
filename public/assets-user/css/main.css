@@ -4456,7 +4456,26 @@ table .product-thumbnail img {
   padding: 8px 40px;
 }
 
-.product-extra-link2 a {
+.addToCartBtn {
+  padding: 8px 40px;
+  font-size: 14px;
+  font-weight: 700;
+  /* display: inline-block; */
+  letter-spacing: 0.5px;
+  text-transform: none;
+  border: 1px solid #e5e5e5;
+  border-radius: 4px;
+  transition: all 0.5s ease-out 0s;
+  -webkit-transition: all 0.5s ease-out 0s;
+}
+
+.addToCartBtn:hover {
+  /* background-color: #046963; */
+  border: 1px solid #046963;
+
+}
+
+.product-extra-link2 {
   background: #fff none repeat scroll 0 0;
   border: 1px solid #e5e5e5;
   color: #333;
@@ -4473,7 +4492,7 @@ table .product-thumbnail img {
   -webkit-transition: all 0.5s ease-out 0s;
 }
 
-.product-extra-link2 a:hover {
+.product-extra-link2:hover {
   background-color: #088178;
   color: #fff;
 }

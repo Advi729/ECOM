@@ -3,7 +3,7 @@
         <div class="page-header breadcrumb-wrap">
             <div class="container">
                 <div class="breadcrumb">
-                    <a href="#" rel="nofollow">Home</a>
+                    <a href="/" rel="nofollow">Home</a>
                     <span></span> Products
                     <span></span> {{product.title}}
                 </div>
@@ -112,10 +112,13 @@
                                                 <span class="qty-val">1</span>
                                                 <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
                                             </div>
-                                            <div class="product-extra-link2">
-                                                <button type="submit" class="button button-add-to-cart">Add to cart</button>
-                                                <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
+                                            <div>
+
+                                            <a type="button" class="addToCartBtn" href="/add-cart/{{product._id}}" onclick="event.preventDefault(); addToCartSuccess(this)" data-id="{{product._id}}">Add to cart</a>
+
+                                                <a aria-label="Add To Wishlist" class="product-extra-link2 action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
                                                 {{!-- <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a> --}}
+
                                             </div>
                                         </div>
                                         <ul class="product-meta font-xs color-grey mt-50">
@@ -662,4 +665,58 @@
             </div>
         </section>
     </main>
+
+ 
+
+
+{{!-- <script>
+    // swal to add a product to cart
+    function addToCartSuccess(anchor) {
+        const slug = anchor.getAttribute('data-slug');
+        setTimeout(() => {
+            window.location.href = anchor.href;
+        }, 2000);
+
+        Swal.fire({
+          title: "Success!",
+          text: "Product added to cart.",
+          icon: "success",
+          showConfirmButton: false,
+          showCloseButton: true,
+        });
+    }
+</script> --}}
+
+<script>
+    // swal to add a product to cart
+    function addToCartSuccess(anchor) {
+        const slug = anchor.getAttribute('data-slug');
+
+        setTimeout(() => {
+            $.ajax({
+            url:'/add-cart/'+slug,
+            method:'get',
+            success:(response) => {
+                if(response.status) {
+                    let count = $('#cart-count').html();
+                    count = parseInt(count) + 1;
+                    $('#cart-count').html(count);
+                }
+            }
+            
+        })
+        },2000);
+
+        Swal.fire({
+                title: "Success!",
+                text: "Product added to cart.",
+                icon: "success",
+                showConfirmButton: false,
+                showCloseButton: true,
+                }); 
+    }
+</script>
+
+
+
     

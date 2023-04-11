@@ -19,14 +19,25 @@ const findProducts = async () => {
   }
 };
 
-// Find a single product
+// Find a single product using slug
 const findSingleProduct = async (slug) => {
   try {
     const singleProduct = await Product.findOne({ slug });
     const foundProduct = JSON.parse(JSON.stringify(singleProduct));
     return foundProduct;
   } catch (error) {
-    throw new Error();
+    throw new Error(error);
+  }
+};
+
+// Find a single product using Id
+const findSingleProductId = async (prodId) => {
+  try {
+    const singleProduct = await Product.findOne({ _id:prodId });
+    const foundProduct = JSON.parse(JSON.stringify(singleProduct));
+    return foundProduct;
+  } catch (error) {
+    throw new Error(error);
   }
 };
 
@@ -90,30 +101,50 @@ const updateProduct = asyncHandler(async (slug, data) => {
     // const updated = await Product.findOneAndUpdate(slug, data, {
     //   new: true,
     // });
-    const imagesFromReq = data.files.images;
-    let imageFiles;
-    const imageNames = [];
-    imagesFromReq.forEach((element) => {
-      [imageFiles] = [element];
-      imageNames.push(imageFiles.filename);
-    });
+    let updated;
+    if (data.files.images) {
+      const imagesFromReq = data.files.images;
+      let imageFiles;
+      const imageNames = [];
+      imagesFromReq.forEach((element) => {
+        [imageFiles] = [element];
+        imageNames.push(imageFiles.filename);
+      });
 
-    const updated = await Product.updateOne(
-      { slug },
-      {
-        $set: {
-          title: data.body.title,
-          description: data.body.description,
-          price: data.body.price,
-          category: data.body.category,
-          subCategory: data.body.subCategory,
-          brand: data.body.brand,
-          quantity: data.body.quantity,
-          images: imageNames,
-          color: data.body.color,
-        },
-      }
-    );
+      updated = await Product.updateOne(
+        { slug },
+        {
+          $set: {
+            title: data.body.title,
+            description: data.body.description,
+            price: data.body.price,
+            category: data.body.category,
+            subCategory: data.body.subCategory,
+            brand: data.body.brand,
+            quantity: data.body.quantity,
+            images: imageNames,
+            color: data.body.color,
+          },
+        }
+      );
+    } else {
+      updated = await Product.updateOne(
+        { slug },
+        {
+          $set: {
+            title: data.body.title,
+            description: data.body.description,
+            price: data.body.price,
+            category: data.body.category,
+            subCategory: data.body.subCategory,
+            brand: data.body.brand,
+            quantity: data.body.quantity,
+            color: data.body.color,
+          },
+        }
+      );
+    }
+
     // console.log('updatedP:->', updated);
     return updated;
   } catch (error) {
@@ -211,6 +242,7 @@ const findProductsByBrandSlug = async (brandSlug) => {
 module.exports = {
   findProducts,
   findSingleProduct,
+  findSingleProductId,
   createProduct,
   updateProduct,
   markDelete,

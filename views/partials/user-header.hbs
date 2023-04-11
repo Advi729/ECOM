@@ -19,11 +19,16 @@
    
     <link rel="shortcut icon" type="image/x-icon" href="/assets-user/imgs/theme/heats_favicon.png">
     
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" integrity="sha256-sWZjHQiY9fvheUAOoxrszw9Wphl3zqfVaz1kZKEvot8=" crossorigin="anonymous">
+    
+
+
 
     <!-- Template CSS -->
     {{!-- <link rel="stylesheet" href="assets-user/css/main.css"> --}}
     <link rel="stylesheet" href="/assets-user/css/main.css" type="text/css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" integrity="sha256-sWZjHQiY9fvheUAOoxrszw9Wphl3zqfVaz1kZKEvot8=" crossorigin="anonymous">
 
     {{!-- <link href="/assets-admin/css/main.css" rel="stylesheet" type="text/css" /> --}}
 
@@ -273,17 +278,25 @@
                             <div class="header-action-2">
                                 
                                 <div class="header-action-icon-2">
-                                    <a href="#">
+                                    <a href="/wishlist">
                                         <img class="svgInject" alt="Evara" src="/assets-user/imgs/theme/icons/icon-heart.svg">
-                                        <span class="pro-count blue">4</span>
+                                        {{#if user}}
+                                        {{#if wishlistCount}}
+                                        <span class="pro-count blue" id="wishlist-count">{{wishlistCount}}</span>
+                                        {{/if}}
+                                        {{/if}}
                                     </a>
                                 </div>
                                 <div class="header-action-icon-2">
-                                    <a class="mini-cart-icon" href="#">
+                                    <a class="mini-cart-icon" href="/cart">
                                         <img alt="Evara" src="/assets-user/imgs/theme/icons/icon-cart.svg">
-                                        <span class="pro-count blue">2</span>
+                                        {{#if user}}
+                                        {{#if cartCount}}
+                                        <span class="pro-count blue" id="cart-count">{{cartCount}}</span>
+                                        {{/if}}
+                                        {{/if}}
                                     </a>
-                                    <div class="cart-dropdown-wrap cart-dropdown-hm2">
+                                    {{!-- <div class="cart-dropdown-wrap cart-dropdown-hm2">
                                         <ul>
                                             <li>
                                                 <div class="shopping-cart-img">
@@ -319,7 +332,7 @@
                                                 <a href="shop-checkout.html">Checkout</a>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                 </div>
                                 {{!-- user profile icon --}}
                                 {{#if isUser}}
@@ -351,9 +364,9 @@
                                                 <div class="dropdown-divider"></div>
                                                 {{/if}}
                                                 {{#if user}}
-                                                <a class="dropdown-item text-dark" href="/logout"><i class="fi fi-rr-power"></i>Log out</a>
+                                                <a class="dropdown-item text-dark" href="/logout"><i class="fi fi-rr-sign-out-alt"></i>Log out</a>
                                                 {{else}}
-                                                <a class="dropdown-item text-dark" href="/login"><i class="fi fi-rr-power"></i>Log in </a>
+                                                <a class="dropdown-item text-dark" href="/login"><i class="fi fi-rr-sign-in-alt"></i>Log in </a>
                                                 {{/if}}
                                             </div>
                                         </li>
@@ -623,7 +636,7 @@
                                             </li> --}}
                                             <li class="sub-mega-menu sub-mega-menu-width-34">
                                                 <div class="menu-banner-wrap">
-                                                    <a href="shop-product-right.html"><img src="/assets-user/imgs/banner/menu-banner-123.webp" alt="Heats"></a>
+                                                    <a href="/shop"><img src="/assets-user/imgs/banner/menu-banner-123.webp" alt="Heats"></a>
                                                     <div class="menu-banner-content">
                                                         <h4>Hot deals</h4>
                                                         <h3>Don't miss<br> Trending</h3>
@@ -631,7 +644,7 @@
                                                             <span class="new-price text-success">Save to 50%</span>
                                                         </div>
                                                         <div class="menu-banner-btn">
-                                                            <a href="shop-product-right.html">Shop now</a>
+                                                            <a href="/shop">Shop now</a>
                                                         </div>
                                                     </div>
                                                     <div class="menu-banner-discount">
@@ -673,6 +686,9 @@
                                     </li> --}}
                                     <li>
                                         <a href="#">Contact</a>
+                                    </li>
+                                    <li>
+                                        <a href="/orders">Orders</a>
                                     </li>
                                     {{!-- <div class="header-action-icon-2">
                                         <a href="#"> 

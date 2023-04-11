@@ -1,0 +1,108 @@
+<main class="main">
+        <div class="page-header breadcrumb-wrap">
+            <div class="container">
+                <div class="breadcrumb">
+                    <a href="/" rel="nofollow">Home</a>
+                    <span></span> Orders
+                </div>
+            </div>
+        </div>
+{{#if orderDetails}}
+
+        <section class="mt-50 mb-50">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="table-responsive">
+                            <table class="table shopping-summery text-center clean">
+                                <thead>
+                                    <tr class="main-heading">
+
+                                        <th scope="col">Sl No.</th>
+                                        <th scope="col">OrderId</th>
+                                        <th scope="col">Total Price</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#each orderDetails}}
+                                    <tr>
+                                        <td>
+                                        {{index @index}}
+                                    </td>
+
+                                    <td>
+                                        {{this.orderId}}
+                                    </td>
+                                        <td class="price" data-title="Price">
+                                            <span>{{formatNumber this.totalPrice style="currency" currency="INR" minimumFractionDigits=2}}</span>
+                                        </td>
+                               
+                
+
+                                        <td class="text-right" data-title="Cart">
+                                            {{#if (equal this.orderStatus "placed")}}
+                                            <span class="badge rounded-pill alert-success">Placed</span>
+                                            {{else if (equal this.orderStatus "pending")}}
+                                            <span class="badge rounded-pill alert-warning">Pending</span>
+                                            {{else if (equal this.orderStatus "received")}}
+                                            <span class="badge rounded-pill alert-success">Received</span>
+                                            {{else if (equal this.orderStatus "cancelled")}}
+                                            <span class="badge rounded-pill alert-danger">Cancelled</span>
+                                            {{else if (equal this.orderStatus "return")}}
+                                            <p style="color: red;">Return initiated</p>
+                                            {{/if}}
+                                        </td>
+                                        <td class="text-right" data-title="Cart">
+                                        <a href="/order-details?orderId={{this.orderId}}"
+                                            class="btn btn-md rounded font-sm">View</a>
+                                    </td>
+                                    </tr>
+                                    {{/each}}
+
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                       
+                        <div class="divider center_icon mt-50 mb-50"><i class="fi-rs-fingerprint"></i></div>
+                         <div class="cart-action text-end">
+                            {{!-- <a class="btn  mr-10 mb-sm-15"><i class="fi-rs-shuffle mr-10"></i>Update Cart</a> --}}
+                            <a class="btn " href="/shop"><i class="fi-rs-shopping-bag mr-10"></i>Continue Shopping</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+{{else}}
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 my-5 py-5 text-center bg-light">
+      <h1 class="display-4">No orders in the list!</h1>
+    </div>
+  </div>
+</div>
+
+{{/if}}
+{{#if orderDetails}}
+{{else}}
+<section class="mt-50 mb-50">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="cart-action text-end">
+                    <a class="btn " href="/shop"><i class="fi-rs-shopping-bag mr-10"></i>Continue Shopping</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{{/if}}
+
+<script>
+    
+
+
+</script>

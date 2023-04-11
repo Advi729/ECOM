@@ -3,6 +3,7 @@ const slugify = require('slugify');
 // const SubCategory = require('../models/category-model');
 const { SubCategory } = require('../models/sub-category-model');
 const Product = require('../models/product-model');
+const { Category } = require('../models/category-model');
 
 // GET all the sub-categories
 const allSubCategories = asyncHandler(async () => {
@@ -17,7 +18,22 @@ const allSubCategories = asyncHandler(async () => {
   }
 });
 
-// Create the category POST method
+// Add subCategory to the CategorySchema
+const updateInCategorySchemaAdd = asyncHandler(
+  async (parentCategory, subCategoryTitle) => {
+    try {
+      const updated = await Category.updateMany(
+        { title: { $in: parentCategory } },
+        { $addToSet: { subCategory: subCategoryTitle } }
+      );
+      if (updated) return updated;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+);
+
+// Create the sub-category POST method
 const addSubCategory = asyncHandler(async (data) => {
   try {
     const subCategoryTitle = data.body.title;
@@ -35,7 +51,11 @@ const addSubCategory = asyncHandler(async (data) => {
     };
 
     const newSubCategory = await SubCategory.create(subCategoryData);
-    if (newSubCategory) {
+    const updateCategory = await updateInCategorySchemaAdd(
+      parentArr,
+      subCategoryTitle
+    );
+    if (newSubCategory && updateCategory) {
       return newSubCategory;
     }
   } catch (error) {
@@ -65,9 +85,30 @@ const findSubCategoryByTitle = asyncHandler(async (title) => {
   }
 });
 
+// Edit subCategory to the CategorySchema
+const updateInCategorySchemaDelete = asyncHandler(
+  async (parentCategory, subCategoryTitle) => {
+    try {
+      const updated = await Category.updateMany(
+        { title: { $nin: parentCategory } },
+        { $pull: { subCategory: subCategoryTitle } }
+      );
+      if (updated) return updated;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+);
+
 // update a category
 const updateSubCategory = asyncHandler(async (slug, data) => {
   try {
+    const subCategoryTitle = data.body.title;
+    const subCategorySlug = slugify(subCategoryTitle, {
+      lower: true,
+      replacement: '-',
+    });
+
     const parentArray = data.body['parent[]'];
     const updated = await SubCategory.updateOne(
       { slug },
@@ -76,10 +117,20 @@ const updateSubCategory = asyncHandler(async (slug, data) => {
           title: data.body.title,
           description: data.body.description,
           parent: parentArray,
+          slug: subCategorySlug,
         },
       }
     );
-    // console.log('updatedP:->', updated);
+    const updateCategory = await updateInCategorySchemaAdd(
+      parentArray,
+      subCategoryTitle
+    );
+    // const subCategoryTitles = [];
+    // subCategoryTitles.push(subCategoryTitle);
+    if (updated && updateCategory) {
+      // subCategoryTitles.push(data.session.subCategoryCurrentTitle);
+      await updateInCategorySchemaDelete(parentArray, subCategoryTitle);
+    }
     return updated;
   } catch (error) {
     throw new Error(error);

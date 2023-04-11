@@ -7,13 +7,33 @@ const userHelpers = require('../helpers/user-helper');
 const categoryHelpers = require('../helpers/category-helper');
 const subCategoryHelpers = require('../helpers/sub-category-helper');
 const brandHelpers = require('../helpers/brand-helper');
+const cartHelpers = require('../helpers/cart-helper');
+const wishlistHelpers = require('../helpers/wishlist-helper');
 
 // Get home page
 const getHomePage = asyncHandler(async (req, res) => {
-  const data = await productHelpers.findProducts();
-  const { user } = req.session;
-  const products = JSON.parse(JSON.stringify(data));
-  res.render('user/home', { user, allProducts: products, isUser: true });
+  try {
+    const { user } = req.session;
+    let cartCount = null;
+    let wishlistCount = null;
+    if (user) {
+      const userId = user.response._id;
+      cartCount = await cartHelpers.getCartCount(userId);
+      wishlistCount = await wishlistHelpers.getWishlistCount(userId);
+    }
+    console.log('wishlistcout', wishlistCount);
+    const data = await productHelpers.findProducts();
+    const products = JSON.parse(JSON.stringify(data));
+    res.render('user/home', {
+      user,
+      allProducts: products,
+      isUser: true,
+      cartCount,
+      wishlistCount,
+    });
+  } catch (error) {
+    throw new Error(error);
+  }
 });
 
 // User sign up GET
@@ -204,6 +224,13 @@ const getShop = asyncHandler(async (req, res) => {
     const subCategories = await subCategoryHelpers.allSubCategories();
     const brands = await brandHelpers.allBrands();
     const { user } = req.session;
+    let cartCount = null;
+    let wishlistCount = null;
+    if (user) {
+      const userId = user.response._id;
+      cartCount = await cartHelpers.getCartCount(userId);
+      wishlistCount = await wishlistHelpers.getWishlistCount(userId);
+    }
     const products = JSON.parse(JSON.stringify(data));
     const pageShop = true;
     res.render('user/shop', {
@@ -214,6 +241,8 @@ const getShop = asyncHandler(async (req, res) => {
       allSubCategories: subCategories,
       allBrands: brands,
       isUser: true,
+      cartCount,
+      wishlistCount,
     });
   } catch (error) {
     throw new Error(error);
@@ -232,7 +261,15 @@ const filterCategory = asyncHandler(async (req, res) => {
     const filteredCategory = await productHelpers.findProductsByCategorySlug(
       categorySlug
     );
-    // console.log('fiiiiiiiiiiiiiiiiii', filteredCategory);
+
+    let cartCount = null;
+    let wishlistCount = null;
+    if (user) {
+      const userId = user.response._id;
+      cartCount = await cartHelpers.getCartCount(userId);
+      wishlistCount = await wishlistHelpers.getWishlistCount(userId);
+    }
+
     const categoryHeading = filteredCategory[0].category;
     const pageCategory = true;
     if (filteredCategory) {
@@ -246,6 +283,8 @@ const filterCategory = asyncHandler(async (req, res) => {
         allCategories: categories,
         allSubCategories: subCategories,
         allBrands: brands,
+        cartCount,
+        wishlistCount,
       });
     }
   } catch (error) {
@@ -269,6 +308,15 @@ const filterSubCategory = asyncHandler(async (req, res) => {
     const subHeading = filteredSubCategory[0].subCategory;
     const { categorySlug } = filteredSubCategory[0];
     const pageSubCategory = true;
+
+    let cartCount = null;
+    let wishlistCount = null;
+    if (user) {
+      const userId = user.response._id;
+      cartCount = await cartHelpers.getCartCount(userId);
+      wishlistCount = await wishlistHelpers.getWishlistCount(userId);
+    }
+
     if (filteredSubCategory) {
       // res.render('user/shop-sub-category', {
       res.render('user/shop', {
@@ -282,6 +330,8 @@ const filterSubCategory = asyncHandler(async (req, res) => {
         allCategories: categories,
         allSubCategories: subCategories,
         allBrands: brands,
+        cartCount,
+        wishlistCount,
       });
     }
   } catch (error) {
@@ -304,6 +354,15 @@ const filterBrand = asyncHandler(async (req, res) => {
     // console.log('fiiiiiiiiiiiiiiiiii', filteredCategory);
     const brandHeading = filteredBrand[0].brand;
     const pageBrand = true;
+
+    let cartCount = null;
+    let wishlistCount = null;
+    if (user) {
+      const userId = user.response._id;
+      cartCount = await cartHelpers.getCartCount(userId);
+      wishlistCount = await wishlistHelpers.getWishlistCount(userId);
+    }
+
     if (filteredBrand) {
       // res.render('user/shop-brand', {
       res.render('user/shop', {
@@ -315,6 +374,8 @@ const filterBrand = asyncHandler(async (req, res) => {
         allCategories: categories,
         allSubCategories: subCategories,
         allBrands: brands,
+        cartCount,
+        wishlistCount,
       });
     }
   } catch (error) {
@@ -327,12 +388,25 @@ const getUserProfile = asyncHandler(async (req, res) => {
   try {
     const { _id } = req.params;
     const { user } = req.session;
+    let cartCount = null;
+    let wishlistCount = null;
+    if (user) {
+      const userId = user.response._id;
+      cartCount = await cartHelpers.getCartCount(userId);
+      wishlistCount = await wishlistHelpers.getWishlistCount(userId);
+    }
     const resultUser = await userHelpers.findUser(_id);
     const finalUser = JSON.parse(JSON.stringify(resultUser));
     // console.log('user.res.address:',user.response.address);
     // console.log('fouhnduser::->profiel::', resultUser);
     if (resultUser) {
-      res.render('user/profile', { isUser: true, user, foundUser: finalUser });
+      res.render('user/profile', {
+        isUser: true,
+        user,
+        foundUser: finalUser,
+        cartCount,
+        wishlistCount,
+      });
     }
   } catch (error) {
     throw new Error(error);
@@ -355,7 +429,7 @@ const addAddress = asyncHandler(async (req, res) => {
 // Edit address
 const editAddress = asyncHandler(async (req, res) => {
   try {
-    console.log('reached edit address>>>>>>>');
+    // console.log('reached edit address>>>>>>>');
     const { _id } = req.params;
     const { user } = req.session;
     // console.log('userId:',user.response._id);

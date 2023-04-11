@@ -118,8 +118,7 @@
                                             {{!-- <a aria-label="Quick view" class="action-btn hover-up" data-bs-toggle="modal"
                                                 data-bs-target="#quickViewModal">
                                                 <i class="fi-rs-search"></i></a> --}}
-                                            <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i
-                                                    class="fi-rs-heart"></i></a>
+                                                <a aria-label="Add To Wishlist" class="action-btn hover-up" href="/add-to-wishlist/{{this._id}}" onclick="event.preventDefault(); addToWishlistConfirmation(this)" data-id="{{this._id}}"><i class="fi-rs-heart"></i></a>
                                             {{!-- <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i
                                                     class="fi-rs-shuffle"></i></a> --}}
                                         </div>
@@ -146,8 +145,8 @@
                                             {{!-- <span class="old-price">$245.8</span> --}}
                                         </div>
                                         <div class="product-action-1 show">
-                                            <a aria-label="Add To Cart" class="action-btn hover-up" href="shop-cart.html"><i
-                                                    class="fi-rs-shopping-bag-add"></i></a>
+                                            <a aria-label="Add To Cart" class="action-btn hover-up" href="/add-cart/{{this._id}}" onclick="event.preventDefault(); addToCartConfirmation(this)" data-id="{{this._id}}"><i class="fi-rs-shopping-bag-add"></i></a>
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -304,3 +303,80 @@
             </div>
         </section>
     </main>
+
+{{!-- <script>
+    // swal to add a product to cart
+    function addToCartConfirmation(anchor) {
+        const slug = anchor.getAttribute('data-slug');
+        setTimeout(() => {
+            window.location.href = anchor.href;
+        }, 2000);
+
+        Swal.fire({
+          title: "Success!",
+          text: "Product added to cart.",
+          icon: "success",
+          showConfirmButton: false,
+          showCloseButton: true,
+        });
+    }
+</script> --}}
+
+<script>
+   
+    // swal to add a product to cart
+    function addToCartConfirmation(anchor) {
+        const id = anchor.getAttribute('data-id');
+
+        setTimeout(() => {
+            $.ajax({
+            url:'/add-cart/'+id,
+            method:'get',
+            success:(response) => {
+                if(response.status) {
+                    let count = $('#cart-count').html();
+                    count = parseInt(count) + 1;
+                    $('#cart-count').html(count);
+                }
+            }
+            
+        })
+        },2000);
+
+        Swal.fire({
+                title: "Success!",
+                text: "Product added to cart.",
+                icon: "success",
+                showConfirmButton: false,
+                showCloseButton: true,
+                }); 
+    }
+
+    // Swal to add product to wishlist
+    function addToWishlistConfirmation(anchor) {
+        const id = anchor.getAttribute('data-id');
+
+        setTimeout(() => {
+            $.ajax({
+            url:'/add-to-wishlist/'+id,
+            method:'get',
+            success:(response) => {
+                if(response.status) {
+                    let count = $('#wishlist-count').html();
+                    count = parseInt(count) + 1;
+                    $('#wishlist-count').html(count);
+                }
+            }
+            
+        })
+        },2000);
+
+        Swal.fire({
+                title: "Success!",
+                text: "Product added to wishlist.",
+                icon: "success",
+                showConfirmButton: false,
+                showCloseButton: true,
+                }); 
+    }
+</script>

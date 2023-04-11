@@ -4,6 +4,7 @@ const productHelpers = require('../helpers/product-helper');
 const categoryHelpers = require('../helpers/category-helper');
 const subCategoryHelpers = require('../helpers/sub-category-helper');
 const brandHelpers = require('../helpers/brand-helper');
+const cartHelpers = require('../helpers/cart-helper');
 
 // create product get
 const createProductGet = asyncHandler(async (req, res) => {
@@ -52,18 +53,23 @@ const getProduct = asyncHandler(async (req, res) => {
   try {
     const { slug } = req.params;
     const { user } = req.session;
-    // console.log('slu:  ', slug);
+    let cartCount = null;
+    if (user) {
+      const userId = user.response._id;
+      cartCount = await cartHelpers.getCartCount(userId);
+    }
     const productDetails = await productHelpers.findSingleProduct(slug);
-    // console.log(productDetails);
+
     if (productDetails) {
       res.render('user/product-details', {
         user,
         product: productDetails,
         isUser: true,
+        cartCount,
       });
     }
   } catch (error) {
-    throw new Error();
+    throw new Error(error);
   }
 });
 
@@ -73,11 +79,17 @@ const editProductGet = asyncHandler(async (req, res) => {
     const { slug } = req.params;
     const { admin } = req.session;
     const productDetails = await productHelpers.findSingleProduct(slug);
+    const findAllCategories = await categoryHelpers.allCategories();
+    const findSubCategories = await subCategoryHelpers.allSubCategories();
+    const findBrands = await brandHelpers.allBrands();
     // console.log('productDetails:::->', productDetails);
     if (productDetails) {
       res.render('admin/edit-product', {
         admin,
         product: productDetails,
+        categories: findAllCategories,
+        subCategories: findSubCategories,
+        brands: findBrands,
         isAdmin: true,
         editProductSuccess: req.session.editProductSuccess,
         editValidationError: req.session.editValidationError,

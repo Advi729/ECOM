@@ -14,28 +14,27 @@ const brandControllers = require('../controllers/brand-controller');
 
 const router = express.Router();
 
-// admin home page
+// Admin home page
 router.get('/', authMiddlewares.adminCheck, adminControllers.dashboardAdmin);
-// router.get('/', async (req, res) => {
-//   res.render('admin/login');
-// });
 
+// Admin login
 router
   .route('/login')
   .get(authMiddlewares.adminAuthentication, adminControllers.loginAdminGet)
   .post(adminValidators.adminLogin, adminControllers.loginAdminPost);
 
-// admin logout
+// Admin logout
 router.get('/logout', adminControllers.adminLogOut);
 
-// admin dashboard
+// Admin dashboard
 router.get(
   '/dashboard',
   authMiddlewares.adminCheck,
   adminControllers.dashboardAdmin
 );
 
-// product management in admin side
+// Product management in admin side
+// Add product
 router
   .route('/add-product')
   .get(authMiddlewares.adminCheck, productControllers.createProductGet)
@@ -47,20 +46,21 @@ router
     productControllers.createProductPost
   );
 
-// router.get('/products-list', authMiddleware, isAdmin , getAllProducts);
+// Products list
 router.get(
   '/products-list',
   authMiddlewares.adminCheck,
   adminControllers.getAllProducts
 );
 
+// Single product
 router.get(
   '/products/:slug',
   authMiddlewares.adminCheck,
   adminControllers.getProduct
 );
 
-// view user list
+// View users list
 router.get(
   '/view-users',
   authMiddlewares.adminCheck,
@@ -73,13 +73,13 @@ router.get(
   authMiddlewares.adminCheck,
   adminControllers.blockUser
 );
+
+// Unblock user
 router.get(
   '/unblock-user/:id',
   authMiddlewares.adminCheck,
   adminControllers.unblockUser
 );
-
-// old apis
 
 // Edit product
 router
@@ -99,6 +99,7 @@ router.get(
   productControllers.deleteProduct
 );
 
+// Restore product
 router.get(
   '/undelete-product/:slug',
   authMiddlewares.adminCheck,
@@ -115,7 +116,7 @@ router.get(
 //--------------------------------------------------------------------------------------------------------------------------------------
 // Category management
 
-// display categories page and add category
+// Display categories page and add category
 router
   .route('/add-category')
   .get(authMiddlewares.adminCheck, categoryControllers.getAllCategories)
@@ -126,7 +127,7 @@ router
     categoryControllers.createCategory
   );
 
-// edit category
+// Edit category
 router
   .route('/edit-category/:slug')
   .get(authMiddlewares.adminCheck, categoryControllers.getEditCategory)
@@ -137,12 +138,12 @@ router
     categoryControllers.postEditCategory
   );
 
-// delete category
+// Delete category
 router
   .route('/delete-category/:slug')
   .get(authMiddlewares.adminCheck, categoryControllers.getDeleteCategory);
 
-// restore category
+// Restore category
 router
   .route('/restore-category/:slug')
   .get(authMiddlewares.adminCheck, categoryControllers.getRestoreCategory);
@@ -150,7 +151,7 @@ router
 //--------------------------------------------------------------------------------------------------------------
 // Sub-Category management
 
-// display sub-categories page and add category
+// Display sub-categories page and add category
 router
   .route('/add-sub-category')
   .get(authMiddlewares.adminCheck, subCategoryControllers.getAllSubCategories)
@@ -161,7 +162,7 @@ router
     subCategoryControllers.createSubCategory
   );
 
-// edit sub-category
+// Edit sub-category
 router
   .route('/edit-sub-category/:slug')
   .get(authMiddlewares.adminCheck, subCategoryControllers.getEditSubCategory)
@@ -172,12 +173,12 @@ router
     subCategoryControllers.postEditSubCategory
   );
 
-// delete sub-category
+// Delete sub-category
 router
   .route('/delete-sub-category/:slug')
   .get(authMiddlewares.adminCheck, subCategoryControllers.getDeleteSubCategory);
 
-// restore sub-category
+// Restore sub-category
 router
   .route('/restore-sub-category/:slug')
   .get(
@@ -188,7 +189,7 @@ router
 //--------------------------------------------------------------------------------------------------------------------------------
 // Brand management
 
-// display brands page and add brand
+// Display brands page and add brand
 router
   .route('/add-brand')
   .get(authMiddlewares.adminCheck, brandControllers.getAllbrands)
@@ -199,7 +200,7 @@ router
     brandControllers.createBrand
   );
 
-// edit brand
+// Edit brand
 router
   .route('/edit-brand/:slug')
   .get(authMiddlewares.adminCheck, brandControllers.getEditBrand)
@@ -210,12 +211,12 @@ router
     brandControllers.postEditBrand
   );
 
-// delete brand
+// Delete brand
 router
   .route('/delete-brand/:slug')
   .get(authMiddlewares.adminCheck, brandControllers.getDeleteBrand);
 
-// restore brand
+// Restore brand
 router
   .route('/restore-brand/:slug')
   .get(authMiddlewares.adminCheck, brandControllers.getRestoreBrand);

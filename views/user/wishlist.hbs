@@ -1,0 +1,134 @@
+<main class="main">
+        <div class="page-header breadcrumb-wrap">
+            <div class="container">
+                <div class="breadcrumb">
+                    <a href="/" rel="nofollow">Home</a>
+                    <a href="/shop"><span></span> Shop</a>
+                    <span></span> Wishlist
+                </div>
+            </div>
+        </div>
+        <section class="mt-50 mb-50">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="table-responsive">
+                            <table class="table shopping-summery text-center">
+                                <thead>
+                                    <tr class="main-heading">
+                                        <th scope="col" colspan="2">Product</th>
+                                        <th scope="col">Price</th>
+                                        <th scope="col">Stock Status</th>
+                                        <th scope="col">Action</th>
+                                        <th scope="col">Remove</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#each foundProducts}}
+                                    <tr>
+                                        <td class="image product-thumbnail"><img src="/uploads/products/{{first this.images}}" alt="#"></td>
+                                        <td class="product-des product-name">
+                                            <h5 class="product-name"><a href="/products/{{this.slug}}">{{this.title}}</a></h5>
+                                            <p class="font-xs">{{this.brand}}'s<br> {{this.category}}'s {{this.subCategory}}
+                                            </p>
+                                        </td>
+                                        <td class="price" data-title="Price"><span>{{formatNumber this.price style="currency" currency="INR" minimumFractionDigits=2}} </span></td>
+                                        <td class="text-center" data-title="Stock">
+                                        {{#if (equal this.quantity 0)}}
+                                            <span class="text-danger font-weight-bold">Out of stock</span>
+                                        {{else}}
+                                            <span class="color3 font-weight-bold">In Stock</span>
+                                        {{/if}}
+                                        </td>
+                                        <td class="text-right" data-title="Cart">
+                                            {{!-- <button class="btn btn-sm"><i class="fi-rs-shopping-bag mr-5"></i>Add to cart</button> --}}
+                                        {{#if (equal this.quantity 0)}}
+                                            <button class="btn btn-sm btn-secondary"><i class="fi-rs-headset mr-5"></i>Contact Us</button>
+                                        {{else}}
+                                            <a aria-label="Add To Cart" class="action-btn hover-up btn btn-sm" href="/add-cart/{{this._id}}" onclick="event.preventDefault(); addToCartConfirmation(this)" data-id="{{this._id}}"><i class="fi-rs-shopping-bag mr-5"></i>Add to cart</a>
+                                        {{/if}}
+                                        </td>
+                                        <td class="action" data-title="Remove"><a href="/remove-wishlist/{{this._id}}" onclick="event.preventDefault(); removeFromWishlistConfirmation(this)" data-id="{{this._id}}"><i class="fi-rs-trash"></i></a></td>
+                                    </tr>
+                                    {{/each}}
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // swal to remove a product from cart
+        function removeFromWishlistConfirmation(anchor) {
+            const id = anchor.getAttribute('data-id');
+            Swal.fire({
+                title: "Are you sure?",
+                text: "Do you want to remove this product from wishlist?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Yes, remove it!",
+                cancelButtonText: "No, cancel",
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    setTimeout(() => {
+                        $.ajax({
+                        url:'/remove-wishlist/'+id,
+                        method:'get',
+                        success:(response) => {
+                            if(response.status) {
+                                let count = $('#wishlist-count').html();
+                                count = parseInt(count) - 1;
+                                $('#wishlist-count').html(count);
+                            }
+                            window.location.href = '/wishlist';
+                        }
+                    })
+                    },2000);
+
+                    // display a success message using SweetAlert2
+                    Swal.fire({
+                        title: "Success!",
+                        text: "Product is removed.",
+                        icon: "success",
+                        showConfirmButton: false,
+                    });
+                }
+            });
+        }
+
+    // swal to add a product to cart
+    function addToCartConfirmation(anchor) {
+        const id = anchor.getAttribute('data-id');
+
+        setTimeout(() => {
+            $.ajax({
+            url:'/add-cart/'+id,
+            method:'get',
+            success:(response) => {
+                if(response.status) {
+                    let count = $('#cart-count').html();
+                    count = parseInt(count) + 1;
+                    $('#cart-count').html(count);
+                }
+            }
+            
+        })
+        },2000);
+
+        Swal.fire({
+                title: "Success!",
+                text: "Product added to cart.",
+                icon: "success",
+                showConfirmButton: false,
+                showCloseButton: true,
+                }); 
+    }
+
+    </script>

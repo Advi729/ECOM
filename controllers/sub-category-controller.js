@@ -33,7 +33,7 @@ const getAllSubCategories = asyncHandler(async (req, res) => {
   }
 });
 
-// Create a category
+// Create a sub-category
 const createSubCategory = asyncHandler(async (req, res) => {
   try {
     // console.log('form valuesesseses:----->', req.body['parent[]']);
@@ -62,22 +62,6 @@ const getEditSubCategory = asyncHandler(async (req, res) => {
     // rest of the parent categories present
     const findCategories = await categoryHelpers.allCategories();
     const categoryTitles = findCategories.map(({ title }) => title);
-    // const parentArr = req.body['parent[]'];
-    // const unique = [];
-    // for (let i = 0; i < categoryTitles.length; i++) {
-    //   if (!parentArr.includes(categoryTitles[i])) {
-    //     unique.push(categoryTitles[i]);
-    //   }
-    // }
-    // for (let i = 0; i < parentArr.length; i++) {
-    //   if (!categoryTitles.includes(parentArr[i])) {
-    //     unique.push(parentArr[i]);
-    //   }
-    // }
-
-    // const findAllSubCategories = await subCategoryHelpers.allSubCategories();
-    // console.log(findAllSubCategories);
-    // if (findAllSubCategories) {
     res.render('admin/edit-sub-category', {
       isAdmin: true,
       admin,
@@ -88,12 +72,13 @@ const getEditSubCategory = asyncHandler(async (req, res) => {
       subCategoryEditValidationError:
         req.session.subCategoryEditValidationError,
     });
+    // req.session.subCategoryCurrentTitle = JSON.stringify(
+    //   findSingleSubCategory.title
+    // );
+    // console.log('sessiontitle', req.session.subCategoryCurrentTitle);
+    // console.log('findsingletitle', findSingleSubCategory.title);
     req.session.subCategoryEditedSuccess = false;
     req.session.subCategoryEditValidationError = false;
-    // } else {
-    //   req.session.subCategoryAddedSuccess = false;
-    //   res.redirect('/admin/add-category');
-    // }
   } catch (error) {
     throw new Error(error);
   }

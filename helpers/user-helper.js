@@ -70,6 +70,25 @@ const findUser = asyncHandler(async (_id) => {
   }
 });
 
+const getDeliveryAddress = asyncHandler(async (userId, deliveryAddressId) => {
+  try {
+    const user = await User.findById(userId);
+    // if (!user) {
+    //   throw new Error("User not found");
+    // }
+    const deliveryAddress = user.address.find(
+      (address) => address._id.toString() === deliveryAddressId.toString()
+    );
+    // if (!deliveryAddress) {
+    //   throw new Error("Delivery address not found");
+    // }
+    // console.log('ddddaddress:', deliveryAddress);
+    return deliveryAddress;
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
 // add address of the user
 const addUserAddress = asyncHandler(async (_id, data) => {
   try {
@@ -148,4 +167,5 @@ module.exports = {
   addUserAddress,
   updateUserAddress,
   deleteUserAddress,
+  getDeliveryAddress,
 };
