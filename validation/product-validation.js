@@ -19,11 +19,11 @@ const validateProduct = [
     .withMessage('Price should be a number.')
     .isFloat({ min: 0.01 })
     .withMessage('Price should be at least 0.01.'),
-  check('quantity')
+  check('stock')
     .notEmpty()
-    .withMessage('Quantity cannot be empty.')
+    .withMessage('Stock cannot be empty.')
     .isInt({ min: 0 })
-    .withMessage('Quantity should be a positive integer.'),
+    .withMessage('Stock should be a positive integer.'),
   check('color')
     .notEmpty()
     .withMessage('Color cannot be empty.')

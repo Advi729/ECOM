@@ -51,11 +51,14 @@
                                                     <button class="cart-item-count mr-3"
                                                         onclick="changeQuantity( '{{../user.response._id}}','{{this._id}}',{{this.price}},1)"
                                                         style="border: 0cm;">▴</button>
+
                                                     <p class="qtyValue" id="{{this._id}}">{{quantity}}</p>
-                                                    {{!-- {{#if decrementButton}} --}}
-                                                    <button class="decrement-btn" id="{{this._id}}-decrement" class="cart-item-count ml-3"
-                                                        onclick="changeQuantity( '{{../user.response._id}}','{{this._id}}',{{this.price}},-1)"
-                                                        style="border: 0cm;">▾</button>
+                                
+                                                        <button class="decrement-btn" id="{{this._id}}-decrement" class="cart-item-count ml-3"
+                                                            onclick="changeQuantity('{{../user.response._id}}','{{this._id}}',{{this.price}},-1)"
+                                                            style="border: 0cm;">▾</button>
+                                                
+
                                                     {{!-- {{/if}} --}}
                                                 </td>
                                             {{!-- </div> --}}
@@ -387,7 +390,7 @@
                                             <tbody>
                                                 <tr>
                                                     <td class="cart_total_label">Cart Subtotal</td>
-                                                    <td class="cart_total_amount"><span class="font-lg fw-900 text-brand">{{formatNumber totalPrice style="currency" currency="INR" minimumFractionDigits=2}}</span></td>
+                                                    <td class="cart_total_amount"><span id="cart-sub-total" class="font-lg fw-900 text-brand">{{formatNumber totalPrice style="currency" currency="INR" minimumFractionDigits=2}}</span></td>
                                                 </tr>
                                                 <tr>
                                                     <td class="cart_total_label">Shipping</td>
@@ -395,7 +398,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td class="cart_total_label">Total</td>
-                                                    <td class="cart_total_amount"><strong><span class="font-xl fw-900 text-brand">{{formatNumber totalPrice style="currency" currency="INR" minimumFractionDigits=2}}</span></strong></td>
+                                                    <td class="cart_total_amount"><strong><span id="cart-grand-total" class="font-xl fw-900 text-brand">{{formatNumber totalPrice style="currency" currency="INR" minimumFractionDigits=2}}</span></strong></td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -437,12 +440,12 @@
 <script>
     
 
-        let prodQuantity = $('.qtyValue').html();
+        {{!-- let prodQuantity = $('.qtyValue').html();
         prodQuantity = parseInt(prodQuantity);
         // Disable decrement button
         if (prodQuantity < 2) {
             $('.decrement-button').prop('disabled', true);
-        }
+        } --}}
 
     // swal to remove a product from cart
         function removeFromCartConfirmation(anchor) {
@@ -468,6 +471,8 @@
                                 let count = $('#cart-count').html();
                                 count = parseInt(count) - 1;
                                 $('#cart-count').html(count);
+                            } else {
+                                alert(response.stockStatus);
                             }
                             window.location.href = '/cart';
                         }
@@ -525,49 +530,80 @@
         }
 
 function changeQuantity(userId, prodId, price, count) {
-    $.ajax({
-        url:'/change-product-quantity',
-        data:{
-            userId:userId,
-            prodId:prodId,
-            price: price,
-            count:count
-        },
-        method:'post',
-        success:(response) => {
-            if(response.status) {
-                let prodQuantity = $('#' + prodId).html();
-                prodQuantity = parseInt(prodQuantity) + count;
-                $('#' + prodId).html(prodQuantity);
+    
+  {{!-- let prodQuantity = $('#' + prodId).html(); --}}
+  {{!-- prodQuantity = parseInt(prodQuantity); --}}
+  {{!-- if (prodQuantity < 2) {
+      $('#' + prodId + '-decrement').prop('disabled', true);
+  } else {
+      $('#' + prodId + '-decrement').prop('disabled', false);
+  } --}}
 
-                // Disable decrement button
-                if (prodQuantity < 2) {
-                    $('#' + prodId + '-decrement').prop('disabled', true);
-                } else {
-                    $('#' + prodId + '-decrement').prop('disabled', false);
-                }
+  $.ajax({
+      url:'/change-product-quantity',
+      data:{
+          userId:userId,
+          prodId:prodId,
+          price: price,
+          count:count
+      },
+      method:'post',
+      success:(response) => {
+  console.log('changed|Qty:',response);
 
-                // Listen for quantity change events
-                $('#' + prodId).on('DOMSubtreeModified', function() {
-                    prodQuantity = parseInt($('#' + prodId).html());
-                    
-                    // Disable decrement button when quantity is 1
-                    if (prodQuantity < 2) {
-                        $('#' + prodId + '-decrement').prop('disabled', true);
-                    } else {
-                        $('#' + prodId + '-decrement').prop('disabled', false);
-                    }
-                });
+          if(response.changedQty.updatedStatus) {
 
-                // Update sub total
-                {{!-- let subTotal = parseFloat($('#' + prodId + '-sub-total').html().replace(/[^\d.-]/g, '')); // extract numeric value
-                subTotal = prodQuantity * subTotal;
-                $('#' + prodId + '-sub-total').html(formatNumber(subTotal, { style: 'currency', currency: 'INR', minimumFractionDigits: 2 })); --}}
+              let prodQuantity = parseInt(document.getElementById(prodId).innerHTML);
+              count = parseInt(count);
 
-                
-            }
-        }
-    })
+              let subTotal = parseFloat(document.getElementById(prodId + '-sub-total').innerHTML.replace(/[^0-9.-]+/g,""));
+              price = parseFloat(price);
+              let change = count * price;
+              let updatedSubTotal = subTotal + change;
+              let formattedSubTotal = "₹" + updatedSubTotal.toFixed(2);
+
+              let grandSubTotal = parseFloat(document.getElementById('cart-sub-total').innerHTML.replace(/[^0-9.-]+/g,""));
+              let updatedGrandSubTotal = grandSubTotal + change;
+              let formattedGrandSubTotal = "₹" + updatedGrandSubTotal.toFixed(2);
+
+              let grandTotal = parseFloat(document.getElementById('cart-grand-total').innerHTML.replace(/[^0-9.-]+/g,""));
+              let updatedGrandTotal = grandTotal + change;
+              let formattedGrandTotal = "₹" + updatedGrandTotal.toFixed(2);
+
+              document.getElementById(prodId).innerHTML = prodQuantity + count;
+              document.getElementById(prodId+'-sub-total').innerHTML = formattedSubTotal;
+              document.getElementById('cart-sub-total').innerHTML = formattedGrandSubTotal;
+              document.getElementById('cart-grand-total').innerHTML = formattedGrandTotal;
+
+    
+              // Disable decrement button
+              {{!-- if (prodQuantity < 2) {
+                  $('#' + prodId + '-decrement').prop('disabled', true);
+              } else {
+                  $('#' + prodId + '-decrement').prop('disabled', false);
+              } --}}
+
+              
+          } else if (response.changedQty.removeProduct){
+               Swal.fire({
+                      title: "Warning!",
+                      text: "Product removed from cart.",
+                      icon: "warning",
+                      showConfirmButton: false,
+                  });
+                  setTimeout(() => {
+                    location.reload();
+                  },2000);
+          } else if (response.changedQty.stockLimit) {
+              Swal.fire({
+                      title: "Warning!",
+                      text: "Quantity limit exceeded!",
+                      icon: "warning",
+                      showConfirmButton: false,
+                  });
+          }
+      }
+  })
 }
 
 

@@ -93,11 +93,18 @@ const getCartCount = asyncHandler(async (userId) => {
 });
 
 // Change product quantity
-const changeTheQuantity = asyncHandler(async (data) => {
+const changeTheQuantity = asyncHandler(async (data, totalStock) => {
   try {
     const { userId, prodId, price, count } = data;
 
-    console.log('cartIdprosubTotal:', userId, prodId, price, count);
+    console.log(
+      'cartIdprosubTotalstockkkk:',
+      userId,
+      prodId,
+      price,
+      count,
+      totalStock
+    );
 
     const prodDetails = await Cart.findOne({
       userId,
@@ -116,17 +123,35 @@ const changeTheQuantity = asyncHandler(async (data) => {
     // finalSubTotal = parseFloat(finalSubTotal);
     console.log('finalssstotal', finalSubTotal);
 
-    const updated = await Cart.updateOne(
-      { userId, 'products.prodId': prodId },
-      {
-        $inc: {
-          'products.$.quantity': countProduct,
-          'products.$.subTotal': finalSubTotal,
-        },
+    if (totalQty === 1 && countProduct === -1) {
+      const deleted = await Cart.updateOne(
+        { userId },
+        {
+          $pull: { products: { prodId } },
+        }
+      );
+      if (deleted) return { removeProduct: true };
+    } else if (
+      totalQty < totalStock ||
+      (totalQty === totalStock && countProduct === -1)
+    ) {
+      const updated = await Cart.updateOne(
+        { userId, 'products.prodId': prodId },
+        {
+          $inc: {
+            'products.$.quantity': countProduct,
+            'products.$.subTotal': finalSubTotal,
+          },
+        }
+      );
+      if (updated) {
+        return { updatedStatus: true, stockLimit: false };
       }
-    );
+    } else if (totalQty === totalStock) {
+      return { stockLimit: true };
+    }
+    return { stockLimit: false };
     // console.log('updated:', updated);
-    return updated;
   } catch (error) {
     throw new Error(error);
   }

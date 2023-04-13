@@ -48,6 +48,10 @@
                                             <span class="badge rounded-pill alert-warning">Pending</span>
                                             {{else if (equal this.orderStatus "received")}}
                                             <span class="badge rounded-pill alert-success">Received</span>
+                                            {{else if (equal this.orderStatus "shipped")}}
+                                            <span class="badge rounded-pill alert-success">Shipped</span>
+                                            {{else if (equal this.orderStatus "delivered")}}
+                                            <span class="badge rounded-pill alert-success">Delivered</span>
                                             {{else if (equal this.orderStatus "cancelled")}}
                                             <span class="badge rounded-pill alert-danger">Cancelled</span>
                                             {{else if (equal this.orderStatus "return")}}

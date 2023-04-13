@@ -25,7 +25,7 @@ const getWishlist = asyncHandler(async (req, res) => {
       })
     );
     const foundProducts = JSON.parse(JSON.stringify(productDetails));
-
+console.log(foundProducts);
     res.render('user/wishlist', {
       user,
       isUser: true,

@@ -124,11 +124,13 @@ const clearCartProducts = asyncHandler(async (req, res) => {
 const changeProductQuantity = asyncHandler(async (req, res) => {
   try {
     console.log('req.body', req.body);
-
-    const changed = await cartHelpers.changeTheQuantity(req.body);
-    if (changed) {
-      res.json({ status: true });
-    }
+    const { prodId } = req.body;
+    const product = await productHelpers.findSingleProductId(prodId);
+    const totalStock = product.stock;
+    const changed = await cartHelpers.changeTheQuantity(req.body, totalStock);
+    const changedQty = JSON.parse(JSON.stringify(changed));
+    console.log('changedQQQ:', changedQty);
+    res.json({ changedQty });
   } catch (error) {
     throw new Error(error);
   }

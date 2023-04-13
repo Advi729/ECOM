@@ -1,7 +1,24 @@
 const asyncHandler = require('express-async-handler');
 const Order = require('../models/order-model');
 const Cart = require('../models/cart-model');
+const Product = require('../models/product-model');
+const productHelpers = require('./product-helper');
 
+// update quantity in product schema after ordering
+const updateProductQuantity = asyncHandler(async (productsList) => {
+  try {
+    await Promise.all(
+      productsList.map(async (product) => {
+        const { quantity } = product;
+        await productHelpers.updateProductQuantity(product.prodId, quantity);
+      })
+    );
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+// Create order
 const createOrder = asyncHandler(
   async (productsList, totalPrice, order, address) => {
     try {
@@ -27,6 +44,7 @@ const createOrder = asyncHandler(
       };
 
       const status = order.payment_option === 'cod' ? 'placed' : 'pending';
+      const payStatus = order.payment_option === 'cod' ? 'pending' : 'paid';
 
       const newOrder = new Order({
         orderId: generateOrderId(),
@@ -35,11 +53,17 @@ const createOrder = asyncHandler(
         paymentMethod: order.payment_option,
         products: productsList,
         orderStatus: status,
+        paymentStatus: payStatus,
         totalPrice,
       });
       await newOrder.save();
+
+      // update the quantity of products
+      await updateProductQuantity(productsList);
+
       // Delete the cart after placing order
       await Cart.deleteOne({ userId: order.userId });
+
       if (newOrder) {
         return newOrder;
       }
@@ -85,9 +109,35 @@ const cancelProductOrder = asyncHandler(async (orderId) => {
   }
 });
 
+// All order details
+const allOrders = asyncHandler(async () => {
+  try {
+    const orderData = await Order.find();
+    const orderDetails = JSON.parse(JSON.stringify(orderData));
+    return orderDetails;
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+// Update the order status
+const updateOrderStatus = asyncHandler(async (orderId, orderStatus) => {
+  try {
+    const updated = await Order.updateOne(
+      { orderId },
+      { $set: { orderStatus } }
+    );
+    if (updated) return updated;
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
 module.exports = {
   createOrder,
   getOrderDetails,
   getSingleOrderDetails,
   cancelProductOrder,
+  allOrders,
+  updateOrderStatus,
 };

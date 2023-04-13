@@ -11,6 +11,7 @@ const brandValidators = require('../validation/brand-validation');
 const categoryControllers = require('../controllers/category-controller');
 const subCategoryControllers = require('../controllers/sub-category-controller');
 const brandControllers = require('../controllers/brand-controller');
+const orderControllers = require('../controllers/order-controller');
 
 const router = express.Router();
 
@@ -220,5 +221,29 @@ router
 router
   .route('/restore-brand/:slug')
   .get(authMiddlewares.adminCheck, brandControllers.getRestoreBrand);
+
+//----------------------------------------------------------------------------------------------------------------------------------------
+// Order management
+
+// view all orders
+router.get(
+  '/view-orders',
+  authMiddlewares.adminCheck,
+  orderControllers.allOrdersAdmin
+);
+
+// Order details
+router.get(
+  '/order-details/:orderId',
+  authMiddlewares.adminCheck,
+  orderControllers.orderDetails
+);
+
+// Change order status
+router.post(
+  '/order-status',
+  authMiddlewares.adminCheck,
+  orderControllers.changeOrderStatus
+);
 
 module.exports = router;

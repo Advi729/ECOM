@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const User = require('../models/user-model');
+const { json } = require('express');
 
 // To create new document in User collection
 const userSignUp = asyncHandler(async (data) => {
@@ -64,7 +65,8 @@ const findOtp = asyncHandler(async (enteredMobile) => {
 const findUser = asyncHandler(async (_id) => {
   try {
     const foundUser = await User.findOne({ _id });
-    return foundUser;
+    const finalUser = JSON.parse(JSON.stringify(foundUser));
+    return finalUser;
   } catch (error) {
     throw new Error(error);
   }

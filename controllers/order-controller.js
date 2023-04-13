@@ -4,6 +4,7 @@ const productHelpers = require('../helpers/product-helper');
 const userHelpers = require('../helpers/user-helper');
 const orderHelpers = require('../helpers/order-helper');
 const wishlistHelpers = require('../helpers/wishlist-helper');
+const User = require('../models/user-model');
 
 // Proceed to checkout
 const checkOutCart = asyncHandler(async (req, res) => {
@@ -78,10 +79,7 @@ const getTotalPrice = asyncHandler(async (products) => {
     throw new Error(error);
   }
 });
-// userId: '64193ddb991947a309de69ed',
-// deliveryAddress: '642c351c81dd676a00ca024b',
-// payment_option: 'razorPay'
-// Place order
+
 const placeOrder = asyncHandler(async (req, res) => {
   try {
     const { userId, deliveryAddress } = req.body;
@@ -98,7 +96,7 @@ const placeOrder = asyncHandler(async (req, res) => {
       req.body,
       address
     );
-    console.log('created order:', created);
+    // console.log('created order:', created);
     if (created) {
       res.json({ status: true });
     }
@@ -186,9 +184,90 @@ const cancelOrder = asyncHandler(async (req, res) => {
   try {
     const { id } = req.params;
     const orderId = id;
-    console.log('ehti bro orderId:', orderId);
     const cancelled = await orderHelpers.cancelProductOrder(orderId);
     if (cancelled) res.json({ status: true });
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+// All orders admin side
+const allOrdersAdmin = asyncHandler(async (req, res) => {
+  try {
+    const { admin } = req.session;
+    const allOrders = await orderHelpers.allOrders();
+    // console.log('allOrdersss: ', allOrders);
+
+    const userData = await Promise.all(
+      allOrders.map(async (order) => {
+        const user = await User.findById(order.userId);
+        return {
+          user,
+          totalPrice: order.totalPrice,
+          orderStatus: order.orderStatus,
+          paymentMethod: order.paymentMethod,
+          orderId: order.orderId,
+          createdAt: order.createdAt,
+        };
+      })
+    );
+    const userDetails = JSON.parse(JSON.stringify(userData));
+    // console.log('userDetails: ', userDetails);
+
+    if (allOrders) {
+      res.render('admin/orders-list', {
+        isAdmin: true,
+        admin,
+        allOrders,
+        userDetails,
+      });
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+// Order details
+const orderDetails = asyncHandler(async (req, res) => {
+  try {
+    const { admin } = req.session;
+    const { orderId } = req.params;
+    const orderData = await orderHelpers.getSingleOrderDetails(orderId);
+    const userData = await userHelpers.findUser(orderData.userId);
+
+    const { products } = orderData;
+    const productDetails = await Promise.all(
+      products.map(async (product) => {
+        const prod = await productHelpers.findSingleProductId(product.prodId);
+        return {
+          ...prod,
+          quantity: product.quantity,
+          subTotal: product.subTotal,
+        };
+      })
+    );
+    const foundProducts = JSON.parse(JSON.stringify(productDetails));
+    // console.log('orderData', orderData);
+    // console.log('userrData', userData);
+    // console.log('foundProductsData', foundProducts);
+    res.render('admin/order-details', {
+      isAdmin: true,
+      admin,
+      orderData,
+      userData,
+      foundProducts,
+    });
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+// Change order status
+const changeOrderStatus = asyncHandler(async (req, res) => {
+  try {
+    const { orderStatus, orderId } = req.body;
+    const updated = await orderHelpers.updateOrderStatus(orderId, orderStatus);
+    if (updated) res.json({ status: true });
   } catch (error) {
     throw new Error(error);
   }
@@ -200,4 +279,7 @@ module.exports = {
   viewOrders,
   viewSingleOrder,
   cancelOrder,
+  allOrdersAdmin,
+  orderDetails,
+  changeOrderStatus,
 };

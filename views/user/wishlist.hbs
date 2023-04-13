@@ -8,6 +8,8 @@
                 </div>
             </div>
         </div>
+{{#if foundProducts}}
+
         <section class="mt-50 mb-50">
             <div class="container">
                 <div class="row">
@@ -60,6 +62,31 @@
             </div>
         </section>
     </main>
+
+    {{else}}
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 my-5 py-5 text-center bg-light">
+      <h1 class="display-4">No items Added to the Wishlist!</h1>
+    </div>
+  </div>
+</div>
+
+{{/if}}
+{{#if foundProducts}}
+{{else}}
+<section class="mt-50 mb-50">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="cart-action text-end">
+                    <a class="btn " href="/shop"><i class="fi-rs-shopping-bag mr-10"></i>Continue Shopping</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{{/if}}
 
     <script>
         // swal to remove a product from cart

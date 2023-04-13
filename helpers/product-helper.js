@@ -33,7 +33,7 @@ const findSingleProduct = async (slug) => {
 // Find a single product using Id
 const findSingleProductId = async (prodId) => {
   try {
-    const singleProduct = await Product.findOne({ _id:prodId });
+    const singleProduct = await Product.findOne({ _id: prodId });
     const foundProduct = JSON.parse(JSON.stringify(singleProduct));
     return foundProduct;
   } catch (error) {
@@ -121,7 +121,7 @@ const updateProduct = asyncHandler(async (slug, data) => {
             category: data.body.category,
             subCategory: data.body.subCategory,
             brand: data.body.brand,
-            quantity: data.body.quantity,
+            stock: data.body.stock,
             images: imageNames,
             color: data.body.color,
           },
@@ -138,7 +138,7 @@ const updateProduct = asyncHandler(async (slug, data) => {
             category: data.body.category,
             subCategory: data.body.subCategory,
             brand: data.body.brand,
-            quantity: data.body.quantity,
+            stock: data.body.stock,
             color: data.body.color,
           },
         }
@@ -239,6 +239,16 @@ const findProductsByBrandSlug = async (brandSlug) => {
   }
 };
 
+// Update product by changing its quantity after order
+const updateProductQuantity = asyncHandler(async (prodId, quantity) => {
+  try {
+    const newStock = -quantity;
+    await Product.updateOne({ _id: prodId }, { $inc: { stock: newStock } });
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
 module.exports = {
   findProducts,
   findSingleProduct,
@@ -251,4 +261,5 @@ module.exports = {
   findProductsByCategorySlug,
   findProductsBySubCategorySlug,
   findProductsByBrandSlug,
+  updateProductQuantity,
 };

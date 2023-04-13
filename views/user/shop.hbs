@@ -328,8 +328,8 @@
     function addToCartConfirmation(anchor) {
         const id = anchor.getAttribute('data-id');
 
-        setTimeout(() => {
-            $.ajax({
+
+        $.ajax({
             url:'/add-cart/'+id,
             method:'get',
             success:(response) => {
@@ -337,27 +337,30 @@
                     let count = $('#cart-count').html();
                     count = parseInt(count) + 1;
                     $('#cart-count').html(count);
+
+                    Swal.fire({
+                        title: "Success!",
+                        text: "Product added to cart.",
+                        icon: "success",
+                        showConfirmButton: false,
+                        showCloseButton: true,
+                    }); 
+                }
+            },
+            error: (error) => {
+                if (error.status === 401) {
+                    const redirectUrl = error.responseJSON.redirectUrl;
+                    window.location.href = redirectUrl;
                 }
             }
             
         })
-        },2000);
-
-        Swal.fire({
-                title: "Success!",
-                text: "Product added to cart.",
-                icon: "success",
-                showConfirmButton: false,
-                showCloseButton: true,
-                }); 
     }
 
     // Swal to add product to wishlist
     function addToWishlistConfirmation(anchor) {
         const id = anchor.getAttribute('data-id');
-
-        setTimeout(() => {
-            $.ajax({
+        $.ajax({
             url:'/add-to-wishlist/'+id,
             method:'get',
             success:(response) => {
@@ -365,18 +368,23 @@
                     let count = $('#wishlist-count').html();
                     count = parseInt(count) + 1;
                     $('#wishlist-count').html(count);
-                }
-            }
-            
-        })
-        },2000);
 
-        Swal.fire({
-                title: "Success!",
-                text: "Product added to wishlist.",
-                icon: "success",
-                showConfirmButton: false,
-                showCloseButton: true,
-                }); 
+                     Swal.fire({
+                        title: "Success!",
+                        text: "Product added to wishlist.",
+                        icon: "success",
+                        showConfirmButton: false,
+                        showCloseButton: true,
+                    }); 
+                }
+            },
+             error: (error) => {
+                if (error.status === 401) {
+                    const redirectUrl = error.responseJSON.redirectUrl;
+                    window.location.href = redirectUrl;
+                }
+            }   
+        })  
     }
+    
 </script>
