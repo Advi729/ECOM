@@ -125,7 +125,7 @@
                             <div class="row gx-2">
                                 <div class="col-sm-6 mb-3">
                                     <label class="form-label">Category</label>
-                                    <select id="" name="category" class="form-select category">
+                                    <select id="category" name="category" class="form-select category">
                                         <option value="">Select a category</option>
                                         {{#each categories}}
                                         <option value="{{this.title}}">{{this.title}}</option>
@@ -134,11 +134,12 @@
                                 </div>
                                 <div class="col-sm-6 mb-3">
                                     <label class="form-label">Sub-category</label>
-                                    <select id="" name="subCategory" class="form-select subCategory">
-                                        <option value="">Select a Sub-category</option>
+                                    <select id="subCategory" name="subCategory" class="form-select subCategory">
+                                         <option value="">Select a Sub-category</option>
+                                        {{!--
                                         {{#each subCategories}}
                                         <option value="{{this.title}}">{{this.title}}</option>
-                                        {{/each}}
+                                        {{/each}} --}}
                                         {{!-- <option value="">Select a Sub category</option> --}}
                                         {{!-- {{#each categories}}
                                         {{#each subCategory}}
@@ -170,25 +171,35 @@
 
 
 <script>
-    const categorySelect = document.querySelector('.category');
-const subCategorySelect = document.querySelector('.subCategory');
 
-categorySelect.addEventListener('change', () => {
-  // Get the selected category
-  const selectedCategory = categorySelect.value;
+// Dynamically change sub-categories
+$('.category').on('change', function() {
+   var category = $(this).val();
 
-  // Find the corresponding object in the categories array
-  const selectedObject = categories.find(category => category.title === selectedCategory);
+   $.ajax({
+      url: '/admin/get-sub-categories',
+      type: 'POST',
+      data: { category: category },
+      success: function(data) {
+         var subCategorySelect = $('.subCategory');
+         subCategorySelect.empty();
 
-  // Clear the existing options in the subCategory select element
-  subCategorySelect.innerHTML = '<option value="">Select a Sub category</option>';
-  // Add new options for the selected subCategory array
-  selectedObject.subCategory.forEach(subCategory => {
-    const option = document.createElement('option');
-    option.value = subCategory;
-    option.textContent = subCategory;
-    subCategorySelect.appendChild(option);
-  });
+        subCategorySelect.append($('<option>', {
+          value: '',
+          text: 'Select a Sub-category'
+        }));
+        
+        $.each(data, function(index, subCategory) {
+            $.each(subCategory, function(i, value) {
+                subCategorySelect.append($('<option>', {
+                    value: value,
+                    text: value
+                }));
+            });
+        });
+
+      }
+   });
 });
 
 

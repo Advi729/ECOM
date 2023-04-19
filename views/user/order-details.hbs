@@ -71,11 +71,16 @@
                                 </tbody>
                             </table>
                         </div>
+                        {{#if (equal orderDetails.orderStatus "cancelled")}}
+                        {{else if (equal orderDetails.orderStatus "return")}}
+                        {{else}}
                         <div class="cart-action text-end">
-
                             {{!-- <a class="btn  mr-10 mb-sm-15"><i class="fi-rs-shuffle mr-10"></i>Update Cart</a> --}}
+                            <a class="btn bg-secondary" href="/invoice/{{orderDetails.orderId}}" onclick="event.preventDefault(); invoiceOrderConfirmation(this)" data-id="{{orderDetails.orderId}}"><i class="fi-rr-download mr-10"></i>Download Invoice</a>
+                            <a class="btn bg-primary" href="/return-order/{{orderDetails.orderId}}" onclick="event.preventDefault(); returnOrderConfirmation(this)" data-id="{{orderDetails.orderId}}"><i class="fi-rs-undo mr-10"></i>Return Order</a>
                             <a class="btn bg-danger" href="/cancel-order/{{orderDetails.orderId}}" onclick="event.preventDefault(); cancelOrderConfirmation(this)" data-id="{{orderDetails.orderId}}"><i class="fi-rs-trash mr-10"></i>Cancel Order</a>
                         </div>
+                        {{/if}}
                         <div class="divider center_icon mt-50 mb-50"><i class="fi-rs-fingerprint"></i></div>
                         <div class="row mb-50">
                            
@@ -160,9 +165,7 @@
                         method:'get',
                         success:(response) => {
                             if(response.status) {
-                                {{!-- let count = $('#cart-count').html();
-                                count = parseInt(count) - 1;
-                                $('#cart-count').html(count); --}}
+                        
                             window.location.href = '/orders';
 
                             }
@@ -181,30 +184,30 @@
             });
         }
 
-// swal to clear all products from cart
-        function clearCartConfirmation(anchor) {
+// swal to return order
+        function returnOrderConfirmation(anchor) {
+            const orderId = anchor.getAttribute('data-id');
+            console.log('orderid:', orderId)
             Swal.fire({
                 title: "Are you sure?",
-                text: "Do you want to remove all products from cart?",
+                text: "Do you want to return the order?",
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#d33",
                 cancelButtonColor: "#3085d6",
-                confirmButtonText: "Yes, clear it!",
+                confirmButtonText: "Yes, return it!",
                 cancelButtonText: "No, cancel",
             }).then((result) => {
                 if (result.isConfirmed) {
 
                     setTimeout(() => {
                         $.ajax({
-                        url:'/clear-cart',
+                        url:'/return-order/'+orderId,
                         method:'get',
                         success:(response) => {
                             if(response.status) {
-                                let count = 0;
-                                $('#cart-count').html(count);
+                                window.location.href = '/orders';
                             }
-                            window.location.href = '/cart';
                         }
                     })
                     },2000);
@@ -212,13 +215,56 @@
                     // display a success message using SweetAlert2
                     Swal.fire({
                         title: "Success!",
-                        text: "Cart is cleared.",
+                        text: "Order's return initiated.",
                         icon: "success",
                         showConfirmButton: false,
                     });
                 }
             });
         }
+
+// download invoice
+function invoiceOrderConfirmation(anchor) {
+  const orderId = anchor.getAttribute('data-id');
+//  const orderId = $(this).data('id');
+    //const url = $(this).attr('href');
+    
+  // Add your confirmation logic here, if needed
+  Swal.fire({
+        title: "Are you sure?",
+        text: "Do you want to download the invoice?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Yes, download it!",
+        cancelButtonText: "No, cancel",
+    }).then((result) => {
+        if (result.isConfirmed) {
+  
+    $.ajax({
+      url: '/invoice/'+orderId,
+      type: 'GET',
+      dataType: 'blob',
+      success: (data) => {
+        console.log('data:', data)
+        const blob = new Blob([data], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `invoice_${orderId}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      },
+      error: (xhr, status, error) => {
+        console.error(status, error);
+      }
+    });
+ 
+         }
+    })
+}
 
 
 

@@ -1,8 +1,14 @@
 const asyncHandler = require('express-async-handler');
+const Razorpay = require('razorpay');
 const Order = require('../models/order-model');
 const Cart = require('../models/cart-model');
 const Product = require('../models/product-model');
 const productHelpers = require('./product-helper');
+
+const instance = new Razorpay({
+  key_id: 'rzp_test_unePQlLuDT2Zxm',
+  key_secret: 'Qrv55Iyw8yIfTZMR8plnQBTa',
+});
 
 // update quantity in product schema after ordering
 const updateProductQuantity = asyncHandler(async (productsList) => {
@@ -74,11 +80,19 @@ const createOrder = asyncHandler(
 );
 
 // Get all order details of a user
-const getOrderDetails = asyncHandler(async (userId) => {
+const getOrderDetails = asyncHandler(async (userId, page) => {
   try {
-    const orderDetails = await Order.find({ userId });
-    //   console.log('carrrrrrrr',orderDetails);
-    return orderDetails;
+    const limit = 9;
+    const skip = (page - 1) * limit;
+    const totalOrders = await Order.countDocuments({ userId });
+    const totalPages = Math.ceil(totalOrders / limit);
+
+    console.log('total orders: ', totalOrders);
+    console.log('total pages: ', totalPages);
+
+    const orderData = await Order.find({ userId }).skip(skip).limit(limit);
+
+    return { orderData, totalPages };
   } catch (error) {
     throw new Error(error);
   }
@@ -99,9 +113,19 @@ const getSingleOrderDetails = asyncHandler(async (orderId) => {
 const cancelProductOrder = asyncHandler(async (orderId) => {
   try {
     const newStatus = 'cancelled';
+    let paymentStatus;
+    const orderDetails = await Order.findOne({ orderId });
+    if (orderDetails.paymentStatus === 'paid') {
+      paymentStatus = 'return';
+    } else if (orderDetails.paymentStatus === 'pending') {
+      paymentStatus = 'cancelled';
+    } else if (orderDetails.paymentStatus === 'cancelled') {
+      paymentStatus = 'cancelled';
+    }
+
     const cancelled = await Order.updateOne(
       { orderId },
-      { $set: { orderStatus: newStatus } }
+      { $set: { orderStatus: newStatus, paymentStatus } }
     );
     if (cancelled) return cancelled;
   } catch (error) {
@@ -109,12 +133,42 @@ const cancelProductOrder = asyncHandler(async (orderId) => {
   }
 });
 
-// All order details
-const allOrders = asyncHandler(async () => {
+// Return order
+const returnProductOrder = asyncHandler(async (orderId) => {
   try {
-    const orderData = await Order.find();
+    const newStatus = 'return';
+    let paymentStatus;
+    const orderDetails = await Order.findOne({ orderId });
+    if (orderDetails.paymentStatus === 'paid') {
+      paymentStatus = 'return';
+    } else if (orderDetails.paymentStatus === 'pending') {
+      paymentStatus = 'pending';
+    } else if (orderDetails.paymentStatus === 'cancelled') {
+      paymentStatus = 'cancelled';
+    }
+    const returned = await Order.updateOne(
+      { orderId },
+      { $set: { orderStatus: newStatus, paymentStatus } }
+    );
+    if (returned) return returned;
+  } catch (error) {
+    // throw new Error(error);
+    console.error(error);
+  }
+});
+
+// All order details
+const allOrders = asyncHandler(async (page) => {
+  try {
+    const limit = 9;
+    const skip = (page - 1) * limit;
+    const totalOrders = await Order.countDocuments();
+
+    const orderData = await Order.find().skip(skip).limit(limit);
     const orderDetails = JSON.parse(JSON.stringify(orderData));
-    return orderDetails;
+    const totalPages = Math.ceil(totalOrders / limit);
+
+    return { orderDetails, totalPages };
   } catch (error) {
     throw new Error(error);
   }
@@ -133,6 +187,52 @@ const updateOrderStatus = asyncHandler(async (orderId, orderStatus) => {
   }
 });
 
+// Razorpay
+const generateRazorPay = asyncHandler(async (orderId, totalPrice) => {
+  try {
+    const createdInstance = await instance.orders.create({
+      amount: totalPrice * 100,
+      currency: 'INR',
+      receipt: orderId,
+    });
+    return createdInstance;
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+// Verify the payment
+const verifyRazorpayPayment = asyncHandler(async (details) => {
+  try {
+    const crypto = require('crypto');
+    let hmac = crypto.createHmac('sha256', 'Qrv55Iyw8yIfTZMR8plnQBTa');
+
+    hmac.update(
+      `${details['payment[razorpay_order_id]']}|${details['payment[razorpay_payment_id]']}`
+    );
+    hmac = hmac.digest('hex');
+    if (hmac === details['payment[razorpay_signature]']) {
+      return true;
+    }
+    return false;
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+// Update the payment status
+const updatePaymentStatus = asyncHandler(async (orderId, paymentStatus) => {
+  try {
+    const updated = await Order.updateOne(
+      { orderId },
+      { $set: { paymentStatus } }
+    );
+    if (updated) return updated;
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
 module.exports = {
   createOrder,
   getOrderDetails,
@@ -140,4 +240,8 @@ module.exports = {
   cancelProductOrder,
   allOrders,
   updateOrderStatus,
+  generateRazorPay,
+  verifyRazorpayPayment,
+  updatePaymentStatus,
+  returnProductOrder,
 };

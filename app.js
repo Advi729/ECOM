@@ -6,7 +6,6 @@ const logger = require('morgan');
 const hbs = require('express-handlebars');
 const handlebarsIntl = require('handlebars-intl');
 const Handlebars = require('handlebars');
-const helpers = require('handlebars-helpers');
 const dotenv = require('dotenv').config();
 const bodyParser = require('body-parser');
 const session = require('express-session');

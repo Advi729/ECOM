@@ -24,7 +24,7 @@ const orderSchema = new mongoose.Schema(
     paymentStatus: {
       type: String,
       default: 'pending',
-      // required: true,
+      required: true,
     },
     totalPrice: {
       type: Number,

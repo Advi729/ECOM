@@ -22,8 +22,8 @@ const getHomePage = asyncHandler(async (req, res) => {
       wishlistCount = await wishlistHelpers.getWishlistCount(userId);
     }
     console.log('wishlistcout', wishlistCount);
-    const data = await productHelpers.findProducts();
-    const products = JSON.parse(JSON.stringify(data));
+    const foundProducts = await productHelpers.findAllProducts();
+    const products = JSON.parse(JSON.stringify(foundProducts));
     res.render('user/home', {
       user,
       allProducts: products,
@@ -219,7 +219,10 @@ const getaUser = asyncHandler(async (req, res) => {
 // Render shop
 const getShop = asyncHandler(async (req, res) => {
   try {
-    const data = await productHelpers.findProducts();
+    const page = req.query.page || 1;
+    const { foundProducts, totalPages } = await productHelpers.findProducts(
+      page
+    );
     const categories = await categoryHelpers.allCategories();
     const subCategories = await subCategoryHelpers.allSubCategories();
     const brands = await brandHelpers.allBrands();
@@ -231,8 +234,9 @@ const getShop = asyncHandler(async (req, res) => {
       cartCount = await cartHelpers.getCartCount(userId);
       wishlistCount = await wishlistHelpers.getWishlistCount(userId);
     }
-    const products = JSON.parse(JSON.stringify(data));
+    const products = JSON.parse(JSON.stringify(foundProducts));
     const pageShop = true;
+
     res.render('user/shop', {
       user,
       pageShop,
@@ -243,6 +247,7 @@ const getShop = asyncHandler(async (req, res) => {
       isUser: true,
       cartCount,
       wishlistCount,
+      totalPages,
     });
   } catch (error) {
     throw new Error(error);
@@ -253,15 +258,15 @@ const getShop = asyncHandler(async (req, res) => {
 const filterCategory = asyncHandler(async (req, res) => {
   try {
     const { categorySlug } = req.params;
-    // console.log('filterparamss:', req.params);
+    const page = req.query.page || 1;
+
     const { user } = req.session;
     const categories = await categoryHelpers.allCategories();
     const subCategories = await subCategoryHelpers.allSubCategories();
     const brands = await brandHelpers.allBrands();
-    const filteredCategory = await productHelpers.findProductsByCategorySlug(
-      categorySlug
-    );
-
+    const { foundProducts, totalPages } =
+      await productHelpers.findProductsByCategorySlug(categorySlug, page);
+    console.log('pages: ', totalPages);
     let cartCount = null;
     let wishlistCount = null;
     if (user) {
@@ -270,21 +275,22 @@ const filterCategory = asyncHandler(async (req, res) => {
       wishlistCount = await wishlistHelpers.getWishlistCount(userId);
     }
 
-    const categoryHeading = filteredCategory[0].category;
+    const categoryHeading = foundProducts[0].category;
     const pageCategory = true;
-    if (filteredCategory) {
+    if (foundProducts) {
       // res.render('user/shop-category', {
       res.render('user/shop', {
         user,
         pageCategory,
         isUser: true,
         categoryHeading,
-        allProducts: filteredCategory,
+        allProducts: foundProducts,
         allCategories: categories,
         allSubCategories: subCategories,
         allBrands: brands,
         cartCount,
         wishlistCount,
+        totalPages,
       });
     }
   } catch (error) {
@@ -297,16 +303,18 @@ const filterSubCategory = asyncHandler(async (req, res) => {
   try {
     const { subCategorySlug } = req.params;
     // console.log('filterparamss:', req.params);
+    const page = req.query.page || 1;
+
     const { user } = req.session;
     const categories = await categoryHelpers.allCategories();
     const subCategories = await subCategoryHelpers.allSubCategories();
     const brands = await brandHelpers.allBrands();
-    const filteredSubCategory =
-      await productHelpers.findProductsBySubCategorySlug(subCategorySlug);
+    const { foundProducts, totalPages } =
+      await productHelpers.findProductsBySubCategorySlug(subCategorySlug, page);
     // console.log('fiiiiiiiiiiiiiiiiii', filteredCategory);
-    const categoryHeading = filteredSubCategory[0].category;
-    const subHeading = filteredSubCategory[0].subCategory;
-    const { categorySlug } = filteredSubCategory[0];
+    const categoryHeading = foundProducts[0].category;
+    const subHeading = foundProducts[0].subCategory;
+    const { categorySlug } = foundProducts[0];
     const pageSubCategory = true;
 
     let cartCount = null;
@@ -317,7 +325,7 @@ const filterSubCategory = asyncHandler(async (req, res) => {
       wishlistCount = await wishlistHelpers.getWishlistCount(userId);
     }
 
-    if (filteredSubCategory) {
+    if (foundProducts) {
       // res.render('user/shop-sub-category', {
       res.render('user/shop', {
         user,
@@ -326,12 +334,13 @@ const filterSubCategory = asyncHandler(async (req, res) => {
         categoryHeading,
         subHeading,
         categorySlug,
-        allProducts: filteredSubCategory,
+        allProducts: foundProducts,
         allCategories: categories,
         allSubCategories: subCategories,
         allBrands: brands,
         cartCount,
         wishlistCount,
+        totalPages,
       });
     }
   } catch (error) {
@@ -344,15 +353,16 @@ const filterBrand = asyncHandler(async (req, res) => {
   try {
     const { brandSlug } = req.params;
     // console.log('filterparamss:', req.params);
+    const page = req.query.page || 1;
+
     const { user } = req.session;
     const categories = await categoryHelpers.allCategories();
     const subCategories = await subCategoryHelpers.allSubCategories();
     const brands = await brandHelpers.allBrands();
-    const filteredBrand = await productHelpers.findProductsByBrandSlug(
-      brandSlug
-    );
+    const { foundProducts, totalPages } =
+      await productHelpers.findProductsByBrandSlug(brandSlug, page);
     // console.log('fiiiiiiiiiiiiiiiiii', filteredCategory);
-    const brandHeading = filteredBrand[0].brand;
+    const brandHeading = foundProducts[0].brand;
     const pageBrand = true;
 
     let cartCount = null;
@@ -363,19 +373,20 @@ const filterBrand = asyncHandler(async (req, res) => {
       wishlistCount = await wishlistHelpers.getWishlistCount(userId);
     }
 
-    if (filteredBrand) {
+    if (foundProducts) {
       // res.render('user/shop-brand', {
       res.render('user/shop', {
         user,
         isUser: true,
         pageBrand,
         brandHeading,
-        allProducts: filteredBrand,
+        allProducts: foundProducts,
         allCategories: categories,
         allSubCategories: subCategories,
         allBrands: brands,
         cartCount,
         wishlistCount,
+        totalPages,
       });
     }
   } catch (error) {

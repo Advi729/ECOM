@@ -806,54 +806,10 @@
     </section>
 </main>
 
-    <script>
-                  
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
-    {{!-- function placeOrderConfirmation(anchor) {
-    Swal.fire({
-        title: "Are you sure?",
-        text: "Do you want to Place the order?",
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, Place order!",
-        cancelButtonText: "No, cancel",
-    }).then((result) => {
-        if (result.isConfirmed) {
-
-                $('#checkout-form').submit((event) => {
-                    event.preventDefault();
-
-                    $.ajax({
-                        method: 'POST',
-                        url: '/place-order',
-                        data: $('#checkout-form').serialize(),
-                        success: (response) => {
-                            if(response.status) {
-                                Swal.fire({
-                                    title: "Success!",
-                                    text: "Order Placed Successfully!",
-                                    icon: "success",
-                                    showConfirmButton: false,
-                                });
-
-                                setTimeout(() => {
-                                window.location.href = '/orders';
-                                },2000);
-
-                            }
-                        }
-                    });
-
-                })
-                $('#checkout-form').submit();
-
-            
-        }
-    });
-} --}}
-
+<script>
+                
  $("#checkout-form").submit((event) => {
         event.preventDefault();
         $.ajax({
@@ -861,32 +817,20 @@
             url: ('/place-order'),
             data: $('#checkout-form').serialize(),
             success: (response) => {
-                if(response.status) {
-                    Swal.fire({
-                        title: "Success!",
-                        text: "Order Placed Successfully!",
-                        icon: "success",
-                        showConfirmButton: false,
-                    });
-
-                    setTimeout(() => {
-                    window.location.href = '/orders';
-                    },2000);
-
-                }
-                {{!-- switch (response.status) {
+                //console.log(response.status)
+                switch (response.status) {
                     case 'cod':
                         swal(
                             "Successfull !",
-                            "Order Placed Successfully !",
+                            "Order Placed Successfully!",
                             "success"
                         ).then(() => {
                             location.replace('/orders');
                         });
-                    case 'razorpay':
-                        razorPayPayment(response)
-                        
-                } --}}
+                    case 'razorPay':
+                        console.log(response.createdInstance)
+                        razorPayPayment(response.createdInstance);                      
+                }
             },
             error: (response, stat, err) => {
                 console.log(response);
@@ -894,4 +838,73 @@
 
         })
     })
+
+    function razorPayPayment(order) {
+        var options = {
+            "key": "rzp_test_unePQlLuDT2Zxm", // Enter the Key ID generated from the Dashboard
+            "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+            "currency": "INR",
+            "name": "Heats", //your business name
+            "description": "Test Transaction",
+            "image": "/assets-user/imgs/theme/heats_favicon.png",
+            "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+            "handler": function (response){
+                //alert(response.razorpay_payment_id);
+                //alert(response.razorpay_order_id);
+                //alert(response.razorpay_signature)
+
+                verifyPayment(response, order);
+            },
+            "prefill": {
+                "name": "Gaurav Kumar", //your customer's name
+                "email": "gaurav.kumar@example.com",
+                "contact": "9000090000"
+            },
+            "notes": {
+                "address": "Razorpay Corporate Office"
+            },
+            "theme": {
+                "color": "#3399cc"
+            }
+        };
+        var rzp1 = new Razorpay(options);
+        rzp1.on('payment.failed', function (response){
+                alert(response.error.code);
+                alert(response.error.description);
+                alert(response.error.source);
+                alert(response.error.step);
+                alert(response.error.reason);
+                alert(response.error.metadata.order_id);
+                alert(response.error.metadata.payment_id);
+        });
+        //document.getElementById('rzp-button1').onclick = function(e){
+            rzp1.open();
+          //  e.preventDefault();
+        //}
+    }
+
+    function verifyPayment(payment, order) {
+        $.ajax({
+            url: '/verify-payment',
+            data: {
+                payment,
+                order
+            },
+            method: 'post',
+            success: (response) => {
+                if (response.status) {
+                     {{!-- Swal.fire({
+                        title: "Success!",
+                        text: "Payment is successfull.",
+                        icon: "success",
+                        showConfirmButton: false,
+                    }); --}}
+                    //setTimeout(() => {
+                        location.replace('/orders');
+                    //},2000);
+                }
+            }
+        });
+    }
     </script>
+

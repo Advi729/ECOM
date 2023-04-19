@@ -11,17 +11,19 @@
 
         <section class="mt-50 mb-50">
             <div class="container">
+                <span id="total-pages" hidden>{{totalPages}}</span>
                 <div class="row">
                     <div class="col-12">
                         <div class="table-responsive">
-                            <table class="table shopping-summery text-center clean">
+                            <table class="table shopping-summery text-center clean all-orders">
                                 <thead>
                                     <tr class="main-heading">
 
                                         <th scope="col">Sl No.</th>
                                         <th scope="col">OrderId</th>
                                         <th scope="col">Total Price</th>
-                                        <th scope="col">Status</th>
+                                        <th scope="col">Order Status</th>
+                                        <th scope="col">Payment Status</th>
                                         <th scope="col">Action</th>
                                     </tr>
                                 </thead>
@@ -55,7 +57,20 @@
                                             {{else if (equal this.orderStatus "cancelled")}}
                                             <span class="badge rounded-pill alert-danger">Cancelled</span>
                                             {{else if (equal this.orderStatus "return")}}
-                                            <p style="color: red;">Return initiated</p>
+                                            <span class="badge rounded-pill alert-danger">Return initiated</span>
+                                            {{!-- <p style="color: red;">Return initiated</p> --}}
+                                            {{/if}}
+                                        </td>
+                                        <td>
+                                            {{#if (equal this.paymentStatus "paid")}}
+                                            <span class="badge rounded-pill alert-success">Paid</span>
+                                            {{else if (equal this.paymentStatus "pending")}}
+                                            <span class="badge rounded-pill alert-warning">Pending</span>
+                                            {{else if (equal this.paymentStatus "cancelled")}}
+                                            <span class="badge rounded-pill alert-danger">Cancelled</span>
+                                            {{else if (equal this.paymentStatus "return")}}
+                                            <span class="badge rounded-pill alert-danger">Refund initiated</span>
+                                            {{!-- <p style="color: red;">Return initiated</p> --}}
                                             {{/if}}
                                         </td>
                                         <td class="text-right" data-title="Cart">
@@ -69,6 +84,16 @@
                                 </tbody>
                             </table>
                         </div>
+
+                        <br>
+                        {{!-- <div class="pagination-area mt-15 mb-50 position-absolute bottom-0"> --}}
+                        <div class="pagination-area mt-15 mb-50">
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination justify-content-start">
+                                    
+                                </ul>
+                            </nav>
+                        </div>
                        
                         <div class="divider center_icon mt-50 mb-50"><i class="fi-rs-fingerprint"></i></div>
                          <div class="cart-action text-end">
@@ -78,6 +103,7 @@
                     </div>
                 </div>
             </div>
+             
         </section>
     </main>
 {{else}}
@@ -105,8 +131,34 @@
 </section>
 {{/if}}
 
+
 <script>
     
+// Pagination 
+const totalPages = parseInt(document.getElementById('total-pages').innerHTML);
+const generatePaginationButtons = (totalPages) => {
+  let html = '';
+  for (let i = 1; i <= totalPages; i++) {
+    html += `<li class="page-item"><a class="page-link" href="#">${i}</a></li>`;
+  }
+  return html;
+};
 
+const paginationContainer = document.querySelector('.pagination-area ul');
+paginationContainer.innerHTML = generatePaginationButtons(totalPages);
+
+paginationContainer.addEventListener('click', async (event) => {
+  event.preventDefault();
+  const page = event.target.textContent;
+  const url = `/orders?page=${page}`;
+  const response = await fetch(url);
+  const data = await response.text();
+  const parser = new DOMParser();
+  const html = parser.parseFromString(data, 'text/html');
+  
+  const productListContainer = document.querySelector('.all-orders');
+  const newProductList = html.querySelector('.all-orders');
+  productListContainer.innerHTML = newProductList.innerHTML;
+});
 
 </script>

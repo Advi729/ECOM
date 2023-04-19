@@ -3,6 +3,7 @@ const userControllers = require('../controllers/user-controller');
 const productControllers = require('../controllers/product-controller');
 const cartControllers = require('../controllers/cart-controller');
 const orderControllers = require('../controllers/order-controller');
+const invoiceControllers = require('../controllers/invoice-controller');
 const wishlistControllers = require('../controllers/wishlist-controller');
 const userValidators = require('../validation/user-validation');
 const authMiddlewares = require('../middlewares/auth-middleware');
@@ -125,6 +126,13 @@ router.post(
   orderControllers.placeOrder
 );
 
+// Verify payment
+router.post(
+  '/verify-payment',
+  authMiddlewares.isUser,
+  orderControllers.verifyPayment
+);
+
 // View all orders
 router.get('/orders', authMiddlewares.isUser, orderControllers.viewOrders);
 
@@ -140,6 +148,20 @@ router.get(
   '/cancel-order/:id',
   authMiddlewares.isUser,
   orderControllers.cancelOrder
+);
+
+// Return order
+router.get(
+  '/return-order/:orderId',
+  authMiddlewares.isUser,
+  orderControllers.returnOrder
+);
+
+// Download invoice
+router.get(
+  '/invoice/:orderId',
+  authMiddlewares.isUser,
+  invoiceControllers.invoiceDownload
 );
 
 // Wish list
@@ -160,4 +182,8 @@ router.get(
   authMiddlewares.isUser,
   wishlistControllers.removeFromWishlist
 );
+
+// pagination
+// router.get('/products-pages', productControllers.pagination);
+
 module.exports = router;

@@ -43,7 +43,7 @@
                                     <p class="mb-1">
                                         {{userData.firstname}} {{userData.lastname}} <br> <template class="__cf_email__" data-cfemail="e2838e879aa2879a838f928e87cc818d8f">[email&#160;protected]</template>{{userData.email}} <br> {{userData.mobile}}
                                     </p>
-                                    <a href="#">View profile</a>
+                                    {{!-- <a href="#">View profile</a> --}}
                                 </div>
                             </article>
                         </div> <!-- col// -->
@@ -70,10 +70,11 @@
                                             {{else if (equal orderData.orderStatus "cancelled")}}
                                             <small class="badge rounded-pill alert-danger">Cancelled</small>
                                             {{else if (equal orderData.orderStatus "return")}}
-                                            <p style="color: red;">Return initiated</p>
+                                            <small class="badge rounded-pill alert-danger">Return initiated</small>
+                                            {{!-- <p style="color: red;">Return initiated</p> --}}
                                             {{/if}}
                                     </p>
-                                    <a href="#">Download info</a>
+                                    {{!-- <a href="#">Download info</a> --}}
                                 </div>
                             </article>
                         </div> <!-- col// -->
@@ -87,7 +88,7 @@
                                     <p class="mb-1">
                                         {{orderData.deliveryDetails.locality}}, {{orderData.deliveryDetails.area}}<br>{{orderData.deliveryDetails.district}}, {{orderData.deliveryDetails.state}}<br> Pin: {{orderData.deliveryDetails.pincode}}
                                     </p>
-                                    <a href="#">View profile</a>
+                                    {{!-- <a href="#">View profile</a> --}}
                                 </div>
                             </article>
                         </div> <!-- col// -->
@@ -154,7 +155,8 @@
                                                             {{else if (equal orderData.paymentStatus "cancelled")}}
                                                             <span class="badge rounded-pill alert-danger">Cancelled</span>
                                                             {{else if (equal orderData.paymentStatus "return")}}
-                                                            <p style="color: red;">Return initiated</p>
+                                                            <span class="badge rounded-pill alert-danger">Refund initiated</span>
+                                                            {{!-- <p style="color: red;">Return initiated</p> --}}
                                                             {{/if}}
                                                         </dd>
                                                     </dl>

@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const categoryHelpers = require('../helpers/category-helper');
 const subCategoryHelpers = require('../helpers/sub-category-helper');
+const { Category } = require('../models/category-model');
 
 // Get All categories
 const getAllCategories = asyncHandler(async (req, res) => {
@@ -132,6 +133,18 @@ const getRestoreCategory = asyncHandler(async (req, res) => {
   }
 });
 
+// Dynamically update sub-categories
+const getSubCategories = asyncHandler(async (req, res) => {
+  const { category } = req.body;
+  console.log('bodyyy:', req.body);
+
+  const foundCategory = await Category.findOne({ title: category });
+  const finalCategory = JSON.parse(JSON.stringify(foundCategory));
+  const subCategories = finalCategory.subCategory;
+  console.log('subCatss:', subCategories);
+  res.json({ subCategories });
+});
+
 module.exports = {
   getAllCategories,
   createCategory,
@@ -139,4 +152,5 @@ module.exports = {
   postEditCategory,
   getDeleteCategory,
   getRestoreCategory,
+  getSubCategories,
 };

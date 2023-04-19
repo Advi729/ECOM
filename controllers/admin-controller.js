@@ -63,7 +63,10 @@ const adminLogOut = async (req, res) => {
 // new get all products admin side
 const getAllProducts = asyncHandler(async (req, res) => {
   try {
-    const foundProducts = await productHelpers.findProducts();
+    const page = req.query.page || 1;
+    const { foundProducts, totalPages } = await productHelpers.findProducts(
+      page
+    );
     const { admin } = req.session;
     if (foundProducts) {
       res.render('admin/view-products', {
@@ -73,6 +76,7 @@ const getAllProducts = asyncHandler(async (req, res) => {
         unlistSuccess: req.session.unlistSuccess,
         restoreSuccess: req.session.restoreSuccess,
         deleteSuccess: req.session.deleteSuccess,
+        totalPages,
       });
       req.session.unlistSuccess = false;
       req.session.restoreSuccess = false;

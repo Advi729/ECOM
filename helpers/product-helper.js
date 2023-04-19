@@ -5,19 +5,33 @@ const categoryHelpers = require('./category-helper');
 const subCategoryHelpers = require('./sub-category-helper');
 const brandHelpers = require('./brand-helper');
 
-// Find all products
-const findProducts = async () => {
+// Find all products with pagination
+const findProducts = async (page) => {
   try {
-    const productDetails = await Product.find();
+    const limit = 9;
+    const skip = (page - 1) * limit;
+    const productDetails = await Product.find().skip(skip).limit(limit);
+    const totalProducts = await Product.countDocuments();
     const foundProducts = JSON.parse(JSON.stringify(productDetails));
-    // console.log('foundProufufuf:->', foundProducts);
 
-    // res.json(productDetails);
-    return foundProducts;
+    const totalPages = Math.ceil(totalProducts / limit);
+    // console.log(foundProducts);
+    return { foundProducts, totalPages };
   } catch (error) {
     throw new Error();
   }
 };
+
+// Find all products
+const findAllProducts = asyncHandler(async (req, res) => {
+  try {
+    const productDetails = await Product.find();
+    const foundProducts = JSON.parse(JSON.stringify(productDetails));
+    return foundProducts;
+  } catch (error) {
+    throw new Error(error);
+  }
+});
 
 // Find a single product using slug
 const findSingleProduct = async (slug) => {
@@ -198,42 +212,65 @@ const markPermanentDeleted = asyncHandler(async (slug) => {
 });
 
 // Find all products by category-slug
-const findProductsByCategorySlug = async (categorySlug) => {
+const findProductsByCategorySlug = async (categorySlug, page) => {
   try {
-    const productDetails = await Product.find({ categorySlug });
+    console.log('pageCategory:', page);
+    const limit = 9;
+    const skip = (page - 1) * limit;
+    const productDetails = await Product.find({ categorySlug })
+      .skip(skip)
+      .limit(limit);
+    const totalProducts = await Product.countDocuments({ categorySlug });
     const foundProducts = JSON.parse(JSON.stringify(productDetails));
-    // console.log('foundProufufuf:->', foundProducts);
 
-    // res.json(productDetails);
-    return foundProducts;
+    const totalPages = Math.ceil(totalProducts / limit);
+
+    // console.log('foundProufufuf:->', foundProducts);
+    console.log('totalPagesCategory:', totalPages);
+    return { foundProducts, totalPages };
   } catch (error) {
     throw new Error();
   }
 };
 
 // Find all products by sub-category-slug
-const findProductsBySubCategorySlug = async (subCategorySlug) => {
+const findProductsBySubCategorySlug = async (subCategorySlug, page) => {
   try {
-    const productDetails = await Product.find({ subCategorySlug });
+    const limit = 9;
+    const skip = (page - 1) * limit;
+    const productDetails = await Product.find({ subCategorySlug })
+      .skip(skip)
+      .limit(limit);
+    const totalProducts = await Product.countDocuments({ subCategorySlug });
     const foundProducts = JSON.parse(JSON.stringify(productDetails));
+
+    const totalPages = Math.ceil(totalProducts / limit);
     // console.log('foundProufufuf:->', foundProducts);
 
     // res.json(productDetails);
-    return foundProducts;
+    return { foundProducts, totalPages };
   } catch (error) {
     throw new Error();
   }
 };
 
 // Find all products by brand-slug
-const findProductsByBrandSlug = async (brandSlug) => {
+const findProductsByBrandSlug = async (brandSlug, page) => {
   try {
-    const productDetails = await Product.find({ brandSlug });
+    const limit = 9;
+    const skip = (page - 1) * limit;
+    const productDetails = await Product.find({ brandSlug })
+      .skip(skip)
+      .limit(limit);
+
+    const totalProducts = await Product.countDocuments({ brandSlug });
     const foundProducts = JSON.parse(JSON.stringify(productDetails));
+
+    const totalPages = Math.ceil(totalProducts / limit);
     // console.log('foundProufufuf:->', foundProducts);
 
     // res.json(productDetails);
-    return foundProducts;
+    return { foundProducts, totalPages };
   } catch (error) {
     throw new Error();
   }
@@ -251,6 +288,7 @@ const updateProductQuantity = asyncHandler(async (prodId, quantity) => {
 
 module.exports = {
   findProducts,
+  findAllProducts,
   findSingleProduct,
   findSingleProductId,
   createProduct,

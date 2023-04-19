@@ -149,6 +149,9 @@ router
   .route('/restore-category/:slug')
   .get(authMiddlewares.adminCheck, categoryControllers.getRestoreCategory);
 
+// Dynamically display sub-categories
+router.post('/get-sub-categories', categoryControllers.getSubCategories);
+
 //--------------------------------------------------------------------------------------------------------------
 // Sub-Category management
 

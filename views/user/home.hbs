@@ -171,7 +171,7 @@
                                     <h2 class="animated fw-900">Supper value deals</h2>
                                     <h1 class="animated fw-900 text-brand">On all products</h1>
                                     <p class="animated">Save more with coupons & up to 70% off</p>
-                                    <a class="animated btn btn-brush btn-brush-3" href="#"> Shop Now </a>
+                                    <a class="animated btn btn-brush btn-brush-3" href="/shop"> Shop Now </a>
                                 </div>
                             </div>
                             <div class="col-lg-7 col-md-6">
@@ -191,7 +191,7 @@
                                     <h2 class="animated fw-900">Fashion Trending</h2>
                                     <h1 class="animated fw-900 text-7">Great Collection</h1>
                                     <p class="animated">Save more with coupons & up to 20% off</p>
-                                    <a class="animated btn btn-brush btn-brush-2" href="#"> Discover Now </a>
+                                    <a class="animated btn btn-brush btn-brush-2" href="/shop"> Discover Now </a>
                                 </div>
                             </div>
                             <div class="col-lg-7 col-md-6">
@@ -211,7 +211,7 @@
                                     <h2 class="animated fw-900">Big Deals From</h2>
                                     <h1 class="animated fw-900 text-8">Manufacturer</h1>
                                     <p class="animated">Shoes, Sneakers, Classics, Sandals...</p>
-                                    <a class="animated btn btn-brush btn-brush-1" href="#"> Shop Now </a>
+                                    <a class="animated btn btn-brush btn-brush-1" href="/shop"> Shop Now </a>
                                 </div>
                             </div>
                             <div class="col-lg-7 col-md-6">
@@ -972,18 +972,18 @@
         </section>
 
 {{!-- banner --}}
-        {{!-- <section class="banner-2 section-padding pb-0">
+        <section class="banner-2 section-padding pb-0">
             <div class="container">
                 <div class="banner-img banner-big wow fadeIn animated f-none">
-                    <img src="assets-user/imgs/banner/banner-4.png" alt="">
+                    <img src="assets-user/imgs/banner/banner-home.png" alt="">
                     <div class="banner-text d-md-block d-none">
-                        <h4 class="mb-15 mt-40 text-brand">Repair Services</h4>
-                        <h1 class="fw-600 mb-20">We're an Apple <br>Authorised Service Provider</h1>
-                        <a href="shop-grid-right.html" class="btn">Learn More <i class="fi-rs-arrow-right"></i></a>
+                        <h4 class="mb-15 mt-40 text-brand">Hot Deals</h4>
+                        <h1 class="fw-600 mb-20">Bag your favourite <br>premium collection Heats!</h1>
+                        <a href="/shop" class="btn">Learn More <i class="fi-rs-arrow-right"></i></a>
                     </div>
                 </div>
             </div>
-        </section> --}}
+        </section>
 
 
 {{!-- popular-categories --}}
@@ -2275,38 +2275,6 @@
 
     </main>
 
-{{!-- <script>
-    // swal to add a product to cart
-    function addToCartConfirmation(anchor) {
-        const slug = anchor.getAttribute('data-slug');
-        setTimeout(() => {
-            window.location.href = anchor.href;
-        }, 2000);
-
-        Swal.fire({
-          title: "Success!",
-          text: "Product added to cart.",
-          icon: "success",
-          showConfirmButton: false,
-          showCloseButton: true,
-        });
-    }
-    function addToCart(slug) {
-        $.ajax({
-            url:'/add-cart/'+slug,
-            method:'get',
-            success:(response) => {
-               Swal.fire({
-                title: "Success!",
-                text: "Product added to cart.",
-                icon: "success",
-                showConfirmButton: false,
-                showCloseButton: true,
-                }); 
-            }
-        })
-    }
-</script> --}}
         
 <script>
     // swal to add a product to cart

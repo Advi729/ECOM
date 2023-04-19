@@ -38,7 +38,7 @@
         <section class="mt-50 mb-50">
             <div class="container">
                 <div class="row flex-row-reverse">
-                    <div class="col-lg-9">
+                    <div class="col-lg-9 position-relative">
                         <div class="shop-product-fillter style-2">
                             {{!-- <div class="totall-product">
                                 <p> We found <strong class="text-brand">688</strong> items for you!</p>
@@ -46,15 +46,19 @@
                             <div>
                                 {{#if pageShop}}
                                 <h3 class="section-title mb-20"><span>All</span> Products</h3>
+                                {{!-- <span id="shop-page-type" hidden>shop</span> --}}
                                 {{/if}} 
                                 {{#if pageCategory}}
                                 <h3 class="section-title mb-20"><span>{{categoryHeading}}'s</span> Footwear</h3>
+                                {{!-- <span id="shop-page-type" hidden>category</span> --}}
                                 {{/if}} 
                                 {{#if pageSubCategory}}
                                 <h3 class="section-title mb-20"><span>{{categoryHeading}}'s</span> {{subHeading}}</h3>
+                                {{!-- <span id="shop-page-type" hidden>subCategory</span> --}}
                                 {{/if}}
                                 {{#if pageBrand}}
                                 <h3 class="section-title mb-20"><span>{{brandHeading}}</span></h3>
+                                {{!-- <span id="shop-page-type" hidden>brand</span> --}}
                                 {{/if}} 
                             
                             </div>
@@ -100,11 +104,12 @@
                             </div>
                         </div>
 
-                        <div class="row product-grid-3">
+                        <div class="row product-grid-3 all-products">
                             <!--single product-->
                             {{#each allProducts}}
                              {{#if this.isDeleted}}
                              {{else}}
+                             
                             <div class="col-lg-4 col-md-4 col-12 col-sm-6">
                                 <div class="product-cart-wrap mb-30">
                                     <div class="product-img-action-wrap">
@@ -151,23 +156,40 @@
                                     </div>
                                 </div>
                             </div>
+
+                                {{#if ../pageShop}}
+                                <span class="shop-page-type" hidden>shop</span>
+                                <span class="shop-slug" hidden>dummy</span>
+                                {{/if}} 
+                                {{#if ../pageCategory}}
+                                <span class="shop-slug" hidden>{{this.categorySlug}}</span>
+                                <span class="shop-page-type" hidden>category</span>
+                                {{/if}} 
+                                {{#if ../pageSubCategory}}
+                                <span class="shop-slug" hidden>{{this.subCategorySlug}}</span>                                
+                                <span class="shop-page-type" hidden>subCategory</span>
+                                {{/if}}
+                                {{#if ../pageBrand}}
+                                <span class="shop-slug" hidden>{{this.brandSlug}}</span>                                
+                                <span class="shop-page-type" hidden>brand</span>
+                                {{/if}} 
+
                             {{/if}}
                             {{/each}}
                             <!--single product--> 
                         </div>
                         <!--pagination-->
-                        <div class="pagination-area mt-15 mb-sm-5 mb-lg-0">
+                        <span id="total-pages" hidden>{{totalPages}}</span>
+                        {{!-- {{#if pageShop}} --}}
+                        <br>
+                        <div class="pagination-area mt-15 mb-sm-5 mb-lg-0 position-absolute bottom-0">
                             <nav aria-label="Page navigation example">
                                 <ul class="pagination justify-content-start">
-                                    <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">02</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">03</a></li>
-                                    <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">16</a></li>
-                                    <li class="page-item"><a class="page-link" href="#"><i class="fi-rs-angle-double-small-right"></i></a></li>
+                                
                                 </ul>
                             </nav>
                         </div>
+                        {{!-- {{/if}} --}}
                     </div>
                     <div class="col-lg-3 primary-sidebar sticky-sidebar">
                         {{#each allCategories}}
@@ -290,37 +312,19 @@
                             </div>
                         </div> --}}
                         {{!-- Banner --}}
-                        {{!-- <div class="banner-img wow fadeIn mb-45 animated d-lg-block d-none">
-                            <img src="assets/imgs/banner/banner-11.jpg" alt="">
+                        <div class="banner-img wow fadeIn mb-45 animated d-lg-block d-none">
+                            <img src="/assets-user/imgs/banner/banner-wmn-sneakers.jpg" alt="">
                             <div class="banner-text">
-                                <span>Women Zone</span>
-                                <h4>Save 17% on <br>Office Dress</h4>
-                                <a href="shop-grid-right.html">Shop Now <i class="fi-rs-arrow-right"></i></a>
+                                <span class="text-secondary">Women Zone</span>
+                                <h4>Save 17% on <br>Hot sneakers</h4>
+                                <a href="/sub-categories/womens-sneakers">Shop Now <i class="fi-rs-arrow-right"></i></a>
                             </div>
-                        </div> --}}
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
     </main>
-
-{{!-- <script>
-    // swal to add a product to cart
-    function addToCartConfirmation(anchor) {
-        const slug = anchor.getAttribute('data-slug');
-        setTimeout(() => {
-            window.location.href = anchor.href;
-        }, 2000);
-
-        Swal.fire({
-          title: "Success!",
-          text: "Product added to cart.",
-          icon: "success",
-          showConfirmButton: false,
-          showCloseButton: true,
-        });
-    }
-</script> --}}
 
 <script>
    
@@ -386,5 +390,94 @@
             }   
         })  
     }
+
+
+// Pagination 
+const shopPageType = document.querySelector('.shop-page-type').innerHTML;
+const shopSlug = document.querySelector('.shop-slug').innerHTML;
+
+const totalPages = parseInt(document.getElementById('total-pages').innerHTML);
+
+console.log('shop-type: ', shopPageType);
+console.log('totalPages: ', totalPages);
+console.log('shopSlug: ', shopSlug);
+
+const generatePaginationButtons = (totalPages) => {
+  let html = '';
+  for (let i = 1; i <= totalPages; i++) {
+    html += `<li class="page-item"><a class="page-link" href="#">${i}</a></li>`;
+  }
+  return html;
+};
+
+const paginationContainer = document.querySelector('.pagination-area ul');
+paginationContainer.innerHTML = generatePaginationButtons(totalPages);
+
+if(shopPageType === 'shop') {
+    //var url = `/shop?page=${page}`;
+  paginationContainer.addEventListener('click', async (event) => {
+  event.preventDefault();
+  const page = event.target.textContent;
+  const url = `/shop?page=${page}`;
+  const response = await fetch(url);
+  const data = await response.text();
+  const parser = new DOMParser();
+  const html = parser.parseFromString(data, 'text/html');
+  
+  const productListContainer = document.querySelector('.all-products');
+  const newProductList = html.querySelector('.all-products');
+  productListContainer.innerHTML = newProductList.innerHTML;
+});
+  } else if(shopPageType === 'category') {
+    //var url = `/categories/${shopSlug}?page=${page}`;
+    paginationContainer.addEventListener('click', async (event) => {
+    event.preventDefault();
+    const page = event.target.textContent;
+    const url = `/categories/${shopSlug}?page=${page}`;
+    const response = await fetch(url);
+    const data = await response.text();
+    const parser = new DOMParser();
+    const html = parser.parseFromString(data, 'text/html');
+    
+    const productListContainer = document.querySelector('.all-products');
+    const newProductList = html.querySelector('.all-products');
+    productListContainer.innerHTML = newProductList.innerHTML;
+    });
+  } else if(shopPageType === 'subCategory') {
+    //var url = `/sub-categories/${shopSlug}?page=${page}`;
+    paginationContainer.addEventListener('click', async (event) => {
+    event.preventDefault();
+    const page = event.target.textContent;
+    const url = `/sub-categories/${shopSlug}?page=${page}`;
+    const response = await fetch(url);
+    const data = await response.text();
+    const parser = new DOMParser();
+    const html = parser.parseFromString(data, 'text/html');
+    
+    const productListContainer = document.querySelector('.all-products');
+    const newProductList = html.querySelector('.all-products');
+    productListContainer.innerHTML = newProductList.innerHTML;
+    });
+  } else if(shopPageType === 'brand') {
+    //var url = `/brands/${shopSlug}?page=${page}`;
+    paginationContainer.addEventListener('click', async (event) => {
+    event.preventDefault();
+    const page = event.target.textContent;
+    const url = `/brands/${shopSlug}?page=${page}`;
+    const response = await fetch(url);
+    const data = await response.text();
+    const parser = new DOMParser();
+    const html = parser.parseFromString(data, 'text/html');
+    
+    const productListContainer = document.querySelector('.all-products');
+    const newProductList = html.querySelector('.all-products');
+    productListContainer.innerHTML = newProductList.innerHTML;
+    });
+  }
+
+
+
+//    const url = `/shop/${brandSlug}?page=${page}`;
+
     
 </script>

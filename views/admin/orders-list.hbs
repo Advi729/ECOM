@@ -15,6 +15,7 @@
                             <input type="text" placeholder="Search..." class="form-control">
                         </div>
                         <div class="col-lg-2 col-6 col-md-3">
+                        <span id="total-pages" hidden>{{totalPages}}</span>
                             <select class="form-select">
                                 <option>Status</option>
                                 <option>Active</option>
@@ -33,7 +34,7 @@
                 </header> <!-- card-header end// -->
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-hover">
+                        <table class="table table-hover all-orders">
                             <thead>
                                 <tr>
                                     <th>#ID</th>
@@ -66,7 +67,8 @@
                                             {{else if (equal orderStatus "cancelled")}}
                                             <span class="badge rounded-pill alert-danger">Cancelled</span>
                                             {{else if (equal orderStatus "return")}}
-                                            <p style="color: red;">Return initiated</p>
+                                            <span class="badge rounded-pill alert-danger">Return initiated</span>
+                                            {{!-- <p style="color: red;">Return initiated</p> --}}
                                             {{/if}}
                                     </td>
                                     <td>{{moment createdAt format="DD MMMM YYYY" locale="en-in"}}</td>
@@ -90,16 +92,43 @@
                     </div> <!-- table-responsive //end -->
                 </div> <!-- card-body end// -->
             </div> <!-- card end// -->
-            <div class="pagination-area mt-15 mb-50">
+            <br>
+            <div class="pagination-area mt-15 mb-50 position-absolute bottom-0">
                 <nav aria-label="Page navigation example">
                     <ul class="pagination justify-content-start">
-                        <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                        <li class="page-item"><a class="page-link" href="#">02</a></li>
-                        <li class="page-item"><a class="page-link" href="#">03</a></li>
-                        <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                        <li class="page-item"><a class="page-link" href="#">16</a></li>
-                        <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
+                        
                     </ul>
                 </nav>
             </div>
         </section>
+
+<script>
+
+// Pagination 
+const totalPages = parseInt(document.getElementById('total-pages').innerHTML);
+const generatePaginationButtons = (totalPages) => {
+  let html = '';
+  for (let i = 1; i <= totalPages; i++) {
+    html += `<li class="page-item"><a class="page-link" href="#">${i}</a></li>`;
+  }
+  return html;
+};
+
+const paginationContainer = document.querySelector('.pagination-area ul');
+paginationContainer.innerHTML = generatePaginationButtons(totalPages);
+
+paginationContainer.addEventListener('click', async (event) => {
+  event.preventDefault();
+  const page = event.target.textContent;
+  const url = `/admin/view-orders?page=${page}`;
+  const response = await fetch(url);
+  const data = await response.text();
+  const parser = new DOMParser();
+  const html = parser.parseFromString(data, 'text/html');
+  
+  const productListContainer = document.querySelector('.all-orders');
+  const newProductList = html.querySelector('.all-orders');
+  productListContainer.innerHTML = newProductList.innerHTML;
+});
+
+</script>

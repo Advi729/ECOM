@@ -531,14 +531,6 @@
 
 function changeQuantity(userId, prodId, price, count) {
     
-  {{!-- let prodQuantity = $('#' + prodId).html(); --}}
-  {{!-- prodQuantity = parseInt(prodQuantity); --}}
-  {{!-- if (prodQuantity < 2) {
-      $('#' + prodId + '-decrement').prop('disabled', true);
-  } else {
-      $('#' + prodId + '-decrement').prop('disabled', false);
-  } --}}
-
   $.ajax({
       url:'/change-product-quantity',
       data:{
@@ -549,7 +541,6 @@ function changeQuantity(userId, prodId, price, count) {
       },
       method:'post',
       success:(response) => {
-  console.log('changed|Qty:',response);
 
           if(response.changedQty.updatedStatus) {
 

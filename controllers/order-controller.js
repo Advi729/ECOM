@@ -90,15 +90,74 @@ const placeOrder = asyncHandler(async (req, res) => {
       userId,
       deliveryAddress
     );
-    const created = await orderHelpers.createOrder(
-      productsList,
-      totalPrice,
-      req.body,
-      address
-    );
-    // console.log('created order:', created);
-    if (created) {
-      res.json({ status: true });
+    if (req.body.payment_option === 'cod') {
+      const created = await orderHelpers.createOrder(
+        productsList,
+        totalPrice,
+        req.body,
+        address
+      );
+      // console.log('created order:', created);
+      if (created) {
+        res.json({ status: 'cod' });
+      }
+    } else if (req.body.payment_option === 'razorPay') {
+      const generateOrderId = () => {
+        let orderId = '';
+        const characters =
+          'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        const charactersLength = characters.length;
+
+        for (let i = 0; i < 10; i++) {
+          orderId += characters.charAt(
+            Math.floor(Math.random() * charactersLength)
+          );
+        }
+
+        const timestamp = Date.now().toString();
+        orderId += timestamp;
+
+        return orderId;
+      };
+
+      const orderId = generateOrderId();
+      const createdInstance = await orderHelpers.generateRazorPay(
+        orderId,
+        totalPrice
+      );
+      if (createdInstance) {
+        const created = await orderHelpers.createOrder(
+          productsList,
+          totalPrice,
+          req.body,
+          address
+        );
+        if (created) {
+          res.json({ status: 'razorPay', createdInstance });
+        }
+      }
+    } else {
+      res.json({ status: false });
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+// verify payment
+const verifyPayment = asyncHandler(async (req, res) => {
+  try {
+    const onlinePayment = await orderHelpers.verifyRazorpayPayment(req.body);
+    if (onlinePayment) {
+      const orderId = req.body['order[receipt]'];
+      const paymentStatus = 'paid';
+      const updated = await orderHelpers.updatePaymentStatus(
+        orderId,
+        paymentStatus
+      );
+      if (updated) {
+        res.json({ status: true });
+      }
     }
   } catch (error) {
     throw new Error(error);
@@ -108,6 +167,7 @@ const placeOrder = asyncHandler(async (req, res) => {
 // View all orders
 const viewOrders = asyncHandler(async (req, res) => {
   try {
+    const page = req.query.page || 1;
     const { user } = req.session;
     const userId = user.response._id;
     let cartCount = null;
@@ -116,9 +176,13 @@ const viewOrders = asyncHandler(async (req, res) => {
       cartCount = await cartHelpers.getCartCount(userId);
       wishlistCount = await wishlistHelpers.getWishlistCount(userId);
     }
-    const orderData = await orderHelpers.getOrderDetails(userId);
+    const { orderData, totalPages } = await orderHelpers.getOrderDetails(
+      userId,
+      page
+    );
+    console.log('totalPages: ', totalPages);
     const orderDetails = JSON.parse(JSON.stringify(orderData));
-    console.log('orderDetails:', orderDetails);
+    // console.log('orderDetails:', orderDetails);
     if (orderDetails) {
       res.render('user/orders', {
         isUser: true,
@@ -126,6 +190,7 @@ const viewOrders = asyncHandler(async (req, res) => {
         orderDetails,
         cartCount,
         wishlistCount,
+        totalPages,
       });
     }
   } catch (error) {
@@ -191,15 +256,29 @@ const cancelOrder = asyncHandler(async (req, res) => {
   }
 });
 
+// Return order
+const returnOrder = asyncHandler(async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    console.log('orderidddddd: ', orderId);
+    const returned = await orderHelpers.returnProductOrder(orderId);
+    console.log('returned order: ', returned);
+    if (returned) res.json({ status: true });
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
 // All orders admin side
 const allOrdersAdmin = asyncHandler(async (req, res) => {
   try {
+    const page = req.query.page || 1;
     const { admin } = req.session;
-    const allOrders = await orderHelpers.allOrders();
+    const { orderDetails, totalPages } = await orderHelpers.allOrders(page);
     // console.log('allOrdersss: ', allOrders);
 
     const userData = await Promise.all(
-      allOrders.map(async (order) => {
+      orderDetails.map(async (order) => {
         const user = await User.findById(order.userId);
         return {
           user,
@@ -214,12 +293,13 @@ const allOrdersAdmin = asyncHandler(async (req, res) => {
     const userDetails = JSON.parse(JSON.stringify(userData));
     // console.log('userDetails: ', userDetails);
 
-    if (allOrders) {
+    if (orderDetails) {
       res.render('admin/orders-list', {
         isAdmin: true,
         admin,
-        allOrders,
+        orderDetails,
         userDetails,
+        totalPages,
       });
     }
   } catch (error) {
@@ -262,7 +342,7 @@ const orderDetails = asyncHandler(async (req, res) => {
   }
 });
 
-// Change order status
+// Change order status admin side
 const changeOrderStatus = asyncHandler(async (req, res) => {
   try {
     const { orderStatus, orderId } = req.body;
@@ -276,10 +356,12 @@ const changeOrderStatus = asyncHandler(async (req, res) => {
 module.exports = {
   checkOutCart,
   placeOrder,
+  verifyPayment,
   viewOrders,
   viewSingleOrder,
   cancelOrder,
   allOrdersAdmin,
   orderDetails,
   changeOrderStatus,
+  returnOrder,
 };
