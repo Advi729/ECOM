@@ -242,6 +242,8 @@
 
 // Pagination 
 const totalPages = parseInt(document.getElementById('total-pages').innerHTML);
+if (totalPages > 1) {
+
 const generatePaginationButtons = (totalPages) => {
   let html = '';
   for (let i = 1; i <= totalPages; i++) {
@@ -266,4 +268,5 @@ paginationContainer.addEventListener('click', async (event) => {
   const newProductList = html.querySelector('.all-products');
   productListContainer.innerHTML = newProductList.innerHTML;
 });
+}
 </script>

@@ -10,44 +10,13 @@
     </div>
     <section class="mt-50 mb-50">
         <div class="container">
-            {{!-- <div class="row">
+            
+            <div class="row">
                 <div class="col-lg-6 mb-sm-15">
-                    <div class="toggle_info">
-                        <span><i class="fi-rs-user mr-10"></i><span class="text-muted">Already have an account?</span>
-                            <a href="#loginform" data-bs-toggle="collapse" class="collapsed" aria-expanded="false">Click
-                                here to login</a></span>
-                    </div>
-                    <div class="panel-collapse collapse login_form" id="loginform">
-                        <div class="panel-body">
-                            <p class="mb-30 font-sm">If you have shopped with us before, please enter your details
-                                below. If you are a new customer, please proceed to the Billing &amp; Shipping section.
-                            </p>
-                            <form method="post">
-                                <div class="form-group">
-                                    <input type="text" name="email" placeholder="Username Or Email">
-                                </div>
-                                <div class="form-group">
-                                    <input type="password" name="password" placeholder="Password">
-                                </div>
-                                <div class="login_footer form-group">
-                                    <div class="chek-form">
-                                        <div class="custome-checkbox">
-                                            <input class="form-check-input" type="checkbox" name="checkbox"
-                                                id="remember" value="">
-                                            <label class="form-check-label" for="remember"><span>Remember
-                                                    me</span></label>
-                                        </div>
-                                    </div>
-                                    <a href="#">Forgot password?</a>
-                                </div>
-                                <div class="form-group">
-                                    <button class="btn btn-md" name="login">Log in</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
+                    <h2>Checkout</h2>
                 </div>
                 <div class="col-lg-6">
+                    <br>
                     <div class="toggle_info">
                         <span><i class="fi-rs-label mr-10"></i><span class="text-muted">Have a coupon?</span> <a
                                 href="#coupon" data-bs-toggle="collapse" class="collapsed" aria-expanded="false">Click
@@ -56,24 +25,24 @@
                     <div class="panel-collapse collapse coupon_form " id="coupon">
                         <div class="panel-body">
                             <p class="mb-30 font-sm">If you have a coupon code, please apply it below.</p>
-                            <form method="post">
+                            <form method="post" id="applyCouponForm" action="/apply-coupon">
+                                <input type="number" hidden name="totalPrice" value="{{totalPrice}}">
                                 <div class="form-group">
-                                    <input type="text" placeholder="Enter Coupon Code...">
+                                    <input type="text" name="couponCode" placeholder="Enter Coupon Code..." value="">
                                 </div>
                                 <div class="form-group">
-                                    <button class="btn  btn-md" name="login">Apply Coupon</button>
+                                    <button type="submit" class="btn btn-md" form="applyCouponForm">Apply Coupon</button>
                                 </div>
                             </form>
                         </div>
                     </div>
                 </div>
-            </div> --}}
-            <div class="row">
-                <h2>Checkout</h2>
+                
                 <div class="col-12">
                     <div class="divider mt-50 mb-50"></div>
                 </div>
             </div>
+            
             <div class="row">
                 <div class="col-md-6">
 
@@ -672,9 +641,84 @@
                         </div>
                     </form> --}}
 
+{{!-- Add Address --}}
+<button type="button" id="add-address-btn"
+    class="btn-sm btn-success" data-bs-toggle="modal"
+    data-bs-target=".staticBackdrop">
+    Add Address
+</button>
+<br>
+<br>
+
+{{!-- Modal for edit Address --}}
+                                        <div class="modal fade staticBackdrop" data-bs-backdrop="static"
+                                            data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                            aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="staticBackdropLabel">Add Address
+                                                        </h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form method="POST" id="addressCheckoutAddForm" action="/add-address-checkout/{{user.response._id}}">
+                                                            <div class="row">
+                                                                <div class="form-group col-md-12">
+                                                                    <label>Locality <span
+                                                                            class="required">*</span></label>
+                                                                    <input class="form-control square"
+                                                                        value="{{this.locality}}" name="locality"
+                                                                        type="text">
+                                                                </div>
+                                                                <div class="form-group col-md-12">
+                                                                    <label>Area <span class="required">*</span></label>
+                                                                    <input class="form-control square"
+                                                                        value="{{this.area}}" name="area" type="text">
+                                                                </div>
+                                                                <div class="form-group col-md-6">
+                                                                    <label>District <span
+                                                                            class="required">*</span></label>
+                                                                    <input class="form-control square"
+                                                                        value="{{this.district}}" name="district"
+                                                                        type="text">
+                                                                </div>
+                                                                <div class="form-group col-md-6">
+                                                                    <label>Pin-code <span
+                                                                            class="required">*</span></label>
+                                                                    <input class="form-control square"
+                                                                        value="{{this.pincode}}" name="pincode"
+                                                                        type="number">
+                                                                </div>
+                                                                <div class="form-group col-md-12">
+                                                                    <label>State <span class="required">*</span></label>
+                                                                    <input class="form-control square"
+                                                                        value="{{this.state}}" name="state" type="text">
+                                                                </div>
+              
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                                                                <button type="submit" class="btn btn-fill-out">Save</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                    {{!-- <div class="modal-footer">
+                                                        <button type="button" class="btn btn-danger"
+                                                            data-bs-dismiss="modal">Close</button>
+                                                        <button type="submit"
+                                                            class="btn btn-fill-out submit">Save</button>
+                                                    </div> --}}
+                                                </div>
+                                            </div>
+                                        </div>
+
                     <form id="checkout-form" method="post" action="/place-order">
                         <div class="col-md-6">
                             <input type="text" hidden name="userId" value="{{user.response._id}}">
+                            <input type="text" hidden name="couponCode" id="couponCode" value="">
+                            <input type="hidden" name="grandTotalPrice" id="grandTotalPriceValue" value="">  
                             <div class="mb-25">
                                 <h4>Select shipping address</h4>
                             </div>
@@ -746,10 +790,15 @@
                                         <td colspan="2"><em>Free Shipping</em></td>
                                     </tr>
                                     <tr>
+                                        <th>Coupon applied</th>
+                                        <td colspan="2" id="coupon-applied"><em>No</em></td>
+                                    </tr>
+                                    <tr>
                                         <th>Total</th>
                                         <td colspan="2" class="product-subtotal"><span
-                                                class="font-xl text-brand fw-900">{{formatNumber totalPrice
-                                                style="currency" currency="INR" minimumFractionDigits=2}}</span></td>
+                                                class="font-xl text-brand fw-900" id="grandTotalPrice">{{formatNumber totalPrice
+                                                style="currency" currency="INR" minimumFractionDigits=2}}</span>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -795,13 +844,59 @@
                             </div>
                         </div>
                     </div>
+
+                    {{!-- <div class="row"> --}}
+                {{!-- <div class="col-lg-6 mb-sm-15">
+                    <div class="toggle_info">
+                        <span><i class="fi-rs-user mr-10"></i><span class="text-muted">Already have an account?</span>
+                            <a href="#loginform" data-bs-toggle="collapse" class="collapsed" aria-expanded="false">Click
+                                here to login</a></span>
+                    </div>
+                    <div class="panel-collapse collapse login_form" id="loginform">
+                        <div class="panel-body">
+                            <p class="mb-30 font-sm">If you have shopped with us before, please enter your details
+                                below. If you are a new customer, please proceed to the Billing &amp; Shipping section.
+                            </p>
+                            <form method="post">
+                                <div class="form-group">
+                                    <input type="text" name="email" placeholder="Username Or Email">
+                                </div>
+                                <div class="form-group">
+                                    <input type="password" name="password" placeholder="Password">
+                                </div>
+                                <div class="login_footer form-group">
+                                    <div class="chek-form">
+                                        <div class="custome-checkbox">
+                                            <input class="form-check-input" type="checkbox" name="checkbox"
+                                                id="remember" value="">
+                                            <label class="form-check-label" for="remember"><span>Remember
+                                                    me</span></label>
+                                        </div>
+                                    </div>
+                                    <a href="#">Forgot password?</a>
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-md" name="login">Log in</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div> --}}
+                {{!-- <div class="col-lg-6"> --}}
+                    
+                {{!-- </div> --}}
+            {{!-- </div> --}}
                 </div>
             </div>
-                        <button type="submit" class="btn btn-fill-out btn-block mt-30">Place Order</a>
+                        {{!-- <button type="submit" class="btn btn-fill-out btn-block mt-30">Place Order</a> --}}
+
+                        <button type="submit" class="btn btn-fill-out btn-block mt-30" form="checkout-form">Place Order</button>
+
                         {{!-- <button type="submit" class="btn btn-fill-out btn-block mt-30" onclick="event.preventDefault(); placeOrderConfirmation(this)" data-id="ORDER_ID">Place Order</button> --}}
                         {{!-- <button type="submit" class="btn btn-fill-out btn-block mt-30" onclick="event.preventDefault(); placeOrderConfirmation(this)">Place Order</button> --}}
 
             </form>
+            
         </div>
     </section>
 </main>
@@ -820,16 +915,18 @@
                 //console.log(response.status)
                 switch (response.status) {
                     case 'cod':
-                        swal(
-                            "Successfull !",
-                            "Order Placed Successfully!",
-                            "success"
-                        ).then(() => {
-                            location.replace('/orders');
+                        Swal.fire({
+                            title: "Success!",
+                            text: "Order is placed.",
+                            icon: "success",
+                            showConfirmButton: false,
                         });
+                        setTimeout(() => {
+                            location.replace('/orders');
+                        },2000);
                     case 'razorPay':
-                        console.log(response.createdInstance)
-                        razorPayPayment(response.createdInstance);                      
+                        //console.log(response.createdInstance)
+                        razorPayPayment(response.createdInstance, response.userData);                      
                 }
             },
             error: (response, stat, err) => {
@@ -839,26 +936,28 @@
         })
     })
 
-    function razorPayPayment(order) {
+    function razorPayPayment(order, userData) {
+        const userName = `${userData.firstname}${userData.lastname}`;
+        const userId = userData._id;
         var options = {
             "key": "rzp_test_unePQlLuDT2Zxm", // Enter the Key ID generated from the Dashboard
             "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
             "currency": "INR",
             "name": "Heats", //your business name
             "description": "Test Transaction",
-            "image": "/assets-user/imgs/theme/heats_favicon.png",
+//            "image": "",
             "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
             "handler": function (response){
                 //alert(response.razorpay_payment_id);
                 //alert(response.razorpay_order_id);
                 //alert(response.razorpay_signature)
 
-                verifyPayment(response, order);
+                verifyPayment(response, order, userId);
             },
             "prefill": {
-                "name": "Gaurav Kumar", //your customer's name
-                "email": "gaurav.kumar@example.com",
-                "contact": "9000090000"
+                "name": userName, //your customer's name
+                "email": userData.email,
+                "contact": userData.mobile
             },
             "notes": {
                 "address": "Razorpay Corporate Office"
@@ -869,13 +968,32 @@
         };
         var rzp1 = new Razorpay(options);
         rzp1.on('payment.failed', function (response){
-                alert(response.error.code);
+                console.log('payment failed: ', response.error)
+                Swal.fire({
+                    title: "Payment failed!",
+                    text: `${response.error.description}`,
+                    icon: "error",
+                    showConfirmButton: false,
+                    showCloseButton: true,
+                }).then(() => {
+                    $.ajax({
+                        url: '/delete-cart',
+                        method: 'get',
+                        success: (response) => {
+                            if (response.status) {
+                                location.replace('/cart');
+                            }
+                        }
+                    });
+                });
+                {{!-- alert(response.error.code);
                 alert(response.error.description);
                 alert(response.error.source);
                 alert(response.error.step);
                 alert(response.error.reason);
                 alert(response.error.metadata.order_id);
-                alert(response.error.metadata.payment_id);
+                alert(response.error.metadata.payment_id); --}}
+                 
         });
         //document.getElementById('rzp-button1').onclick = function(e){
             rzp1.open();
@@ -883,28 +1001,123 @@
         //}
     }
 
-    function verifyPayment(payment, order) {
+    function verifyPayment(payment, order, userId) {
         $.ajax({
             url: '/verify-payment',
             data: {
                 payment,
-                order
+                order,
+                userId
             },
             method: 'post',
             success: (response) => {
                 if (response.status) {
-                     {{!-- Swal.fire({
+                     Swal.fire({
                         title: "Success!",
-                        text: "Payment is successfull.",
+                        text: "Order is placed.",
                         icon: "success",
                         showConfirmButton: false,
-                    }); --}}
-                    //setTimeout(() => {
+                    });
+                    setTimeout(() => {
                         location.replace('/orders');
-                    //},2000);
+                    },2000);
                 }
             }
         });
     }
+
+    // select the form by ID
+const addressAddForm = document.getElementById("addressCheckoutAddForm");
+
+// add a submit event listener to the form
+addressAddForm.addEventListener("submit", (event) => {
+  // prevent the default form submission behavior
+  event.preventDefault();
+
+  // display a confirmation message using SweetAlert2
+  Swal.fire({
+    title: "Are you sure?",
+    text: "Do you want to add this address?",
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, add it!",
+    cancelButtonText: "No, cancel",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // if the user confirms the action, submit the form
+      setTimeout(() => {
+        addressAddForm.submit();
+        }, 2000);
+
+      // display a success message using SweetAlert2 after the form is submitted
+      Swal.fire({
+        title: "Success!",
+        text: "Address has been added.",
+        icon: "success",
+        showConfirmButton: false,
+      });
+    }
+  });
+});
+
+// Ajax call for applying coupon code
+const applyCouponForm = document.getElementById("applyCouponForm");
+
+// add a submit event listener to the form
+applyCouponForm.addEventListener("submit", (event) => {
+  // prevent the default form submission behavior
+  event.preventDefault();
+  
+  //const formData = new FormData(applyCouponForm);
+  //console.log('formData: ', formData)
+
+  // display a confirmation message using SweetAlert2
+  Swal.fire({
+    title: "Are you sure?",
+    text: "Do you want to apply this coupon?",
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, apply it!",
+    cancelButtonText: "No, cancel",
+  }).then((result) => {
+    if (result.isConfirmed) {
+        $.ajax({
+            url: '/apply-coupon',
+            data: $('#applyCouponForm').serialize(),
+            method: 'post',
+            success: (response) => {
+                if (response.status) {
+                      Swal.fire({
+                        title: "Success!",
+                        text: "Coupon has been applied.",
+                        icon: "success",
+                        showConfirmButton: false,
+                    });
+                    console.log('grand: ', response.grandTotalPrice)
+                    let formattedGrandTotalPrice = "₹" + response.grandTotalPrice.toFixed(2);
+                    document.getElementById('grandTotalPrice').innerHTML = formattedGrandTotalPrice;
+                    document.getElementById('coupon-applied').innerHTML = 'Yes';
+                    const grandTotalPriceValue = document.getElementById('grandTotalPriceValue');
+                    grandTotalPriceValue.value = parseFloat(response.grandTotalPrice);
+                    const couponCodeValue = document.getElementById('couponCode');
+                    couponCodeValue.value = response.couponCode;
+                } else {
+                    Swal.fire({
+                        title: "Error!",
+                        text: "Not eligible for this coupon",
+                        icon: "error",
+                        showConfirmButton: false,
+                    });
+                }
+            }
+        });
+    
+    }
+  });
+});
     </script>
 

@@ -1,9 +1,13 @@
 const asyncHandler = require('express-async-handler');
 const Razorpay = require('razorpay');
 const Order = require('../models/order-model');
+const Wallet = require('../models/wallet-model');
 const Cart = require('../models/cart-model');
+const User = require('../models/user-model');
 const Product = require('../models/product-model');
 const productHelpers = require('./product-helper');
+const couponHelpers = require('./coupon-helper');
+const userHelpers = require('./user-helper');
 
 const instance = new Razorpay({
   key_id: 'rzp_test_unePQlLuDT2Zxm',
@@ -24,9 +28,55 @@ const updateProductQuantity = asyncHandler(async (productsList) => {
   }
 });
 
+// Update coupon details in user schema
+const updateCouponDetails = asyncHandler(async (userId, coupon) => {
+  try {
+    console.log('userId: ', userId);
+    console.log('couponDeta: ', coupon.code);
+    const user = await User.findById(userId);
+    const couponObj = {
+      code: coupon.code,
+      timesUsed: 1,
+    };
+    const existingCouponIndex = user.coupons.findIndex(
+      (c) => c.code == coupon.code
+    );
+console.log('existing: ', existingCouponIndex);
+    if (existingCouponIndex !== -1) {
+      // Coupon already exists, increment timesUsed property
+      // user.coupons[existingCouponIndex].timesUsed++;
+      const updated = await User.updateOne(
+        { _id: userId, 'coupons.code': coupon.code },
+        { $inc: { 'coupons.$.timesUsed': 1 } }
+      );
+      return updated;
+    }
+    // Coupon doesn't exist, add a new coupon object to user's coupons array
+    // user.coupons.push(couponObj);
+    const updated = await User.updateOne(
+      { _id: userId },
+      // { $push: { coupons: { $each: [couponObj] } } }
+      { $push: { coupons: couponObj } },
+      { new: true }
+    );
+    // const updated = await user.save();
+    return updated;
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
 // Create order
 const createOrder = asyncHandler(
-  async (productsList, totalPrice, order, address) => {
+  async (
+    productsList,
+    totalPrice,
+    grandTotalPrice,
+    order,
+    address,
+    userId,
+    coupon
+  ) => {
     try {
       // console.log('productsList:', productsList);
       // console.log('totalPrice:', totalPrice);
@@ -52,6 +102,10 @@ const createOrder = asyncHandler(
       const status = order.payment_option === 'cod' ? 'placed' : 'pending';
       const payStatus = order.payment_option === 'cod' ? 'pending' : 'paid';
 
+      let couponPercentage;
+      if (coupon) {
+        couponPercentage = coupon.discountPercentage;
+      }
       const newOrder = new Order({
         orderId: generateOrderId(),
         userId: order.userId,
@@ -61,6 +115,8 @@ const createOrder = asyncHandler(
         orderStatus: status,
         paymentStatus: payStatus,
         totalPrice,
+        grandTotalPrice,
+        couponPercentage,
       });
       await newOrder.save();
 
@@ -68,9 +124,13 @@ const createOrder = asyncHandler(
       await updateProductQuantity(productsList);
 
       // Delete the cart after placing order
-      await Cart.deleteOne({ userId: order.userId });
+      // await Cart.deleteOne({ userId: order.userId });
 
       if (newOrder) {
+        if (coupon) {
+          // update coupon details in user schema
+          await updateCouponDetails(userId, coupon);
+        }
         return newOrder;
       }
     } catch (error) {
@@ -87,10 +147,13 @@ const getOrderDetails = asyncHandler(async (userId, page) => {
     const totalOrders = await Order.countDocuments({ userId });
     const totalPages = Math.ceil(totalOrders / limit);
 
-    console.log('total orders: ', totalOrders);
-    console.log('total pages: ', totalPages);
+    // console.log('total orders: ', totalOrders);
+    // console.log('total pages: ', totalPages);
 
-    const orderData = await Order.find({ userId }).skip(skip).limit(limit);
+    const orderData = await Order.find({ userId })
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
 
     return { orderData, totalPages };
   } catch (error) {
@@ -104,6 +167,35 @@ const getSingleOrderDetails = asyncHandler(async (orderId) => {
     const singleOrderData = await Order.findOne({ orderId });
     const singleOrderDetails = JSON.parse(JSON.stringify(singleOrderData));
     return singleOrderDetails;
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+// Give refund if order cancelled or returned
+const giveRefund = asyncHandler(async (order) => {
+  try {
+    const { userId } = order;
+    const amount = parseFloat(order.totalPrice);
+    const transaction = {
+      orderId: order.orderId,
+      amount,
+      date: new Date(),
+    };
+    const walletExisting = await Wallet.findOne({ userId });
+    if (walletExisting) {
+      walletExisting.balance += amount;
+      walletExisting.transactions.push(transaction);
+      await walletExisting.save();
+      return walletExisting;
+    }
+    const walletNew = new Wallet({
+      userId,
+      balance: amount,
+      transactions: [transaction],
+    });
+    await walletNew.save();
+    return walletNew;
   } catch (error) {
     throw new Error(error);
   }
@@ -127,6 +219,10 @@ const cancelProductOrder = asyncHandler(async (orderId) => {
       { orderId },
       { $set: { orderStatus: newStatus, paymentStatus } }
     );
+    if (orderDetails.paymentMethod !== 'cod') {
+      const refunded = await giveRefund(orderDetails);
+      if (cancelled && refunded) return cancelled;
+    }
     if (cancelled) return cancelled;
   } catch (error) {
     throw new Error(error);
@@ -150,7 +246,12 @@ const returnProductOrder = asyncHandler(async (orderId) => {
       { orderId },
       { $set: { orderStatus: newStatus, paymentStatus } }
     );
-    if (returned) return returned;
+
+    // if (orderDetails.paymentMethod !== 'cod') {
+    const refunded = await giveRefund(orderDetails);
+    if (returned && refunded) return returned;
+    // }
+    // if (returned) return returned;
   } catch (error) {
     // throw new Error(error);
     console.error(error);
@@ -164,7 +265,10 @@ const allOrders = asyncHandler(async (page) => {
     const skip = (page - 1) * limit;
     const totalOrders = await Order.countDocuments();
 
-    const orderData = await Order.find().skip(skip).limit(limit);
+    const orderData = await Order.find()
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
     const orderDetails = JSON.parse(JSON.stringify(orderData));
     const totalPages = Math.ceil(totalOrders / limit);
 
@@ -197,7 +301,8 @@ const generateRazorPay = asyncHandler(async (orderId, totalPrice) => {
     });
     return createdInstance;
   } catch (error) {
-    throw new Error(error);
+    // throw new Error(error);
+    console.error(error);
   }
 });
 
@@ -233,6 +338,17 @@ const updatePaymentStatus = asyncHandler(async (orderId, paymentStatus) => {
   }
 });
 
+// Get wallet details
+const getWalletDetails = asyncHandler(async (userId) => {
+  try {
+    const walletData = await Wallet.findOne({ userId }).sort({ createdAt: -1 });
+    const walletDetails = JSON.parse(JSON.stringify(walletData));
+    if (walletDetails) return walletDetails;
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
 module.exports = {
   createOrder,
   getOrderDetails,
@@ -244,4 +360,5 @@ module.exports = {
   verifyRazorpayPayment,
   updatePaymentStatus,
   returnProductOrder,
+  getWalletDetails,
 };

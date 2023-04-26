@@ -46,6 +46,7 @@ Handlebars.registerHelper('inc', (value) => parseInt(value) + 1);
 Handlebars.registerHelper('equal', (a, b) => a === b);
 Handlebars.registerHelper('index', (index) => index + 1);
 Handlebars.registerHelper('lt', (a, b) => a < b);
+Handlebars.registerHelper('greaterThan', (a, b) => a > b);
 // Handlebars.registerHelper(helpers.comparison().lt);
 Handlebars.registerHelper('moment', (dateValue, options) => {
   const format = options.hash.format || 'YYYY-MM-DD';

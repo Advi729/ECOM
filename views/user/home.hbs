@@ -3,7 +3,7 @@
         <div class="mobile-header-wrapper-inner">
             <div class="mobile-header-top">
                 <div class="mobile-header-logo">
-                    <a href="index.html"><img src="assets-user/imgs/theme/logo.svg" alt="logo"></a>
+                    <a href="/"><img src="/assets-user/imgs/theme/logo.svg" alt="logo"></a>
                 </div>
                 <div class="mobile-menu-close close-style-wrap close-style-position-inherit">
                     <button class="close-style search-close">
@@ -216,7 +216,7 @@
                             </div>
                             <div class="col-lg-7 col-md-6">
                                 <div class="single-slider-img single-slider-img-1">
-                                    <img class="animated slider-1-3" src="assets-user/imgs/slider/slider-3.jpg" alt="">
+                                    <img class="animated slider-1-3" src="/assets-user/imgs/slider/slider-3.jpg" alt="">
                                 </div>
                             </div>
                         </div>
@@ -232,37 +232,37 @@
                 <div class="row">
                     <div class="col-lg-2 col-md-4 mb-md-3 mb-lg-0">
                         <div class="banner-features wow fadeIn animated hover-up">
-                            <img src="assets-user/imgs/theme/icons/feature-1.png" alt="">
+                            <img src="/assets-user/imgs/theme/icons/feature-1.png" alt="">
                             <h4 class="bg-1">Free Shipping</h4>
                         </div>
                     </div>
                     <div class="col-lg-2 col-md-4 mb-md-3 mb-lg-0">
                         <div class="banner-features wow fadeIn animated hover-up">
-                            <img src="assets-user/imgs/theme/icons/feature-2.png" alt="">
+                            <img src="/assets-user/imgs/theme/icons/feature-2.png" alt="">
                             <h4 class="bg-3">Online Order</h4>
                         </div>
                     </div>
                     <div class="col-lg-2 col-md-4 mb-md-3 mb-lg-0">
                         <div class="banner-features wow fadeIn animated hover-up">
-                            <img src="assets-user/imgs/theme/icons/feature-3.png" alt="">
+                            <img src="/assets-user/imgs/theme/icons/feature-3.png" alt="">
                             <h4 class="bg-2">Save Money</h4>
                         </div>
                     </div>
                     <div class="col-lg-2 col-md-4 mb-md-3 mb-lg-0">
                         <div class="banner-features wow fadeIn animated hover-up">
-                            <img src="assets-user/imgs/theme/icons/feature-4.png" alt="">
+                            <img src="/assets-user/imgs/theme/icons/feature-4.png" alt="">
                             <h4 class="bg-4">Promotions</h4>
                         </div>
                     </div>
                     <div class="col-lg-2 col-md-4 mb-md-3 mb-lg-0">
                         <div class="banner-features wow fadeIn animated hover-up">
-                            <img src="assets-user/imgs/theme/icons/feature-5.png" alt="">
+                            <img src="/assets-user/imgs/theme/icons/feature-5.png" alt="">
                             <h4 class="bg-5">Happy Sell</h4>
                         </div>
                     </div>
                     <div class="col-lg-2 col-md-4 mb-md-3 mb-lg-0">
                         <div class="banner-features wow fadeIn animated hover-up">
-                            <img src="assets-user/imgs/theme/icons/feature-6.png" alt="">
+                            <img src="/assets-user/imgs/theme/icons/feature-6.png" alt="">
                             <h4 class="bg-6">24/7 Support</h4>
                         </div>
                     </div>
@@ -300,6 +300,8 @@
                             {{#each allProducts}}
                             {{#if this.isDeleted}}
                             {{else}}
+                            {{#if (equal this.stock 0)}}
+                            {{else}}
                             <div class="col-lg-3 col-md-4 col-12 col-sm-6">
                                 <div class="product-cart-wrap mb-30">
                                     <div class="product-img-action-wrap">
@@ -323,7 +325,7 @@
                                     </div>
                                     <div class="product-content-wrap">
                                         <div class="product-category">
-                                            <a href="#">{{this.brand}}</a>
+                                            <a href="/brands/{{this.brandSlug}}">{{this.brand}}</a>
                                         </div>
                                         <h2><a href="/products/{{this.slug}}">{{this.title}}</a></h2>
                                         {{!-- <div class="rating-result" title="90%">
@@ -332,8 +334,8 @@
                                             </span>
                                         </div> --}}
                                         <div>
-                                            <a href="#">{{this.category}}'s </a>
-                                            <a href="#">{{this.subCategory}}</a>
+                                            <a href="/categories/{{this.categorySlug}}">{{this.category}}'s </a>
+                                            <a href="/sub-categories/{{this.subCategorySlug}}">{{this.subCategory}}</a>
                                         </div>
                                         <div class="product-price">
                                             <span> {{formatNumber this.price style="currency" currency="INR" minimumFractionDigits=2}} </span>
@@ -347,6 +349,7 @@
                                     </div>
                                 </div>
                             </div>   
+                            {{/if}}
                             {{/if}}
                             {{/each}}
                         </div>

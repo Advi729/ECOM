@@ -36,8 +36,8 @@ const addProductToCart = asyncHandler(async (userId, prodId, subTotal) => {
       const updated = await Cart.updateOne(
         { userId, 'products.prodId': prodId },
         {
-          $inc: { 'products.$.quantity': 1 },
-          $set: { 'products.$.subTotal': subTotal },
+          $inc: { 'products.$.quantity': 1, 'products.$.subTotal': subTotal },
+          // $set: { 'products.$.subTotal': subTotal },
         }
       );
       return updated;
@@ -157,6 +157,16 @@ const changeTheQuantity = asyncHandler(async (data, totalStock) => {
   }
 });
 
+// Delete the cart after order is placed
+const deleteTheCart = asyncHandler(async (userId) => {
+  try {
+    const deleted = await Cart.deleteOne({ userId });
+    return deleted;
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
 module.exports = {
   getCartDetails,
   addProductToCart,
@@ -164,4 +174,5 @@ module.exports = {
   clearedCart,
   getCartCount,
   changeTheQuantity,
+  deleteTheCart,
 };

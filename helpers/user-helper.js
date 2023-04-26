@@ -1,6 +1,6 @@
 const asyncHandler = require('express-async-handler');
-const User = require('../models/user-model');
 const { json } = require('express');
+const User = require('../models/user-model');
 
 // To create new document in User collection
 const userSignUp = asyncHandler(async (data) => {

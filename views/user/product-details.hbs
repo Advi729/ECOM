@@ -105,17 +105,19 @@
                                                 <li><a href="#">13</a></li>
                                             </ul>
                                         </div>
-                                        <div class="bt-1 border-color-1 mt-30 mb-30"></div>
-                                        <div class="detail-extralink">
-                                            <div class="detail-qty border radius">
-                                                <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
-                                                <span class="qty-val">1</span>
-                                                <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
-                                            </div>
-                                            <div>
+                                        <div class="bt-1 border-color-1 mt-30 mb-30">
+                                            <div class="detail-extralink">
+                                                {{!-- <div class="detail-qty border radius">
+                                                    <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
+                                                    <span class="qty-val">1</span>
+                                                    <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
+                                                    <a href="#" class="qty-up" onclick="changeQuantity( '{{../user.response._id}}','{{this._id}}',{{this.price}},1)"><i class="fi-rs-angle-small-up"></i></a>
+                                                        <span class="qty-val" id="{{this._id}}">{{quantity}}1</span>
+                                                    <a href="#" class="qty-down" onclick="changeQuantity( '{{../user.response._id}}','{{this._id}}',{{this.price}},-1)"><i class="fi-rs-angle-small-down"></i></a>
+                                                </div> --}}
+                                            
 
-                                            <a type="button" class="addToCartBtn" href="/add-cart/{{product._id}}" onclick="event.preventDefault(); addToCartSuccess(this)" data-id="{{product._id}}">Add to cart</a>
-
+                                             <a type="button" class="addToCartBtn" href="/add-cart/{{product._id}}" onclick="event.preventDefault(); addToCartConfirmation(this)" data-id="{{product._id}}">Add to cart</a>
                                                 <a aria-label="Add To Wishlist" class="product-extra-link2 action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
                                                 {{!-- <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a> --}}
 
@@ -124,7 +126,7 @@
                                         <ul class="product-meta font-xs color-grey mt-50">
                                             <li class="mb-5">SKU: <a href="#">{{product.slug}}</a></li>
                                             <li class="mb-5">Tags: <a href="#" rel="tag">{{product.brand}}</a>, <a href="#" rel="tag">{{product.category}}</a>, <a href="#" rel="tag">{{product.subCategory}}</a> </li>
-                                            <li>Availability:<span class="in-stock text-success ml-5">{{product.quantity}} Items In Stock</span></li>
+                                            <li>Availability:<span class="in-stock text-success ml-5">{{product.stock}} Items In Stock</span></li>
                                         </ul>
                                     </div>
                                     <!-- Detail Info -->
@@ -688,32 +690,39 @@
 </script> --}}
 
 <script>
+    
     // swal to add a product to cart
-    function addToCartSuccess(anchor) {
-        const slug = anchor.getAttribute('data-slug');
+    function addToCartConfirmation(anchor) {
+        const id = anchor.getAttribute('data-id');
 
-        setTimeout(() => {
-            $.ajax({
-            url:'/add-cart/'+slug,
+
+        $.ajax({
+            url:'/add-cart/'+id,
             method:'get',
             success:(response) => {
                 if(response.status) {
                     let count = $('#cart-count').html();
                     count = parseInt(count) + 1;
                     $('#cart-count').html(count);
+
+                    Swal.fire({
+                        title: "Success!",
+                        text: "Product added to cart.",
+                        icon: "success",
+                        showConfirmButton: false,
+                        showCloseButton: true,
+                    }); 
+                }
+            },
+            error: (error) => {
+                if (error.status === 401) {
+                    const redirectUrl = error.responseJSON.redirectUrl;
+                    window.location.href = redirectUrl;
                 }
             }
             
         })
-        },2000);
-
-        Swal.fire({
-                title: "Success!",
-                text: "Product added to cart.",
-                icon: "success",
-                showConfirmButton: false,
-                showCloseButton: true,
-                }); 
+  
     }
 </script>
 

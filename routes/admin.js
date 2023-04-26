@@ -12,6 +12,7 @@ const categoryControllers = require('../controllers/category-controller');
 const subCategoryControllers = require('../controllers/sub-category-controller');
 const brandControllers = require('../controllers/brand-controller');
 const orderControllers = require('../controllers/order-controller');
+const couponControllers = require('../controllers/coupon-controller');
 
 const router = express.Router();
 
@@ -247,6 +248,28 @@ router.post(
   '/order-status',
   authMiddlewares.adminCheck,
   orderControllers.changeOrderStatus
+);
+
+//------------------------------------------------------------------------------------------------------------
+// Coupon management
+// Display and create coupons
+router
+  .route('/add-coupon')
+  .get(authMiddlewares.adminCheck, couponControllers.viewAllCoupons)
+  .post(authMiddlewares.adminCheck, couponControllers.createCoupon);
+
+// Change status of coupon
+router.post(
+  '/coupon-status/:code',
+  authMiddlewares.adminCheck,
+  couponControllers.changeCouponStatus
+);
+
+// Delete coupon
+router.get(
+  '/delete-coupon/:code',
+  authMiddlewares.adminCheck,
+  couponControllers.deleteCoupon
 );
 
 module.exports = router;

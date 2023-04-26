@@ -35,10 +35,10 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    cart: {
-      type: Array,
-      default: [],
-    },
+    // cart: {
+    //   type: Array,
+    //   default: [],
+    // },
     // address: [
     //   {
     //     type: mongoose.Schema.Types.ObjectId,
@@ -73,15 +73,27 @@ const userSchema = new mongoose.Schema(
         // },
       },
     ],
-    wishlist: [
+    // wishlist: [
+    //   {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'Product',
+    //   },
+    // ],
+    coupons: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Product',
+        code: {
+          type: String,
+          // unique: true,
+          required: true,
+        },
+        timesUsed: {
+          type: Number,
+        },
       },
     ],
-    refreshToken: {
-      type: String,
-    },
+    // refreshToken: {
+    //   type: String,
+    // },
   },
   {
     timestamps: true,

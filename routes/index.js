@@ -5,6 +5,7 @@ const cartControllers = require('../controllers/cart-controller');
 const orderControllers = require('../controllers/order-controller');
 const invoiceControllers = require('../controllers/invoice-controller');
 const wishlistControllers = require('../controllers/wishlist-controller');
+const couponControllers = require('../controllers/coupon-controller');
 const userValidators = require('../validation/user-validation');
 const authMiddlewares = require('../middlewares/auth-middleware');
 
@@ -72,6 +73,13 @@ router.post(
   userControllers.addAddress
 );
 
+// Add address checkout
+router.post(
+  '/add-address-checkout/:_id',
+  authMiddlewares.isUser,
+  userControllers.addAddressCheckout
+);
+
 // Edit Address
 router.post(
   '/edit-address/:_id',
@@ -109,6 +117,9 @@ router.get(
   cartControllers.clearCartProducts
 );
 
+// Delete cart
+router.get('/delete-cart', authMiddlewares.isUser, cartControllers.deleteCart);
+
 // Change product quantity in cart
 router.post(
   '/change-product-quantity',
@@ -118,6 +129,13 @@ router.post(
 
 // Proceed to Checkout
 router.get('/check-out', authMiddlewares.isUser, orderControllers.checkOutCart);
+
+// Apply coupon code
+router.post(
+  '/apply-coupon',
+  authMiddlewares.isUser,
+  couponControllers.applyCoupon
+);
 
 // Place order
 router.post(
@@ -182,8 +200,5 @@ router.get(
   authMiddlewares.isUser,
   wishlistControllers.removeFromWishlist
 );
-
-// pagination
-// router.get('/products-pages', productControllers.pagination);
 
 module.exports = router;

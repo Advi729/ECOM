@@ -9,6 +9,8 @@ const subCategoryHelpers = require('../helpers/sub-category-helper');
 const brandHelpers = require('../helpers/brand-helper');
 const cartHelpers = require('../helpers/cart-helper');
 const wishlistHelpers = require('../helpers/wishlist-helper');
+const orderHelpers = require('../helpers/order-helper');
+const couponHelpers = require('../helpers/coupon-helper');
 
 // Get home page
 const getHomePage = asyncHandler(async (req, res) => {
@@ -399,10 +401,10 @@ const getUserProfile = asyncHandler(async (req, res) => {
   try {
     const { _id } = req.params;
     const { user } = req.session;
+    const userId = user.response._id;
     let cartCount = null;
     let wishlistCount = null;
     if (user) {
-      const userId = user.response._id;
       cartCount = await cartHelpers.getCartCount(userId);
       wishlistCount = await wishlistHelpers.getWishlistCount(userId);
     }
@@ -410,6 +412,9 @@ const getUserProfile = asyncHandler(async (req, res) => {
     const finalUser = JSON.parse(JSON.stringify(resultUser));
     // console.log('user.res.address:',user.response.address);
     // console.log('fouhnduser::->profiel::', resultUser);
+    const walletDetails = await orderHelpers.getWalletDetails(userId);
+    const coupon = await couponHelpers.getAllCoupons(finalUser);
+    console.log('coupons: ', coupon);
     if (resultUser) {
       res.render('user/profile', {
         isUser: true,
@@ -417,6 +422,8 @@ const getUserProfile = asyncHandler(async (req, res) => {
         foundUser: finalUser,
         cartCount,
         wishlistCount,
+        walletDetails,
+        coupon,
       });
     }
   } catch (error) {
@@ -431,6 +438,19 @@ const addAddress = asyncHandler(async (req, res) => {
     const addressAdded = await userHelpers.addUserAddress(_id, req);
     if (addressAdded) {
       res.redirect(`/profile/${_id}`);
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+// Add address Checkout
+const addAddressCheckout = asyncHandler(async (req, res) => {
+  try {
+    const { _id } = req.params;
+    const addressAdded = await userHelpers.addUserAddress(_id, req);
+    if (addressAdded) {
+      res.redirect(`/check-out`);
     }
   } catch (error) {
     throw new Error(error);
@@ -495,4 +515,5 @@ module.exports = {
   addAddress,
   editAddress,
   deleteAddress,
+  addAddressCheckout,
 };

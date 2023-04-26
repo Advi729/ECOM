@@ -4,7 +4,9 @@ const productHelpers = require('../helpers/product-helper');
 const userHelpers = require('../helpers/user-helper');
 const orderHelpers = require('../helpers/order-helper');
 const wishlistHelpers = require('../helpers/wishlist-helper');
+const couponHelpers = require('../helpers/coupon-helper');
 const User = require('../models/user-model');
+const Cart = require('../models/cart-model');
 
 // Proceed to checkout
 const checkOutCart = asyncHandler(async (req, res) => {
@@ -82,7 +84,10 @@ const getTotalPrice = asyncHandler(async (products) => {
 
 const placeOrder = asyncHandler(async (req, res) => {
   try {
-    const { userId, deliveryAddress } = req.body;
+    const { userId, deliveryAddress, couponCode, grandTotalPrice } = req.body;
+    console.log('couponCode: ', couponCode);
+    console.log('grandTotalPrice: ', grandTotalPrice);
+    const userData = await userHelpers.findUser(userId);
     const cart = await cartHelpers.getCartDetails(userId);
     const productsList = cart.products;
     const totalPrice = await getTotalPrice(productsList);
@@ -90,15 +95,27 @@ const placeOrder = asyncHandler(async (req, res) => {
       userId,
       deliveryAddress
     );
+
+    let coupon;
+    if (couponCode) {
+      coupon = await couponHelpers.getSingleCoupon(couponCode);
+      console.log('coupon details in placeorder: ', coupon);
+    }
+
     if (req.body.payment_option === 'cod') {
       const created = await orderHelpers.createOrder(
         productsList,
         totalPrice,
+        grandTotalPrice,
         req.body,
-        address
+        address,
+        userId,
+        coupon
       );
       // console.log('created order:', created);
       if (created) {
+        // Delete the cart after placing order
+        await Cart.deleteOne({ userId });
         res.json({ status: 'cod' });
       }
     } else if (req.body.payment_option === 'razorPay') {
@@ -129,24 +146,29 @@ const placeOrder = asyncHandler(async (req, res) => {
         const created = await orderHelpers.createOrder(
           productsList,
           totalPrice,
+          grandTotalPrice,
           req.body,
-          address
+          address,
+          userId,
+          coupon
         );
         if (created) {
-          res.json({ status: 'razorPay', createdInstance });
+          res.json({ status: 'razorPay', createdInstance, userData });
         }
       }
     } else {
       res.json({ status: false });
     }
   } catch (error) {
-    throw new Error(error);
+    // throw new Error(error);
+    console.error(error);
   }
 });
 
 // verify payment
 const verifyPayment = asyncHandler(async (req, res) => {
   try {
+    const { userId } = req.body;
     const onlinePayment = await orderHelpers.verifyRazorpayPayment(req.body);
     if (onlinePayment) {
       const orderId = req.body['order[receipt]'];
@@ -156,6 +178,8 @@ const verifyPayment = asyncHandler(async (req, res) => {
         paymentStatus
       );
       if (updated) {
+        // Delete the cart after placing order
+        await Cart.deleteOne({ userId });
         res.json({ status: true });
       }
     }
@@ -180,7 +204,7 @@ const viewOrders = asyncHandler(async (req, res) => {
       userId,
       page
     );
-    console.log('totalPages: ', totalPages);
+
     const orderDetails = JSON.parse(JSON.stringify(orderData));
     // console.log('orderDetails:', orderDetails);
     if (orderDetails) {
@@ -260,9 +284,9 @@ const cancelOrder = asyncHandler(async (req, res) => {
 const returnOrder = asyncHandler(async (req, res) => {
   try {
     const { orderId } = req.params;
-    console.log('orderidddddd: ', orderId);
+    // console.log('orderidddddd: ', orderId);
     const returned = await orderHelpers.returnProductOrder(orderId);
-    console.log('returned order: ', returned);
+    // console.log('returned order: ', returned);
     if (returned) res.json({ status: true });
   } catch (error) {
     throw new Error(error);

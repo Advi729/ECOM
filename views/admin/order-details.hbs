@@ -57,7 +57,7 @@
                                     <p class="mb-1">
                                         Shipping: Fargo express 
                                         <br> Pay method: {{#if (equal orderData.paymentMethod 'cod')}} Cash on delivery
-                                                         {{else if (equal orderDat.paymentMethod 'razorPay')}} Online payment
+                                                         {{else if (equal orderData.paymentMethod 'razorPay')}} Razor Pay
                                                          {{/if}}
                                         <br> Status: {{#if (equal orderData.orderStatus "placed")}}
                                             <small class="badge rounded-pill alert-success">Placed</small>

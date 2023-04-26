@@ -30,6 +30,14 @@ const orderSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    grandTotalPrice: {
+      type: Number,
+    },
+    couponPercentage: {
+      type: Number,
+      min: 0,
+      max: 100,
+    },
     orderStatus: {
       type: String,
       required: true,

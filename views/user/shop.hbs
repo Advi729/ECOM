@@ -109,7 +109,8 @@
                             {{#each allProducts}}
                              {{#if this.isDeleted}}
                              {{else}}
-                             
+                             {{#if (equal this.stock 0)}}
+                             {{else}}
                             <div class="col-lg-4 col-md-4 col-12 col-sm-6">
                                 <div class="product-cart-wrap mb-30">
                                     <div class="product-img-action-wrap">
@@ -174,6 +175,7 @@
                                 <span class="shop-page-type" hidden>brand</span>
                                 {{/if}} 
 
+                            {{/if}}
                             {{/if}}
                             {{/each}}
                             <!--single product--> 
@@ -402,6 +404,8 @@ console.log('shop-type: ', shopPageType);
 console.log('totalPages: ', totalPages);
 console.log('shopSlug: ', shopSlug);
 
+if (totalPages > 1) {
+
 const generatePaginationButtons = (totalPages) => {
   let html = '';
   for (let i = 1; i <= totalPages; i++) {
@@ -475,7 +479,7 @@ if(shopPageType === 'shop') {
     });
   }
 
-
+}
 
 //    const url = `/shop/${brandSlug}?page=${page}`;
 

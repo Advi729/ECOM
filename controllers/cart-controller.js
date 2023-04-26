@@ -136,10 +136,23 @@ const changeProductQuantity = asyncHandler(async (req, res) => {
   }
 });
 
+// Delete cart after order is placed
+const deleteCart = asyncHandler(async (req, res) => {
+  try {
+    const { user } = req.session;
+    const userId = user.response._id;
+    const deleted = await cartHelpers.deleteTheCart(userId);
+    if (deleted) res.json({ status: true });
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
 module.exports = {
   getCart,
   addToCart,
   removeProductFromCart,
   clearCartProducts,
   changeProductQuantity,
+  deleteCart,
 };

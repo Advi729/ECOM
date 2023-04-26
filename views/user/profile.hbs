@@ -1,8 +1,9 @@
+
 <main class="main">
     <div class="page-header breadcrumb-wrap">
         <div class="container">
             <div class="breadcrumb">
-                <a href="index.html" rel="nofollow">Home</a>
+                <a href="/" rel="nofollow">Home</a>
                 <span></span> Profile
             </div>
         </div>
@@ -23,17 +24,23 @@
                                             aria-selected="false"><i
                                                 class="fi-rs-settings-sliders mr-10"></i>Dashboard</a>
                                     </li>
-                                    <li class="nav-item">
+                                    {{!-- <li class="nav-item">
                                         <a class="nav-link" id="orders-tab" data-bs-toggle="tab" href="#orders"
                                             role="tab" aria-controls="orders" aria-selected="false"><i
                                                 class="fi-rs-shopping-bag mr-10"></i>Orders</a>
-                                    </li>
+                                    </li> --}}
+                                    
                                     <li class="nav-item">
+                                        <a class="nav-link" id="wallet-tab" data-bs-toggle="tab" href="#wallet"
+                                            role="tab" aria-controls="wallet" aria-selected="false"><i
+                                                class="fi fi-tr-wallet mr-10"></i>Wallet</a>
+                                    </li>
+                                    {{!-- <li class="nav-item">
                                         <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab"
                                             href="#track-orders" role="tab" aria-controls="track-orders"
                                             aria-selected="false"><i class="fi-rs-shopping-cart-check mr-10"></i>Track
                                             Your Order</a>
-                                    </li>
+                                    </li> --}}
                                     <li class="nav-item">
                                         <a class="nav-link" id="address-tab" data-bs-toggle="tab" href="#address"
                                             role="tab" aria-controls="address" aria-selected="true"><i
@@ -43,6 +50,11 @@
                                         <a class="nav-link" id="account-detail-tab" data-bs-toggle="tab"
                                             href="#account-detail" role="tab" aria-controls="account-detail"
                                             aria-selected="true"><i class="fi-rs-user mr-10"></i>Edit Profile</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="coupon-tab" data-bs-toggle="tab" href="#coupon"
+                                            role="tab" aria-controls="coupon" aria-selected="false"><i
+                                                class="fi fi-rs-ticket mr-10"></i>Coupons</a>
                                     </li>
                                     {{!-- <li class="nav-item">
                                         <a class="nav-link" href="page-login-register.html"><i
@@ -220,6 +232,126 @@
                                         </div>
                                     </div>
                                 </div>
+            {{!-- wallet --}}
+            <div class="tab-pane fade" id="wallet" role="tabpanel" aria-labelledby="wallet-tab">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="card mb-3 mb-lg-0">
+                            <div class="card-header">
+                                <h5 class="mb-0">Your balance</h5>
+                            </div>
+                            <div class="card-body">
+                                {{#if walletDetails}}
+                                <h3>{{formatNumber walletDetails.balance style="currency" currency="INR" minimumFractionDigits=2}}
+                                </h3>
+                                {{else}}
+                                <h3>{{formatNumber 0 style="currency" currency="INR" minimumFractionDigits=2}}
+                                </h3>
+                                {{/if}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                {{#if walletDetails}}
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Your transactions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>OrderId</th>
+                                        <th>Amount</th>
+                                        <th>Date</th>
+            
+                                    </tr>
+                                </thead>
+                                <tbody>
+            
+                                    {{#each walletDetails.transactions}}
+                                    <tr>
+                                        <td>{{this.orderId}}</td>
+                                        <td>{{formatNumber this.amount style="currency" currency="INR" minimumFractionDigits=2}}
+                                        </td>
+                                        <td>{{moment this.date format='ddd, MMM D, YYYY, h:mmA'}}</td>
+                                    </tr>
+                                    {{/each}}
+            
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                {{/if}}
+            </div>
+
+{{!-- coupons --}}
+            <div class="tab-pane fade" id="coupon" role="tabpanel" aria-labelledby="coupon-tab">
+           
+                <div class="row">
+                     {{#each coupon as |coupon index|}}
+                    {{#if this.active}}
+                     {{!-- <div class="col-sm-6 col-md-3"> --}}
+                     <div class="col-sm-6 col-md-4">
+          <div  class="dl">
+            {{!-- <div class="brand">
+                <h2>lacoste</h2>
+            </div> --}}
+            <br>
+            <div class="discount emerald">
+                {{this.discountPercentage}}%
+                <div class="type">
+                    off
+                </div>
+            </div>
+            <div class="descr">
+                <strong>
+                    Limited time offer! 
+                </strong> 
+                <br>
+                <br>
+                Purchase minimum for {{formatNumber this.minimumPurchase style="currency" currency="INR" minimumFractionDigits=2}}
+                <br>
+                <br>
+                Coupon valid till  {{moment this.expiryDate format='D, MMM, YYYY'}}
+                <br>
+                <br>
+                <small>Maximum use: {{this.maximumUse}}</small>
+            </div>
+            <div class="ends">
+                <small>
+                   * Terms and Conditions apply.
+                </small>
+            </div>
+            {{!-- <div class="coupon midnight-blue">
+                <a data-toggle="collapse" href="#code-{{@index}}" class="open-code">Get a code</a>
+                <div id="code-{{@index}}" class="collapse in code">
+                    {{this.code}}
+                </div>
+            </div> --}}
+            <div class="coupon midnight-blue">
+                <a data-bs-toggle="collapse" href="#code-{{@index}}" class="open-code">Get a code</a>
+                <div id="code-{{@index}}" class="collapse in code">
+                    {{this.code}}
+                    <a><i class="fi fi-rs-copy-alt" onclick="copyToClipboard('{{this.code}}')"></i></a>
+
+                </div>
+            </div>
+            
+          </div>
+          <br>
+                  
+        </div>
+                    {{/if}}
+                    {{/each}}
+                    
+                </div>
+                    
+                
+            </div>
                                 <div class="tab-pane fade" id="track-orders" role="tabpanel"
                                     aria-labelledby="track-orders-tab">
                                     <div class="card">
@@ -268,14 +400,7 @@
                                                     <address>{{this.locality}}<br> {{this.area}},<br> {{this.district}}.
                                                         <br>{{this.state}}, PIN: {{this.pincode}}</address>
                                                     <p>India</p>
-                                                    {{!-- <a href="/edit-address/{{this._id}}"
-                                                        class="btn-small">Edit</a> --}}
-                                                    {{!-- <a class="btn-small" id="edit-address-btn" data-toggle="modal"
-                                                        data-target="#editAddressModal">Edit</a> --}}
-                                                    {{!-- <button type="button" id="edit-address-btn" class="btn-small"
-                                                        data-toggle="modal" data-target="#exampleModal">
-                                                        Edit
-                                                    </button> --}}
+                                                    
                                                     <!-- Button trigger modal -->
                                                     <button type="button" id="edit-address-btn"
                                                         class="btn-sm btn-success" data-bs-toggle="modal"
@@ -483,6 +608,26 @@
     </section>
 </main>
 
+<style>
+    section{padding:5% 0}
+.emerald{background:#16a085}
+.midnight-blue{background:#2c3e50}
+.dl{background:#f0f0f0;padding:30px 0;border-radius:20px;position:relative}
+.dl:before{content:" ";height:20px;width:20px;background:#ddd;border-radius:20px;position:absolute;left:50%;top:20px;margin-left:-10px}
+.dl .brand{text-transform:uppercase;letter-spacing:3px;padding:10px 15px;margin-top:10px;text-align:center;min-height:100px}
+.dl .discount{min-height:50px;position:relative;font-size:80px;line-height:80px;text-align:center;font-weight:700;padding:20px 15px 0;color:#f1c40f}
+.dl .discount:after{content:" ";border-right:20px solid transparent;border-left:20px solid transparent;position:absolute;bottom:-20px;left:20%}
+
+
+.dl .discount.emerald:after{border-top:20px solid #16a085}
+
+.dl .discount .type{font-size:20px;letter-spacing:1px;text-transform:uppercase;margin-top:-30px}
+.dl .descr{color:#999;margin-top:10px;padding:20px 15px}
+.dl .ends{padding:0 15px;color:#f1c40f;margin-bottom:10px}
+.dl .coupon{min-height:50px;text-align:center;font-weight:700;font-size:18px;padding:20px 15px}
+.dl .coupon a.open-code{color:#16a085}
+.dl .coupon .code{letter-spacing:1px;border-radius:4px;margin-top:10px;padding:10px 15px;color:#f1c40f;background:#f0f0f0}
+</style>
 <script>
 
 // select the form by ID
@@ -592,6 +737,17 @@ addressEditForm.forEach((form) => {
 
             }
         });
+    }
+
+// copy coupon code to clipboard
+    function copyToClipboard(code) {
+        const el = document.createElement('textarea');
+        el.value = code;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+        alert('Coupon code copied to clipboard!');
     }
 
 </script>

@@ -10,8 +10,10 @@ const findProducts = async (page) => {
   try {
     const limit = 9;
     const skip = (page - 1) * limit;
-    const productDetails = await Product.find().skip(skip).limit(limit);
-    const totalProducts = await Product.countDocuments();
+    const productDetails = await Product.find({ stock: { $gt: 0 } })
+      .skip(skip)
+      .limit(limit);
+    const totalProducts = await Product.countDocuments({ stock: { $gt: 0 } });
     const foundProducts = JSON.parse(JSON.stringify(productDetails));
 
     const totalPages = Math.ceil(totalProducts / limit);
@@ -217,10 +219,16 @@ const findProductsByCategorySlug = async (categorySlug, page) => {
     console.log('pageCategory:', page);
     const limit = 9;
     const skip = (page - 1) * limit;
-    const productDetails = await Product.find({ categorySlug })
+    const productDetails = await Product.find({
+      categorySlug,
+      stock: { $gt: 0 },
+    })
       .skip(skip)
       .limit(limit);
-    const totalProducts = await Product.countDocuments({ categorySlug });
+    const totalProducts = await Product.countDocuments({
+      categorySlug,
+      stock: { $gt: 0 },
+    });
     const foundProducts = JSON.parse(JSON.stringify(productDetails));
 
     const totalPages = Math.ceil(totalProducts / limit);
@@ -238,10 +246,16 @@ const findProductsBySubCategorySlug = async (subCategorySlug, page) => {
   try {
     const limit = 9;
     const skip = (page - 1) * limit;
-    const productDetails = await Product.find({ subCategorySlug })
+    const productDetails = await Product.find({
+      subCategorySlug,
+      stock: { $gt: 0 },
+    })
       .skip(skip)
       .limit(limit);
-    const totalProducts = await Product.countDocuments({ subCategorySlug });
+    const totalProducts = await Product.countDocuments({
+      subCategorySlug,
+      stock: { $gt: 0 },
+    });
     const foundProducts = JSON.parse(JSON.stringify(productDetails));
 
     const totalPages = Math.ceil(totalProducts / limit);
@@ -259,11 +273,14 @@ const findProductsByBrandSlug = async (brandSlug, page) => {
   try {
     const limit = 9;
     const skip = (page - 1) * limit;
-    const productDetails = await Product.find({ brandSlug })
+    const productDetails = await Product.find({ brandSlug, stock: { $gt: 0 } })
       .skip(skip)
       .limit(limit);
 
-    const totalProducts = await Product.countDocuments({ brandSlug });
+    const totalProducts = await Product.countDocuments({
+      brandSlug,
+      stock: { $gt: 0 },
+    });
     const foundProducts = JSON.parse(JSON.stringify(productDetails));
 
     const totalPages = Math.ceil(totalProducts / limit);
