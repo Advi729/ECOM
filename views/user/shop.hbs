@@ -145,9 +145,20 @@
                                         <div>
                                             <a href="/categories/{{this.categorySlug}}">{{this.category}}'s </a>
                                             <a href="/sub-categories/{{this.subCategorySlug}}">{{this.subCategory}}</a>
+                                            {{#if (equal this.discountPercentage 0)}}
+                                            {{else}}
+                                            <span class="save-price">{{this.discountPercentage}}% Off</span>
+                                            {{/if}}
                                         </div>
                                         <div class="product-price">
+                                            {{#if (equal this.discountPrice 0)}}
                                             <span> {{formatNumber this.price style="currency" currency="INR" minimumFractionDigits=2}} </span>
+                                            {{else}}
+                                            <span> {{formatNumber this.discountPrice style="currency" currency="INR" minimumFractionDigits=2}} </span>
+                                            <span class="old-price">{{formatNumber this.price style="currency" currency="INR" minimumFractionDigits=2}}</span>
+                                            {{!-- <span class="save-price">{{this.discountPercentage}}% Off</span> --}}
+                                            {{/if}}
+                                            {{!-- <span> {{formatNumber this.price style="currency" currency="INR" minimumFractionDigits=2}} </span> --}}
                                             {{!-- <span class="old-price">$245.8</span> --}}
                                         </div>
                                         <div class="product-action-1 show">

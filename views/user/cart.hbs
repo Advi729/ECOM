@@ -35,7 +35,11 @@
                                             </p>
                                         </td>
                                         <td class="price" data-title="Price">
+                                            {{#if (equal this.discountPrice 0)}}
                                             <span>{{formatNumber this.price style="currency" currency="INR" minimumFractionDigits=2}}</span>
+                                            {{else}}
+                                            <span>{{formatNumber this.discountPrice style="currency" currency="INR" minimumFractionDigits=2}}</span>
+                                            {{/if}}
                                         </td>
                                         {{!-- <td class="text-center" data-title="Stock"> --}}
                                             {{!-- <div class="detail-qty border radius  m-auto"> --}}
@@ -48,16 +52,27 @@
                                                 </div>
                                                 </td> --}}
                                                 <td class="text-center" data-title="Stock">
+                                                    {{#if (equal this.discountPrice 0)}}
                                                     <button class="cart-item-count mr-3"
                                                         onclick="changeQuantity( '{{../user.response._id}}','{{this._id}}',{{this.price}},1)"
                                                         style="border: 0cm;">▴</button>
+                                                    {{else}}
+                                                    <button class="cart-item-count mr-3"
+                                                        onclick="changeQuantity( '{{../user.response._id}}','{{this._id}}',{{this.discountPrice}},1)"
+                                                        style="border: 0cm;">▴</button>
+                                                    {{/if}}
 
                                                     <p class="qtyValue" id="{{this._id}}">{{quantity}}</p>
-                                
+
+                                                    {{#if (equal this.discountPrice 0)}}
                                                         <button class="decrement-btn" id="{{this._id}}-decrement" class="cart-item-count ml-3"
                                                             onclick="changeQuantity('{{../user.response._id}}','{{this._id}}',{{this.price}},-1)"
                                                             style="border: 0cm;">▾</button>
-                                                
+                                                    {{else}}
+                                                        <button class="decrement-btn" id="{{this._id}}-decrement" class="cart-item-count ml-3"
+                                                            onclick="changeQuantity('{{../user.response._id}}','{{this._id}}',{{this.discountPrice}},-1)"
+                                                            style="border: 0cm;">▾</button>
+                                                    {{/if}}
 
                                                     {{!-- {{/if}} --}}
                                                 </td>

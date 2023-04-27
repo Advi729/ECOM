@@ -44,6 +44,7 @@ Handlebars.registerHelper('first', (array) => array[0]);
 Handlebars.registerHelper('second', (array) => array[1]);
 Handlebars.registerHelper('inc', (value) => parseInt(value) + 1);
 Handlebars.registerHelper('equal', (a, b) => a === b);
+Handlebars.registerHelper('notEqual', (a, b) => a !== b);
 Handlebars.registerHelper('index', (index) => index + 1);
 Handlebars.registerHelper('lt', (a, b) => a < b);
 Handlebars.registerHelper('greaterThan', (a, b) => a > b);

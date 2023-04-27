@@ -63,9 +63,16 @@
                                         <div class="clearfix product-price-cover">
                                             <div class="product-price primary-color float-left">
                                                 {{!-- <ins><span class="text-brand">₹ {{product.price}}</span></ins> --}}
-                                                <ins><span class="text-band"> {{formatNumber product.price style="currency" currency="INR" minimumFractionDigits=2}} </span></ins>
+                                                {{!-- <ins><span class="text-band"> {{formatNumber product.price style="currency" currency="INR" minimumFractionDigits=2}} </span></ins> --}}
                                                 {{!-- <ins><span class="old-price font-md ml-15">₹ 200.00</span></ins> --}}
                                                 {{!-- <span class="save-price  font-md color3 ml-15">25% Off</span> --}}
+                                                 {{#if (equal this.discountPrice 0)}}
+                                                <ins><span class="text-band"> {{formatNumber product.price style="currency" currency="INR" minimumFractionDigits=2}} </span></ins>
+                                                {{else}}
+                                                <ins><span class="text-band"> {{formatNumber product.discountPrice style="currency" currency="INR" minimumFractionDigits=2}} </span></ins>
+                                                <ins><span class="old-price font-md ml-15">{{formatNumber product.price style="currency" currency="INR" minimumFractionDigits=2}}</span></ins>
+                                                <span class="save-price font-md color3 ml-15">{{product.discountPercentage}}% Off</span>
+                                                {{/if}}
                                             </div>
                                         </div>
                                         <div class="bt-1 border-color-1 mt-15 mb-15"></div>
@@ -91,11 +98,12 @@
                                                 <li><a href="#" data-color="Purple"><span class="product-color-purple"></span></a></li>
                                             </ul>
                                         </div> --}}
-                                        <div class="attr-detail attr-size">
+
+                                        {{!-- <div class="attr-detail attr-size">
                                             <strong class="mr-10">Size</strong>
                                             <ul class="list-filter size-filter font-small">
                                                 <li><a href="#">6</a></li>
-                                                {{!-- <li class="active"><a href="#">M</a></li> --}}
+                                                <li class="active"><a href="#">M</a></li>
                                                 <li><a href="#">7</a></li>
                                                 <li><a href="#">8</a></li>
                                                 <li><a href="#">9</a></li>
@@ -104,19 +112,10 @@
                                                 <li><a href="#">12</a></li>
                                                 <li><a href="#">13</a></li>
                                             </ul>
-                                        </div>
+                                        </div> --}}
                                         <div class="bt-1 border-color-1 mt-30 mb-30">
                                             <div class="detail-extralink">
-                                                {{!-- <div class="detail-qty border radius">
-                                                    <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
-                                                    <span class="qty-val">1</span>
-                                                    <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
-                                                    <a href="#" class="qty-up" onclick="changeQuantity( '{{../user.response._id}}','{{this._id}}',{{this.price}},1)"><i class="fi-rs-angle-small-up"></i></a>
-                                                        <span class="qty-val" id="{{this._id}}">{{quantity}}1</span>
-                                                    <a href="#" class="qty-down" onclick="changeQuantity( '{{../user.response._id}}','{{this._id}}',{{this.price}},-1)"><i class="fi-rs-angle-small-down"></i></a>
-                                                </div> --}}
-                                            
-
+       
                                              <a type="button" class="addToCartBtn" href="/add-cart/{{product._id}}" onclick="event.preventDefault(); addToCartConfirmation(this)" data-id="{{product._id}}">Add to cart</a>
                                                 <a aria-label="Add To Wishlist" class="product-extra-link2 action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
                                                 {{!-- <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a> --}}

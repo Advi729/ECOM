@@ -1,12 +1,14 @@
 
         <section class="content-main">
             <div class="content-header">
+                <span id="order-sales-data" style="display:none">{{monthlyOrdersArr}}</span>
+                <span id="order-category-data" style="display:none">{{categoryWiseCount}}</span>
                 <div>
                     <h2 class="content-title card-title">Dashboard </h2>
                     <p>Whole data about your business here</p>
                 </div>
                 <div>
-                    <a href="#" class="btn btn-primary"><i class="text-muted material-icons md-post_add"></i>Create report</a>
+                    <a href="/admin/sales-report" class="btn btn-primary"><i class="text-muted material-icons md-post_add"></i>Create report</a>
                 </div>
             </div>
             <div class="row">
@@ -16,7 +18,7 @@
                             <span class="icon icon-sm rounded-circle bg-primary-light"><i class="text-primary material-icons md-monetization_on"></i></span>
                             <div class="text">
                                 <h6 class="mb-1 card-title">Revenue</h6>
-                                <span>$13,456.5</span>
+                                <span>{{formatNumber totalRevenue style="currency" currency="INR" minimumFractionDigits=2}}</span>
                                 <span class="text-sm">
                                     Shipping fees are not included
                                 </span>
@@ -29,7 +31,7 @@
                         <article class="icontext">
                             <span class="icon icon-sm rounded-circle bg-success-light"><i class="text-success material-icons md-local_shipping"></i></span>
                             <div class="text">
-                                <h6 class="mb-1 card-title">Orders</h6> <span>53.668</span>
+                                <h6 class="mb-1 card-title">Orders</h6> <span>{{totalOrders}}</span>
                                 <span class="text-sm">
                                     Excluding orders in transit
                                 </span>
@@ -42,9 +44,9 @@
                         <article class="icontext">
                             <span class="icon icon-sm rounded-circle bg-warning-light"><i class="text-warning material-icons md-qr_code"></i></span>
                             <div class="text">
-                                <h6 class="mb-1 card-title">Products</h6> <span>9.856</span>
+                                <h6 class="mb-1 card-title">Products</h6> <span>{{totalProducts}}</span>
                                 <span class="text-sm">
-                                    In 19 Categories
+                                    In {{totalCategories}} Categories
                                 </span>
                             </div>
                         </article>
@@ -55,7 +57,7 @@
                         <article class="icontext">
                             <span class="icon icon-sm rounded-circle bg-info-light"><i class="text-info material-icons md-shopping_basket"></i></span>
                             <div class="text">
-                                <h6 class="mb-1 card-title">Monthly Earning</h6> <span>$6,982</span>
+                                <h6 class="mb-1 card-title">Monthly Earning</h6> <span>{{formatNumber totalSales style="currency" currency="INR" minimumFractionDigits=2}}</span>
                                 <span class="text-sm">
                                     Based in your local time.
                                 </span>
@@ -68,11 +70,11 @@
                 <div class="col-xl-8 col-lg-12">
                     <div class="card mb-4">
                         <article class="card-body">
-                            <h5 class="card-title">Sale statistics</h5>
-                            <canvas id="myChart" height="120px"></canvas>
+                            <h5 class="card-title" style="text-align: center">Sales statistics</h5>
+                            <canvas id="myChart1" height="120px"></canvas>
                         </article>
                     </div>
-                    <div class="row">
+                    {{!-- <div class="row">
                         <div class="col-lg-5">
                             <div class="card mb-4">
                                 <article class="card-body">
@@ -202,16 +204,16 @@
                                 </article>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
                 <div class="col-xl-4 col-lg-12">
                     <div class="card mb-4">
                         <article class="card-body">
-                            <h5 class="card-title">Revenue Base on Area</h5>
-                            <canvas id="myChart2" height="217"></canvas>
+                            <h5 class="card-title" style="text-align: center">Category based products delivered</h5>
+                            <canvas id="myChart3" height="217"></canvas>
                         </article>
                     </div>
-                    <div class="card mb-4">
+                    {{!-- <div class="card mb-4">
                         <article class="card-body">
                             <h5 class="card-title">Marketing Chanel</h5>
                             <span class="text-muted font-xs">Facebook</span>
@@ -235,7 +237,7 @@
                                 <div class="progress-bar" role="progressbar" style="width: 80%"> 80%</div>
                             </div>
                         </article>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
             {{!-- <div class="card mb-4">
@@ -466,4 +468,107 @@
                 </nav>
             </div> --}}
         </section> <!-- content-main end// -->
+
+<script>
+    // Group the orders by month
+(function ($) {
+    "use strict";
+    /*Sale statistics Chart*/
+    if ($('#myChart1').length) {
+        var ordersInEachMonth = document.getElementById("order-sales-data").innerHTML;
+        //var ordersByMonth = salesDataElement.innerHTML;
+        let arr = ordersInEachMonth.split(",").map(x => parseInt(x));
+        console.log('arr:',arr)
+        var ctx = document.getElementById('myChart1').getContext('2d');
+        var chart = new Chart(ctx, {
+            // The type of chart we want to create
+            type: 'line',
+            // The data for our dataset
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [{
+                    label: 'Orders',
+                    tension: 0.3,
+                    fill: true,
+                    //backgroundColor: 'rgba(44, 120, 220, 0.2)',
+                    //borderColor: 'rgba(44, 120, 220)',
+                    data: arr,
+                    backgroundColor: 'rgba(102, 204, 102, 0.2)',
+                    borderColor: 'rgba(102, 204, 102, 1)',
+                    borderWidth: 1,
+                    pointRadius: 3,
+                    pointBackgroundColor: 'rgba(102, 204, 102, 1)',
+                    pointBorderColor: 'rgba(102, 204, 102, 1)',
+                    pointHoverRadius: 5,
+                    pointHoverBackgroundColor: 'rgba(102, 204, 102, 1)',
+                    pointHoverBorderColor: 'rgba(102, 204, 102, 1)',
+                },
+                ]
+            },
+            options: {
+                plugins: {
+                    legend: {
+                        labels: {
+                            usePointStyle: true,
+                        },
+                    }
+                }
+            }
+        });
+    } 
+
+    // Category wise count pie chart 
+    if ($('#myChart3').length) {
+
+        const categoryWiseCountElem = document.getElementById("order-category-data");
+        const categoryWiseCountValues = JSON.parse(categoryWiseCountElem.textContent);
+        const categoryKeys = Object.keys(categoryWiseCountValues);
+        const categoryValues = Object.values(categoryWiseCountValues);
+        console.log('Category Keys:', categoryKeys);
+        console.log('Category Values:', categoryValues);
+
+        const colors = ['#FFA07A','#FF6384', '#36A2EB', '#FFCE56', '#FFD700', '#4BC0C0', '#C9CBCF', '#000000', '#808080', '#800000'];
+
+        // Keep track of which colors have already been used
+        const usedColors = [];
+
+        // Function to generate a random color from the colors array
+        const getRandomColor = () => {
+        // If all colors have been used, start over
+        if (usedColors.length === colors.length) {
+            usedColors.length = 0;
+        }
+
+        // Get a random color that hasn't been used yet
+        let colorIndex = Math.floor(Math.random() * colors.length);
+        while (usedColors.includes(colorIndex)) {
+            colorIndex = Math.floor(Math.random() * colors.length);
+        }
+
+        // Mark the color as used and return it
+        usedColors.push(colorIndex);
+        return colors[colorIndex];
+        };
+
+
+        // Generate the background and hover background colors for the chart
+        const bgColor = categoryKeys.map(() => getRandomColor());
+        const hoverBgColor = bgColor.slice();
+
+        var ctx = document.getElementById("myChart3");
+        var myChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: categoryKeys,
+                datasets: [{
+                    data: categoryValues,
+                    backgroundColor: bgColor,
+                    hoverBackgroundColor: hoverBgColor
+                }]
+            },
+        });
+    }
+
+})(jQuery);
+</script>
         

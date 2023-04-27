@@ -1,7 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const categoryHelpers = require('../helpers/category-helper');
 const subCategoryHelpers = require('../helpers/sub-category-helper');
-const { Category } = require('../models/category-model');
+const Category = require('../models/category-model');
 
 // Get All categories
 const getAllCategories = asyncHandler(async (req, res) => {

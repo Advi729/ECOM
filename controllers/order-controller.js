@@ -307,6 +307,7 @@ const allOrdersAdmin = asyncHandler(async (req, res) => {
         return {
           user,
           totalPrice: order.totalPrice,
+          grandTotalPrice: order.grandTotalPrice,
           orderStatus: order.orderStatus,
           paymentMethod: order.paymentMethod,
           orderId: order.orderId,

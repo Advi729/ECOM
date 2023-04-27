@@ -4,9 +4,9 @@
                     <h2 class="content-title card-title">All Orders </h2>
                     <p></p>
                 </div>
-                <div>
+                {{!-- <div>
                     <input type="text" placeholder="Search order ID" class="form-control bg-white">
-                </div>
+                </div> --}}
             </div>
             <div class="card mb-4">
                 <header class="card-header">
@@ -52,7 +52,13 @@
                                     <td>{{orderId}}</td>
                                     <td><b>{{user.firstname}} {{user.lastname}}</b></td>
                                     {{!-- <td><template class="__cf_email__" data-cfemail="aec3cfdcd8c7c0eecbd6cfc3dec2cb80cdc1c3">[email&#160;protected]</template></td> --}}
-                                    <td>{{formatNumber totalPrice style="currency" currency="INR" minimumFractionDigits=2}}</td>
+                                    <td>
+                                        {{#if grandTotalPrice}}
+                                        {{formatNumber grandTotalPrice style="currency" currency="INR" minimumFractionDigits=2}}
+                                        {{else}}
+                                        {{formatNumber totalPrice style="currency" currency="INR" minimumFractionDigits=2}}
+                                        {{/if}}
+                                    </td>
                                     <td>
                                         {{#if (equal orderStatus "placed")}}
                                             <span class="badge rounded-pill alert-success">Placed</span>

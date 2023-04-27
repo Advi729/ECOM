@@ -22,6 +22,16 @@ const productSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    discountPrice: {
+      type: Number,
+      default: 0,
+    },
+    discountPercentage: {
+      type: Number,
+      min: 0,
+      max: 100,
+      default: 0,
+    },
     // category:{
     //     type:mongoose.Schema.Types.ObjectId,
     //     ref:"category",

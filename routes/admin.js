@@ -13,6 +13,7 @@ const subCategoryControllers = require('../controllers/sub-category-controller')
 const brandControllers = require('../controllers/brand-controller');
 const orderControllers = require('../controllers/order-controller');
 const couponControllers = require('../controllers/coupon-controller');
+const offerControllers = require('../controllers/offer-controller');
 
 const router = express.Router();
 
@@ -270,6 +271,40 @@ router.get(
   '/delete-coupon/:code',
   authMiddlewares.adminCheck,
   couponControllers.deleteCoupon
+);
+
+// Offers
+// Add offer for category
+router
+  .route('/add-category-offer')
+  .get(authMiddlewares.adminCheck, offerControllers.getAddCategoryOffer)
+  .post(authMiddlewares.adminCheck, offerControllers.postAddCategoryOffer);
+
+// Change offer status
+router.post(
+  '/offer-status/:id',
+  authMiddlewares.adminCheck,
+  offerControllers.changeOfferStatus
+);
+
+// Delete offer
+router.get(
+  '/delete-offer/:id',
+  authMiddlewares.adminCheck,
+  offerControllers.deleteOffer
+);
+
+// Sales report
+router
+  .route('/sales-report')
+  .get(authMiddlewares.adminCheck, adminControllers.getSalesReport)
+  .post(authMiddlewares.adminCheck, adminControllers.downloadReport);
+
+// Sort report datewise
+router.post(
+  '/sort-report',
+  authMiddlewares.adminCheck,
+  adminControllers.sortReportDateWise
 );
 
 module.exports = router;

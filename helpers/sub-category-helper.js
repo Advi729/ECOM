@@ -1,9 +1,9 @@
 const asyncHandler = require('express-async-handler');
 const slugify = require('slugify');
-// const SubCategory = require('../models/category-model');
-const { SubCategory } = require('../models/sub-category-model');
+const SubCategory = require('../models/sub-category-model');
+// const { SubCategory } = require('../models/sub-category-model');
 const Product = require('../models/product-model');
-const { Category } = require('../models/category-model');
+const Category = require('../models/category-model');
 
 // GET all the sub-categories
 const allSubCategories = asyncHandler(async () => {

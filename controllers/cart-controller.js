@@ -72,14 +72,14 @@ const addToCart = asyncHandler(async (req, res) => {
     const foundProduct = JSON.parse(JSON.stringify(prod));
 
     // console.log('addedProduct:', foundProduct);
-    const added = await cartHelpers.addProductToCart(
-      userId,
-      id,
-      foundProduct.price
-    );
-    // if (added) {
-    //   res.redirect('/cart');
-    // }
+    let finalPrice;
+    if (foundProduct.discountPrice === 0) {
+      finalPrice = foundProduct.price;
+    } else {
+      finalPrice = foundProduct.discountPrice;
+    }
+    const added = await cartHelpers.addProductToCart(userId, id, finalPrice);
+
     if (added) {
       // console.log('addeddddd:', added);
       res.json({ status: true });

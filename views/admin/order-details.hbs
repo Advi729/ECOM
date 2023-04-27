@@ -124,7 +124,13 @@
                                                 </a>
                                             </td>
                                             <td><a href="/admin/products/{{this.slug}}">{{this.title}}</a></td>
-                                            <td> {{formatNumber this.price style="currency" currency="INR" minimumFractionDigits=2}} </td>
+                                            <td> 
+                                                {{#if (equal this.discountPrice 0)}}
+                                                {{formatNumber this.price style="currency" currency="INR" minimumFractionDigits=2}} 
+                                                {{else}}
+                                                {{formatNumber this.discountPrice style="currency" currency="INR" minimumFractionDigits=2}} 
+                                                {{/if}}
+                                            </td>
                                             <td> {{this.quantity}} </td>
                                             <td class="text-end"> {{formatNumber this.subTotal style="currency" currency="INR" minimumFractionDigits=2}} </td>
                                         </tr>
@@ -141,9 +147,20 @@
                                                         <dt>Shipping cost:</dt>
                                                         <dd>{{formatNumber 0 style="currency" currency="INR" minimumFractionDigits=2}}</dd>
                                                     </dl>
+                                                    {{#if orderData.grandTotalPrice}}
+                                                    <dl class="dlist">
+                                                        <dt>Discount:</dt>
+                                                        <dd>{{orderData.couponPercentage}} %</dd>
+                                                    </dl>
+                                                    {{/if}}
+                                                    
                                                     <dl class="dlist">
                                                         <dt>Grand total:</dt>
+                                                        {{#if orderData.grandTotalPrice}}
+                                                        <dd> <b class="h5">{{formatNumber orderData.grandTotalPrice style="currency" currency="INR" minimumFractionDigits=2}}</b> </dd>
+                                                        {{else}}
                                                         <dd> <b class="h5">{{formatNumber orderData.totalPrice style="currency" currency="INR" minimumFractionDigits=2}}</b> </dd>
+                                                        {{/if}}
                                                     </dl>
                                                     <dl class="dlist">
                                                         <dt class="text-muted">Status:</dt>

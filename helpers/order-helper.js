@@ -41,7 +41,7 @@ const updateCouponDetails = asyncHandler(async (userId, coupon) => {
     const existingCouponIndex = user.coupons.findIndex(
       (c) => c.code == coupon.code
     );
-console.log('existing: ', existingCouponIndex);
+    console.log('existing: ', existingCouponIndex);
     if (existingCouponIndex !== -1) {
       // Coupon already exists, increment timesUsed property
       // user.coupons[existingCouponIndex].timesUsed++;
@@ -278,6 +278,106 @@ const allOrders = asyncHandler(async (page) => {
   }
 });
 
+// All Delivered order details
+const allDeliveredOrders = asyncHandler(async () => {
+  try {
+    // const orderData = await Order.find({ orderStatus: 'delivered' });
+    // const orderDetails = JSON.parse(JSON.stringify(orderData));
+
+    const orderDetails = await Order.aggregate([
+      {
+        $match: { orderStatus: 'delivered' },
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'userId',
+          foreignField: '_id',
+          as: 'user',
+        },
+      },
+      {
+        $unwind: '$user',
+      },
+      {
+        $project: {
+          _id: 0,
+          orderId: '$_id',
+          totalPrice: 1,
+          grandTotalPrice: 1,
+          createdAt: 1,
+          paymentMethod: 1,
+          // user: {
+          // _id: '$user._id',
+          firstname: '$user.firstname',
+          lastname: '$user.lastname',
+          email: '$user.email',
+          mobile: '$user.mobile',
+          // },
+        },
+      },
+    ]);
+
+    return { orderDetails };
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+// Date wise all delivered orders
+const dateWiseOrders = asyncHandler(async (data) => {
+  try {
+    const fromDate = new Date(data.fromDate);
+    const toDate = new Date(data.toDate);
+    toDate.setDate(toDate.getDate() + 1);
+    console.log('data: ', data);
+    const orderDetails = await Order.aggregate([
+      {
+        $match: {
+          orderStatus: 'delivered',
+          createdAt: {
+            $gte: fromDate,
+            $lt: toDate,
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'userId',
+          foreignField: '_id',
+          as: 'user',
+        },
+      },
+      {
+        $unwind: '$user',
+      },
+      {
+        $project: {
+          _id: 0,
+          orderId: '$_id',
+          totalPrice: 1,
+          grandTotalPrice: 1,
+          createdAt: 1,
+          paymentMethod: 1,
+          // user: {
+          // _id: '$user._id',
+          firstname: '$user.firstname',
+          lastname: '$user.lastname',
+          email: '$user.email',
+          mobile: '$user.mobile',
+          // },
+        },
+      },
+    ]);
+
+    return { orderDetails };
+  } catch (error) {
+    console.error(error);
+    throw new Error(error);
+  }
+});
+
 // Update the order status
 const updateOrderStatus = asyncHandler(async (orderId, orderStatus) => {
   try {
@@ -285,7 +385,12 @@ const updateOrderStatus = asyncHandler(async (orderId, orderStatus) => {
       { orderId },
       { $set: { orderStatus } }
     );
-    if (updated) return updated;
+    let statusUpdated;
+    if (orderStatus === 'delivered') {
+      const paymentStatus = 'paid';
+      statusUpdated = await updatePaymentStatus(orderId, paymentStatus);
+    }
+    if (updated && statusUpdated) return updated;
   } catch (error) {
     throw new Error(error);
   }
@@ -361,4 +466,6 @@ module.exports = {
   updatePaymentStatus,
   returnProductOrder,
   getWalletDetails,
+  allDeliveredOrders,
+  dateWiseOrders,
 };

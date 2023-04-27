@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const slugify = require('slugify');
 const Product = require('../models/product-model');
+const Offer = require('../models/offer-model');
 const categoryHelpers = require('./category-helper');
 const subCategoryHelpers = require('./sub-category-helper');
 const brandHelpers = require('./brand-helper');
@@ -303,6 +304,58 @@ const updateProductQuantity = asyncHandler(async (prodId, quantity) => {
   }
 });
 
+// Update discount price when offer is applied
+const updateDiscountPrice = asyncHandler(async (category, subCategory) => {
+  try {
+    const offerData = await Offer.findOne({ category, subCategory });
+    const offerDetails = JSON.parse(JSON.stringify(offerData));
+    let discountPercentage;
+    if (offerDetails) {
+      discountPercentage = offerDetails.discountPercentage;
+    }
+    // let { discountPercentage } = data;
+    // discountPercentage = parseFloat(discountPercentage);
+    // console.log('category: ', category);
+    // console.log('subcategory: ', subCategory);
+    // console.log('discount: ', discountPercentage);
+    const productsToUpdate = await Product.find({ category, subCategory });
+    // console.log('prss: ', productsToUpdate);
+    let operations;
+    if (offerDetails?.active) {
+      operations = productsToUpdate.map((product) => ({
+        updateOne: {
+          filter: { _id: product._id },
+          update: {
+            $set: {
+              discountPrice:
+                product.price - product.price * (discountPercentage / 100),
+              discountPercentage,
+            },
+          },
+        },
+      }));
+    } else {
+      operations = productsToUpdate.map((product) => ({
+        updateOne: {
+          filter: { _id: product._id },
+          update: {
+            $set: {
+              discountPrice: 0,
+              discountPercentage: 0,
+            },
+          },
+        },
+      }));
+    }
+
+    const updated = await Product.bulkWrite(operations);
+    // console.log('updated :', updated);
+    if (updated) return updated;
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
 module.exports = {
   findProducts,
   findAllProducts,
@@ -317,4 +370,5 @@ module.exports = {
   findProductsBySubCategorySlug,
   findProductsByBrandSlug,
   updateProductQuantity,
+  updateDiscountPrice,
 };

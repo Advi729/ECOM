@@ -3,11 +3,43 @@ const { validationResult } = require('express-validator');
 const User = require('../models/user-model');
 const productHelpers = require('../helpers/product-helper');
 const adminHelpers = require('../helpers/admin-helper');
+const reportHelpers = require('../helpers/report-helper');
+const orderHelpers = require('../helpers/order-helper');
 
 // Admin Dashboard
 const dashboardAdmin = asyncHandler(async (req, res) => {
+  const totalOrders = await reportHelpers.computeTotalOrders();
+  const totalRevenue = await reportHelpers.computeTotalRevenue();
+  const totalProducts = await reportHelpers.computeTotalProducts();
+  const totalCategories = await reportHelpers.computeTotalCategories();
+  const monthlySales = await reportHelpers.computeMonthlySales();
+
+  const { totalSales } = monthlySales[0];
+
+  console.log('totalrevenue: ', monthlySales[0]);
+
+  // for chart
+  const monthlyOrders = await reportHelpers.computeMonthlyOrders();
+  console.log('monthlyorders: ', monthlyOrders);
+  const monthlyOrdersArr = monthlyOrders.map((e) => e.count);
+  console.log('monthlyordersARRR: ', monthlyOrdersArr);
+  const categoryWiseCount = await reportHelpers.computeCategoryWiseDelivered();
+  console.log('categoryWiseCount: ', categoryWiseCount);
+  // const categoryWiseCountValues = Object.values(categoryWiseCount);
+  const cat = JSON.stringify(categoryWiseCount);
+
   const { admin } = req.session;
-  res.render('admin/dashboard', { admin, isAdmin: true });
+  res.render('admin/dashboard', {
+    admin,
+    isAdmin: true,
+    totalOrders,
+    totalRevenue,
+    totalProducts,
+    totalCategories,
+    totalSales,
+    monthlyOrdersArr,
+    categoryWiseCount: cat,
+  });
 });
 
 // Admin-login GET
@@ -175,6 +207,82 @@ const unblockUser = asyncHandler(async (req, res) => {
   }
 });
 
+// Sales report
+const getSalesReport = asyncHandler(async (req, res) => {
+  try {
+    const { admin } = req.session;
+    const totalOrders = await reportHelpers.computeTotalOrders();
+    const totalRevenue = await reportHelpers.computeTotalRevenue();
+    const totalProducts = await reportHelpers.computeTotalProducts();
+    const totalUsers = await reportHelpers.computeTotalUsers();
+    const totalCategories = await reportHelpers.computeTotalCategories();
+    const monthlySales = await reportHelpers.computeMonthlySales();
+
+    const { totalSales } = monthlySales[0];
+
+    const deliveredOrders = await orderHelpers.allDeliveredOrders();
+console.log('deliveredOrders: ', deliveredOrders);
+console.log('userdeat: ', deliveredOrders.orderDetails[0].user);
+    res.render('admin/sales-report', {
+      admin,
+      isAdmin: true,
+      totalOrders,
+      totalRevenue,
+      totalProducts,
+      totalUsers,
+      totalCategories,
+      totalSales,
+      deliveredOrders,
+    });
+  } catch (error) {
+    console.error(error);
+    throw new Error(error);
+  }
+});
+
+// Sort report date wise
+const sortReportDateWise = asyncHandler(async (req, res) => {
+  try {
+    const { admin } = req.session;
+    const totalOrders = await reportHelpers.computeTotalOrders();
+    const totalRevenue = await reportHelpers.computeTotalRevenue();
+    const totalProducts = await reportHelpers.computeTotalProducts();
+    const totalUsers = await reportHelpers.computeTotalUsers();
+    const totalCategories = await reportHelpers.computeTotalCategories();
+    const monthlySales = await reportHelpers.computeMonthlySales();
+
+    const { totalSales } = monthlySales[0];
+
+    // date wise delivered orders
+    const deliveredOrders = await orderHelpers.dateWiseOrders(req.body);
+
+    res.render('admin/sales-report', {
+      admin,
+      isAdmin: true,
+      totalOrders,
+      totalRevenue,
+      totalProducts,
+      totalUsers,
+      totalCategories,
+      totalSales,
+      deliveredOrders,
+    });
+  } catch (error) {
+    console.error(error);
+    throw new Error(error);
+  }
+});
+
+// Download report
+const downloadReport = asyncHandler(async (req, res) => {
+  try {
+    const a = 1;
+  } catch (error) {
+    console.error(error);
+    throw new Error(error);
+  }
+});
+
 module.exports = {
   dashboardAdmin,
   loginAdminGet,
@@ -186,4 +294,7 @@ module.exports = {
   blockUser,
   unblockUser,
   getAllUsers,
+  getSalesReport,
+  sortReportDateWise,
+  downloadReport,
 };
