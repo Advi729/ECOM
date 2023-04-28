@@ -14,6 +14,7 @@ const brandControllers = require('../controllers/brand-controller');
 const orderControllers = require('../controllers/order-controller');
 const couponControllers = require('../controllers/coupon-controller');
 const offerControllers = require('../controllers/offer-controller');
+const bannerControllers = require('../controllers/banner-controller');
 
 const router = express.Router();
 
@@ -273,6 +274,7 @@ router.get(
   couponControllers.deleteCoupon
 );
 
+//----------------------------------------------------------------------------------------
 // Offers
 // Add offer for category
 router
@@ -297,14 +299,43 @@ router.get(
 // Sales report
 router
   .route('/sales-report')
-  .get(authMiddlewares.adminCheck, adminControllers.getSalesReport)
-  .post(authMiddlewares.adminCheck, adminControllers.downloadReport);
+  .get(authMiddlewares.adminCheck, adminControllers.getSalesReport);
+// .post(authMiddlewares.adminCheck, adminControllers.downloadReport);
 
 // Sort report datewise
 router.post(
   '/sort-report',
   authMiddlewares.adminCheck,
   adminControllers.sortReportDateWise
+);
+
+//--------------------------------------------------------------------------------------------------
+// Banner management
+// Add banner
+router
+  .route('/add-banner')
+  .get(authMiddlewares.adminCheck, bannerControllers.getAddBanner)
+  .post(
+    authMiddlewares.adminCheck,
+    uploadMiddlewares.uploadSinglePhoto,
+    bannerControllers.postAddBanner
+  );
+
+// Edit banner
+router
+  .route('/edit-banner/:id')
+  .get(authMiddlewares.adminCheck, bannerControllers.getEditBanner)
+  .post(
+    authMiddlewares.adminCheck,
+    uploadMiddlewares.uploadSinglePhoto,
+    bannerControllers.postEditBanner
+  );
+
+// Delete banner
+router.get(
+  '/delete-banner/:id',
+  authMiddlewares.adminCheck,
+  bannerControllers.deleteBanner
 );
 
 module.exports = router;

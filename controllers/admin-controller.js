@@ -221,8 +221,7 @@ const getSalesReport = asyncHandler(async (req, res) => {
     const { totalSales } = monthlySales[0];
 
     const deliveredOrders = await orderHelpers.allDeliveredOrders();
-console.log('deliveredOrders: ', deliveredOrders);
-console.log('userdeat: ', deliveredOrders.orderDetails[0].user);
+
     res.render('admin/sales-report', {
       admin,
       isAdmin: true,
@@ -274,14 +273,14 @@ const sortReportDateWise = asyncHandler(async (req, res) => {
 });
 
 // Download report
-const downloadReport = asyncHandler(async (req, res) => {
-  try {
-    const a = 1;
-  } catch (error) {
-    console.error(error);
-    throw new Error(error);
-  }
-});
+// const downloadReport = asyncHandler(async (req, res) => {
+//   try {
+//     const a = 1;
+//   } catch (error) {
+//     console.error(error);
+//     throw new Error(error);
+//   }
+// });
 
 module.exports = {
   dashboardAdmin,
@@ -296,5 +295,4 @@ module.exports = {
   getAllUsers,
   getSalesReport,
   sortReportDateWise,
-  downloadReport,
 };

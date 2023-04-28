@@ -11,6 +11,7 @@ const cartHelpers = require('../helpers/cart-helper');
 const wishlistHelpers = require('../helpers/wishlist-helper');
 const orderHelpers = require('../helpers/order-helper');
 const couponHelpers = require('../helpers/coupon-helper');
+const bannerHelpers = require('../helpers/banner-helper');
 
 // Get home page
 const getHomePage = asyncHandler(async (req, res) => {
@@ -26,12 +27,16 @@ const getHomePage = asyncHandler(async (req, res) => {
     console.log('wishlistcout', wishlistCount);
     const foundProducts = await productHelpers.findAllProducts();
     const products = JSON.parse(JSON.stringify(foundProducts));
+
+    const allBanners = await bannerHelpers.findAllBanners();
+
     res.render('user/home', {
       user,
       allProducts: products,
       isUser: true,
       cartCount,
       wishlistCount,
+      allBanners,
     });
   } catch (error) {
     throw new Error(error);

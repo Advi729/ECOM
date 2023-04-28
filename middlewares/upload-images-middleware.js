@@ -12,32 +12,6 @@ const multerStorage = multer.diskStorage({
   },
 });
 
-// const multerFilter = (req, file, cb) => {
-//   if (file.mimetype.startsWith('image')) {
-//     cb(null, true);
-//   } else {
-//     cb(
-//       {
-//         message: 'Unsupported file format',
-//       },
-//       false
-//     );
-//   }
-// };
-
-// const multerFilter = (req, file, cb) => {
-//   const images = req.files && req.files.images;
-//   if (!images || images.length === 0) {
-//     req.session.imageValidationError = 'No image file uploaded.';
-//     cb(null, false);
-//   } else if (file.mimetype.startsWith('image')) {
-//     cb(null, true);
-//   } else {
-//     req.session.imageValidationError = 'Unsupported image file format.';
-//     cb(null, false);
-//   }
-// };
-
 const multerFilter = (req, file, cb) => {
   if (file.mimetype.startsWith('image')) {
     cb(null, true);
@@ -71,4 +45,30 @@ const uploadMultiplePhoto = uploadPhoto.fields([
 //     next();
 // };
 
-module.exports = { uploadMultiplePhoto };
+const multerStorageSingle = multer.diskStorage({
+  destination(req, file, cb) {
+    cb(null, path.join(__dirname, '../public/uploads/banners'));
+  },
+  filename(req, file, cb) {
+    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+    cb(null, `banner-${file.fieldname}-${uniqueSuffix}.jpeg`);
+  },
+});
+
+const multerFilterSingle = (req, file, cb) => {
+  if (file.mimetype.startsWith('image')) {
+    cb(null, true);
+  } else {
+    req.session.imageValidationError = 'Unsupported image file format.';
+    // cb(err, false);
+    cb(null, false);
+  }
+};
+
+const uploadSinglePhoto = multer({
+  storage: multerStorageSingle,
+  fileFilter: multerFilterSingle,
+  limits: { fieldSize: 2000000 },
+}).single('image');
+
+module.exports = { uploadMultiplePhoto, uploadSinglePhoto };
