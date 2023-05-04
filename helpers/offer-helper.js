@@ -24,8 +24,8 @@ const addOffer = asyncHandler(async (data) => {
     const newOffer = await Offer.create(offer);
     if (newOffer) return newOffer;
   } catch (error) {
-    // throw new Error(error);
     console.error(error);
+    throw error;
   }
 });
 
@@ -36,7 +36,8 @@ const allOffers = asyncHandler(async () => {
     const foundOffers = JSON.parse(JSON.stringify(findOffers));
     if (foundOffers) return foundOffers;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -47,7 +48,8 @@ const getSingleOffer = asyncHandler(async (id) => {
     const foundOffer = JSON.parse(JSON.stringify(findOffer));
     if (foundOffer) return foundOffer;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -64,7 +66,8 @@ const changeStatus = asyncHandler(async (id) => {
 
     return changed;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -74,7 +77,8 @@ const deleteTheOffer = asyncHandler(async (id) => {
     const deleted = await Offer.deleteOne({ _id: id });
     if (deleted) return deleted;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 

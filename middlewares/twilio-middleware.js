@@ -1,4 +1,3 @@
-/* eslint-disable linebreak-style */
 const twilio = require('twilio');
 
 const accountSid = process.env.ACCOUNT_SID;
@@ -24,6 +23,7 @@ module.exports = {
   // api for verifying the otp recived by the user
   verifying_otp: (mobileNo, otp) =>
     new Promise((resolve, reject) => {
+      console.log('mobileNo: ', mobileNo);
       client.verify
         .services(serviceSid)
         .verificationChecks.create({

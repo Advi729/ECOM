@@ -13,7 +13,8 @@ const addBanner = asyncHandler(async (data) => {
     const added = await Banner.create(bannerData);
     if (added) return added;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -27,16 +28,17 @@ const editBanner = asyncHandler(async (data) => {
       {
         $set: {
           name: data.body.name,
-          heading1: data.body.heading1,
-          heading2: data.body.heading2,
+          heading: data.body.heading,
           subHeading: data.body.subHeading,
+          footer: data.body.footer,
           image: data.body.image,
         },
       }
     );
     return updated;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -45,9 +47,15 @@ const findAllBanners = asyncHandler(async () => {
   try {
     const findBanners = await Banner.find().sort({ createdAt: -1 });
     const foundBanners = JSON.parse(JSON.stringify(findBanners));
-    if (foundBanners) return foundBanners;
+    if (foundBanners.length !== 0) {
+      return foundBanners;
+    }
+    const error = new Error('An error occured while finding banners');
+    error.status = 404;
+    throw error;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -56,9 +64,15 @@ const findSingleBanner = asyncHandler(async (id) => {
   try {
     const findBanner = await Banner.findOne({ _id: id });
     const foundBanner = JSON.parse(JSON.stringify(findBanner));
-    if (foundBanner) return foundBanner;
+    if (foundBanner) {
+      return foundBanner;
+    }
+    const error = new Error('Banner not found');
+    error.status = 404;
+    throw error;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -68,7 +82,8 @@ const deleteTheBanner = asyncHandler(async (id) => {
     const deleted = await Banner.deleteOne({ _id: id });
     if (deleted) return deleted;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 

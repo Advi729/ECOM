@@ -1,5 +1,4 @@
 const asyncHandler = require('express-async-handler');
-const { json } = require('express');
 const User = require('../models/user-model');
 
 // To create new document in User collection
@@ -22,7 +21,8 @@ const userSignUp = asyncHandler(async (data) => {
       return { response, status: false };
     }
   } catch (error) {
-    throw new Error();
+    console.error(error);
+    throw error;
   }
 });
 
@@ -45,7 +45,8 @@ const userLogin = asyncHandler(async (data) => {
     }
     return { status: false, blockedStatus: false };
   } catch (error) {
-    throw new Error();
+    console.error(error);
+    throw error;
   }
 });
 
@@ -57,7 +58,8 @@ const findOtp = asyncHandler(async (enteredMobile) => {
     response = findUser;
     return { response };
   } catch (error) {
-    throw new Error();
+    console.error(error);
+    throw error;
   }
 });
 
@@ -66,28 +68,40 @@ const findUser = asyncHandler(async (_id) => {
   try {
     const foundUser = await User.findOne({ _id });
     const finalUser = JSON.parse(JSON.stringify(foundUser));
-    return finalUser;
+    if (finalUser) {
+      return finalUser;
+    }
+    const error = new Error('User not found');
+    error.status = 404; // set the error status to 404 (Not Found)
+    throw error;
   } catch (error) {
-    throw new Error(error);
+    if (error.name === 'CastError') {
+      const notFoundError = new Error('User not found');
+      notFoundError.status = 404;
+      throw notFoundError;
+    }
+    console.error(error);
+    throw error;
   }
 });
 
 const getDeliveryAddress = asyncHandler(async (userId, deliveryAddressId) => {
   try {
     const user = await User.findById(userId);
-    // if (!user) {
-    //   throw new Error("User not found");
-    // }
+    if (!user) {
+      throw new Error('User not found');
+    }
     const deliveryAddress = user.address.find(
       (address) => address._id.toString() === deliveryAddressId.toString()
     );
-    // if (!deliveryAddress) {
-    //   throw new Error("Delivery address not found");
-    // }
+    if (!deliveryAddress) {
+      throw new Error('Delivery address not found');
+    }
     // console.log('ddddaddress:', deliveryAddress);
     return deliveryAddress;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -95,9 +109,9 @@ const getDeliveryAddress = asyncHandler(async (userId, deliveryAddressId) => {
 const addUserAddress = asyncHandler(async (_id, data) => {
   try {
     const { pincode, locality, area, district, state } = data.body;
-    // if (!pincode || !locality || !area || !district || !state) {
-    //   throw new Error('Missing required address fields');
-    // }
+    if (!pincode || !locality || !area || !district || !state) {
+      throw new Error('Missing required address fields');
+    }
 
     // Create new address object
     const newAddress = {
@@ -117,7 +131,8 @@ const addUserAddress = asyncHandler(async (_id, data) => {
 
     return createdAddress;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -139,7 +154,8 @@ const updateUserAddress = asyncHandler(async (userId, addressId, data) => {
     );
     return updated;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -157,7 +173,42 @@ const deleteUserAddress = asyncHandler(async (userId, addressId) => {
 
     return deleted;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
+  }
+});
+
+// Return all slugs of products
+const allSlugsInProducts = asyncHandler(async (foundProducts) => {
+  try {
+    const categories = foundProducts.reduce((acc, product) => {
+      if (!acc[product.categorySlug]) {
+        acc[product.categorySlug] = true;
+      }
+      return acc;
+    }, {});
+    const allCategorySlugs = Object.keys(categories);
+
+    const subCategories = foundProducts.reduce((acc, product) => {
+      if (!acc[product.subCategorySlug]) {
+        acc[product.subCategorySlug] = true;
+      }
+      return acc;
+    }, {});
+    const allSubCategorySlugs = Object.keys(subCategories);
+
+    const brands = foundProducts.reduce((acc, product) => {
+      if (!acc[product.brandSlug]) {
+        acc[product.brandSlug] = true;
+      }
+      return acc;
+    }, {});
+    const allBrandSlugs = Object.keys(brands);
+
+    return { allCategorySlugs, allSubCategorySlugs, allBrandSlugs };
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
 });
 
@@ -170,4 +221,5 @@ module.exports = {
   updateUserAddress,
   deleteUserAddress,
   getDeliveryAddress,
+  allSlugsInProducts,
 };

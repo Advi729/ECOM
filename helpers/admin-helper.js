@@ -19,7 +19,8 @@ const adminLogin = asyncHandler(async (data) => {
     }
     return { notExist: true };
   } catch (error) {
-    throw new Error();
+    console.error(error);
+    throw error;
   }
 });
 
@@ -28,11 +29,16 @@ const findAllUsers = asyncHandler(async () => {
   try {
     const findUsers = await User.find({ role: 'user' });
     const foundUsers = JSON.parse(JSON.stringify(findUsers));
-    if (foundUsers) {
+    console.log('foundxzuser: ', foundUsers);
+    if (foundUsers.length !== 0) {
       return foundUsers;
     }
+    const error = new Error('An error occured while finding users');
+    error.status = 404; // set the error status to 404 (Not Found)
+    throw error;
   } catch (error) {
-    throw new Error();
+    console.error(error);
+    throw error;
   }
 });
 
@@ -55,7 +61,8 @@ const updateBlockStatus = asyncHandler(async (id) => {
     }
     return { status: false };
   } catch (error) {
-    throw new Error();
+    console.error(error);
+    throw error;
   }
 });
 
@@ -78,7 +85,8 @@ const updateUnBlockStatus = asyncHandler(async (id) => {
     }
     return { status: false };
   } catch (error) {
-    throw new Error();
+    console.error(error);
+    throw error;
   }
 });
 

@@ -13,7 +13,8 @@ const computeTotalOrders = asyncHandler(async () => {
     ]);
     return totalOrders[0].totalOrders;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -39,7 +40,8 @@ const computeTotalRevenue = asyncHandler(async () => {
     ]);
     return totalRevenue[0].totalRevenue;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -56,7 +58,8 @@ const computeTotalProducts = asyncHandler(async () => {
     ]);
     return totalProducts[0].totalProducts;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -66,7 +69,8 @@ const computeTotalUsers = asyncHandler(async () => {
     const totalUsers = await User.countDocuments({ role: 'user' });
     return totalUsers;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -76,7 +80,8 @@ const computeTotalCategories = asyncHandler(async () => {
     const totalCategories = await Category.countDocuments();
     return totalCategories;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -112,7 +117,8 @@ const computeMonthlySales = asyncHandler(async () => {
     ]);
     return monthlySales;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -159,7 +165,7 @@ const computeMonthlyOrders = asyncHandler(async () => {
     return ordersInEachMonth;
   } catch (error) {
     console.error(error);
-    throw new Error(error);
+    throw error;
   }
 });
 
@@ -198,7 +204,7 @@ const computeCategoryWiseDelivered = asyncHandler(async () => {
     return countByCategory;
   } catch (error) {
     console.error(error);
-    throw new Error(error);
+    throw error;
   }
 });
 

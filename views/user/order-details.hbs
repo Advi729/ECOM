@@ -87,17 +87,100 @@
                         </div>
                         {{#if (equal orderDetails.orderStatus "cancelled")}}
                         {{else if (equal orderDetails.orderStatus "return")}}
+                        {{else if (equal orderDetails.orderStatus "returned")}}
                         {{else}}
                         <div class="cart-action text-end">
                             {{!-- <a class="btn  mr-10 mb-sm-15"><i class="fi-rs-shuffle mr-10"></i>Update Cart</a> --}}
                             <a class="btn bg-secondary" href="/invoice/{{orderDetails.orderId}}" onclick="event.preventDefault(); invoiceOrderConfirmation(this)" data-id="{{orderDetails.orderId}}"><i class="fi-rr-download mr-10"></i>Download Invoice</a>
                             {{#if (equal orderDetails.orderStatus "delivered")}}
-                            <a class="btn bg-primary" href="/return-order/{{orderDetails.orderId}}" onclick="event.preventDefault(); returnOrderConfirmation(this)" data-id="{{orderDetails.orderId}}"><i class="fi-rs-undo mr-10"></i>Return Order</a>
+                            {{!-- <a class="btn bg-primary" href="/return-order/{{orderDetails.orderId}}" onclick="event.preventDefault(); returnOrderConfirmation(this)" data-id="{{orderDetails.orderId}}"><i class="fi-rs-undo mr-10"></i>Return Order</a> --}}
+                            <a class="btn bg-primary" data-bs-toggle="modal" data-bs-target=".staticBackdrop"><i class="fi-rs-undo mr-10"></i>Return Order</a>
                             {{/if}}
                             <a class="btn bg-danger" href="/cancel-order/{{orderDetails.orderId}}" onclick="event.preventDefault(); cancelOrderConfirmation(this)" data-id="{{orderDetails.orderId}}"><i class="fi-rs-trash mr-10"></i>Cancel Order</a>
                         </div>
                         {{/if}}
                         <div class="divider center_icon mt-50 mb-50"><i class="fi-rs-fingerprint"></i></div>
+
+                        {{!-- <button type="button" id="add-address-btn"
+    class="btn-sm btn-success" data-bs-toggle="modal"
+    data-bs-target=".staticBackdrop">
+    Add Address
+</button>
+<a class="btn bg-primary" data-bs-toggle="modal" data-bs-target=".staticBackdrop"><i class="fi-rs-undo mr-10"></i>Return Order</a>
+<br>
+<br> --}}
+
+{{!-- Modal for return reason --}}
+                                        <div class="modal fade staticBackdrop" data-bs-backdrop="static"
+                                            data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                            aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="staticBackdropLabel">Choose your reason
+                                                        </h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form method="POST" id="return-reason-form" action="/return-order">
+                                                            <div class="row">
+                                                                <input type="text" hidden name="orderId" value="{{orderDetails.orderId}}">
+                                                                <div class="form-check ms-2">
+                                                                    <input class="form-check-input" value="I changed my mind" name="returnReason" type="radio" id="flexRadioDefault1">
+                                                                    <label class="form-check-label" for="flexRadioDefault1">
+                                                                        I changed my mind.
+                                                                    </label>
+                                                                </div>
+                                                                <div class="form-check ms-2">
+                                                                    <input class="form-check-input" value="Wrong item(s) delivered" name="returnReason" type="radio" id="flexRadioDefault2">
+                                                                    <label class="form-check-label" for="flexRadioDefault2">
+                                                                        Wrong item(s) delivered.
+                                                                    </label>
+                                                                </div>
+                                                                <div class="form-check ms-2">
+                                                                    <input class="form-check-input" value="High shipping cost" name="returnReason" type="radio" id="flexRadioDefault3">
+                                                                    <label class="form-check-label" for="flexRadioDefault3">
+                                                                        High shipping cost.
+                                                                    </label>
+                                                                </div>
+                                                                <div class="form-check ms-2">
+                                                                    <input class="form-check-input" value="I found a cheaper alternative" name="returnReason" type="radio" id="flexRadioDefault4">
+                                                                    <label class="form-check-label" for="flexRadioDefault4">
+                                                                        I found a cheaper alternative.
+                                                                    </label>
+                                                                </div>
+                                                                <div class="form-check ms-2">
+                                                                    <input class="form-check-input" value="Other reasons" name="returnReason" type="radio" id="flexRadioDefault5">
+                                                                    <label class="form-check-label" for="flexRadioDefault5">
+                                                                        Other reasons.
+                                                                    </label>
+                                                                </div>
+                                                                {{!-- <div class="form-group col-md-12">
+                                                                    <label>State <span class="required">*</span></label>
+                                                                    <input class="form-control square"
+                                                                        value="{{this.state}}" name="state" type="text">
+                                                                </div> --}}
+              
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                                                                <button type="submit" class="btn btn-fill-out">Return Order</button>
+                                                                {{!-- <a class="btn btn-fill-out" href="/return-order/{{orderDetails.orderId}}" onclick="event.preventDefault(); returnOrderConfirmation(this)" data-id="{{orderDetails.orderId}}"><i class="fi-rs-undo mr-10"></i>Return Order</a> --}}
+                                                                {{!-- <a class="btn btn-fill-out" type="submit"><i class="fi-rs-undo mr-10"></i>Return Order</a> --}}
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                    {{!-- <div class="modal-footer">
+                                                        <button type="button" class="btn btn-danger"
+                                                            data-bs-dismiss="modal">Close</button>
+                                                        <button type="submit"
+                                                            class="btn btn-fill-out submit">Save</button>
+                                                    </div> --}}
+                                                </div>
+                                            </div>
+                                        </div>
+
                         <div class="row mb-50">
                            
                             {{!-- <div class="col-lg-6 col-md-12">
@@ -201,9 +284,17 @@
         }
 
 // swal to return order
-        function returnOrderConfirmation(anchor) {
-            const orderId = anchor.getAttribute('data-id');
-            console.log('orderid:', orderId)
+// select the form by ID
+const returnReasonForm = document.getElementById("return-reason-form");
+
+// add a submit event listener to the form
+returnReasonForm.addEventListener("submit", (event) => {
+  // prevent the default form submission behavior
+  event.preventDefault();
+
+       // function returnOrderConfirmation(anchor) {
+         //   const orderId = anchor.getAttribute('data-id');
+            console.log('orderid:---')
             Swal.fire({
                 title: "Are you sure?",
                 text: "Do you want to return the order?",
@@ -216,28 +307,36 @@
             }).then((result) => {
                 if (result.isConfirmed) {
 
-                    setTimeout(() => {
                         $.ajax({
-                        url:'/return-order/'+orderId,
-                        method:'get',
+                        url:'/return-order',
+                        data: $('#return-reason-form').serialize(),
+                        method:'post',
                         success:(response) => {
                             if(response.status) {
-                                window.location.href = '/orders';
+                                
+                            // display a success message using SweetAlert2
+                            Swal.fire({
+                                title: "Success!",
+                                text: "Order's return initiated.",
+                                icon: "success",
+                                showConfirmButton: false,
+                            });
+                            setTimeout(() => {
+                            window.location.href = '/orders';
+                            }, 2000);
                             }
                         }
                     })
-                    },2000);
+          
+                    {{!-- setTimeout(() => {
+        returnReasonForm.submit();
+        window.location.href = '/orders';
+        }, 2000); --}}
 
-                    // display a success message using SweetAlert2
-                    Swal.fire({
-                        title: "Success!",
-                        text: "Order's return initiated.",
-                        icon: "success",
-                        showConfirmButton: false,
-                    });
                 }
             });
-        }
+      //  }
+});
 
 // download invoice
 function invoiceOrderConfirmation(anchor) {

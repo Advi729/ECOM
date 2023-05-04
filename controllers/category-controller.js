@@ -4,7 +4,7 @@ const subCategoryHelpers = require('../helpers/sub-category-helper');
 const Category = require('../models/category-model');
 
 // Get All categories
-const getAllCategories = asyncHandler(async (req, res) => {
+const getAllCategories = asyncHandler(async (req, res, next) => {
   try {
     const { admin } = req.session;
     const findAllCategories = await categoryHelpers.allCategories();
@@ -30,12 +30,13 @@ const getAllCategories = asyncHandler(async (req, res) => {
     //   res.redirect('/admin/add-category');
     // }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // Create a category POST method
-const createCategory = asyncHandler(async (req, res) => {
+const createCategory = asyncHandler(async (req, res, next) => {
   try {
     console.log(req.body);
     const createdCategory = await categoryHelpers.addCategory(req);
@@ -48,12 +49,13 @@ const createCategory = asyncHandler(async (req, res) => {
       res.redirect('/admin/add-category');
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // GET edit category page
-const getEditCategory = asyncHandler(async (req, res) => {
+const getEditCategory = asyncHandler(async (req, res, next) => {
   try {
     const { admin } = req.session;
     const { slug } = req.params;
@@ -76,12 +78,13 @@ const getEditCategory = asyncHandler(async (req, res) => {
     //   res.redirect('/admin/add-category');
     // }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // POST edit category page
-const postEditCategory = asyncHandler(async (req, res) => {
+const postEditCategory = asyncHandler(async (req, res, next) => {
   const { slug } = req.params;
   try {
     const editedCategory = await categoryHelpers.updateCategory(slug, req);
@@ -94,12 +97,13 @@ const postEditCategory = asyncHandler(async (req, res) => {
       res.redirect(`/admin/edit-category/${slug}`);
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // Delete a category
-const getDeleteCategory = asyncHandler(async (req, res) => {
+const getDeleteCategory = asyncHandler(async (req, res, next) => {
   const { slug } = req.params;
   try {
     const deletedCategory = await categoryHelpers.deleteCategory(slug);
@@ -112,12 +116,13 @@ const getDeleteCategory = asyncHandler(async (req, res) => {
       res.redirect('/admin/add-category');
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // Restore a category
-const getRestoreCategory = asyncHandler(async (req, res) => {
+const getRestoreCategory = asyncHandler(async (req, res, next) => {
   const { slug } = req.params;
   try {
     const restoredCategory = await categoryHelpers.restoreCategory(slug);
@@ -129,20 +134,26 @@ const getRestoreCategory = asyncHandler(async (req, res) => {
       res.redirect('/admin/add-category');
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // Dynamically update sub-categories
-const getSubCategories = asyncHandler(async (req, res) => {
-  const { category } = req.body;
-  console.log('bodyyy:', req.body);
+const getSubCategories = asyncHandler(async (req, res, next) => {
+  try {
+    const { category } = req.body;
+    console.log('bodyyy:', req.body);
 
-  const foundCategory = await Category.findOne({ title: category });
-  const finalCategory = JSON.parse(JSON.stringify(foundCategory));
-  const subCategories = finalCategory.subCategory;
-  console.log('subCatss:', subCategories);
-  res.json({ subCategories });
+    const foundCategory = await Category.findOne({ title: category });
+    const finalCategory = JSON.parse(JSON.stringify(foundCategory));
+    const subCategories = finalCategory.subCategory;
+    console.log('subCatss:', subCategories);
+    res.json({ subCategories });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
 });
 
 module.exports = {

@@ -2,7 +2,7 @@
     {{#if isAdmin}}
     {{>admin-header}}
     {{>admin-nav}}
-    {{else}}
+    {{else if isUser}}
     {{>user-header}}
     {{/if}}
 
@@ -10,7 +10,7 @@
 
     {{#if isAdmin}}
     {{>admin-footer}}
-    {{else}}
+    {{else if isUser}}
     {{>user-footer}}
     {{/if}}
 

@@ -4,7 +4,7 @@ const productHelpers = require('../helpers/product-helper');
 const wishlistHelpers = require('../helpers/wishlist-helper');
 
 // Get cart details
-const getCart = asyncHandler(async (req, res) => {
+const getCart = asyncHandler(async (req, res, next) => {
   try {
     const { user } = req.session;
     const userId = user.response._id;
@@ -58,12 +58,13 @@ const getCart = asyncHandler(async (req, res) => {
       });
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // Add to Cart
-const addToCart = asyncHandler(async (req, res) => {
+const addToCart = asyncHandler(async (req, res, next) => {
   try {
     const { id } = req.params;
     const { user } = req.session;
@@ -85,12 +86,13 @@ const addToCart = asyncHandler(async (req, res) => {
       res.json({ status: true });
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // Remove product from cart
-const removeProductFromCart = asyncHandler(async (req, res) => {
+const removeProductFromCart = asyncHandler(async (req, res, next) => {
   try {
     const { id } = req.params;
     const { user } = req.session;
@@ -101,12 +103,13 @@ const removeProductFromCart = asyncHandler(async (req, res) => {
       res.json({ status: true });
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // Clear cart
-const clearCartProducts = asyncHandler(async (req, res) => {
+const clearCartProducts = asyncHandler(async (req, res, next) => {
   try {
     const { user } = req.session;
     const userId = user.response._id;
@@ -116,12 +119,13 @@ const clearCartProducts = asyncHandler(async (req, res) => {
       res.json({ status: true });
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // Change product quantity
-const changeProductQuantity = asyncHandler(async (req, res) => {
+const changeProductQuantity = asyncHandler(async (req, res, next) => {
   try {
     console.log('req.body', req.body);
     const { prodId } = req.body;
@@ -132,19 +136,21 @@ const changeProductQuantity = asyncHandler(async (req, res) => {
     console.log('changedQQQ:', changedQty);
     res.json({ changedQty });
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // Delete cart after order is placed
-const deleteCart = asyncHandler(async (req, res) => {
+const deleteCart = asyncHandler(async (req, res, next) => {
   try {
     const { user } = req.session;
     const userId = user.response._id;
     const deleted = await cartHelpers.deleteTheCart(userId);
     if (deleted) res.json({ status: true });
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 

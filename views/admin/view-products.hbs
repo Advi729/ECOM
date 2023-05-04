@@ -36,6 +36,7 @@
             <thead class="bg-white">
                
                 <tr>
+                    <th scope="col">Sl no.</th>
                     <th scope="col">Title</th>
                     <th scope="col">Slug</th>
                     {{!-- <th scope="col">Description</th> --}}
@@ -57,6 +58,7 @@
                 {{!-- <hr> --}}
                 {{#each allProducts}}
                 <tr>
+                    <td>{{index @index}}.</td>
                     <td><a href="/admin/products/{{this.slug}}">{{this.title}}</a></td>
                     <td>{{this.slug}}</td>
                     {{!-- <td>{{this.description}}</td> --}}

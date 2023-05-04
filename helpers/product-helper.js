@@ -6,12 +6,15 @@ const categoryHelpers = require('./category-helper');
 const subCategoryHelpers = require('./sub-category-helper');
 const brandHelpers = require('./brand-helper');
 
-// Find all products with pagination
+// Find all products with pagination user side
 const findProducts = async (page) => {
   try {
     const limit = 9;
     const skip = (page - 1) * limit;
-    const productDetails = await Product.find({ stock: { $gt: 0 } })
+    const productDetails = await Product.find({
+      isDeleted: false,
+      stock: { $gt: 0 },
+    })
       .skip(skip)
       .limit(limit);
     const totalProducts = await Product.countDocuments({ stock: { $gt: 0 } });
@@ -21,18 +24,42 @@ const findProducts = async (page) => {
     // console.log(foundProducts);
     return { foundProducts, totalPages };
   } catch (error) {
-    throw new Error();
+    console.error(error);
+    throw error;
+  }
+};
+
+// Find all products with pagination
+const findProductsForAdmin = async (page) => {
+  try {
+    const limit = 9;
+    const skip = (page - 1) * limit;
+    const productDetails = await Product.find({
+      stock: { $gt: 0 },
+    })
+      .skip(skip)
+      .limit(limit);
+    const totalProducts = await Product.countDocuments({ stock: { $gt: 0 } });
+    const foundProducts = JSON.parse(JSON.stringify(productDetails));
+
+    const totalPages = Math.ceil(totalProducts / limit);
+    // console.log(foundProducts);
+    return { foundProducts, totalPages };
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
 };
 
 // Find all products
-const findAllProducts = asyncHandler(async (req, res) => {
+const findAllProducts = asyncHandler(async () => {
   try {
-    const productDetails = await Product.find();
+    const productDetails = await Product.find({ isDeleted: false });
     const foundProducts = JSON.parse(JSON.stringify(productDetails));
     return foundProducts;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -43,7 +70,8 @@ const findSingleProduct = async (slug) => {
     const foundProduct = JSON.parse(JSON.stringify(singleProduct));
     return foundProduct;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 };
 
@@ -54,7 +82,8 @@ const findSingleProductId = async (prodId) => {
     const foundProduct = JSON.parse(JSON.stringify(singleProduct));
     return foundProduct;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 };
 
@@ -109,7 +138,8 @@ const createProduct = asyncHandler(async (data) => {
     const addedProduct = await Product.create(productData);
     return addedProduct;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -165,7 +195,8 @@ const updateProduct = asyncHandler(async (slug, data) => {
     // console.log('updatedP:->', updated);
     return updated;
   } catch (error) {
-    throw new Error();
+    console.error(error);
+    throw error;
   }
 });
 
@@ -180,7 +211,8 @@ const markDelete = asyncHandler(async (slug) => {
       return markedProduct;
     }
   } catch (error) {
-    throw new Error();
+    console.error(error);
+    throw error;
   }
 });
 
@@ -195,7 +227,8 @@ const unMarkDelete = asyncHandler(async (slug) => {
       return markedProduct;
     }
   } catch (error) {
-    throw new Error();
+    console.error(error);
+    throw error;
   }
 });
 
@@ -210,7 +243,8 @@ const markPermanentDeleted = asyncHandler(async (slug) => {
       return markedProduct;
     }
   } catch (error) {
-    throw new Error();
+    console.error(error);
+    throw error;
   }
 });
 
@@ -238,7 +272,8 @@ const findProductsByCategorySlug = async (categorySlug, page) => {
     console.log('totalPagesCategory:', totalPages);
     return { foundProducts, totalPages };
   } catch (error) {
-    throw new Error();
+    console.error(error);
+    throw error;
   }
 };
 
@@ -265,7 +300,8 @@ const findProductsBySubCategorySlug = async (subCategorySlug, page) => {
     // res.json(productDetails);
     return { foundProducts, totalPages };
   } catch (error) {
-    throw new Error();
+    console.error(error);
+    throw error;
   }
 };
 
@@ -290,7 +326,8 @@ const findProductsByBrandSlug = async (brandSlug, page) => {
     // res.json(productDetails);
     return { foundProducts, totalPages };
   } catch (error) {
-    throw new Error();
+    console.error(error);
+    throw error;
   }
 };
 
@@ -300,7 +337,8 @@ const updateProductQuantity = asyncHandler(async (prodId, quantity) => {
     const newStock = -quantity;
     await Product.updateOne({ _id: prodId }, { $inc: { stock: newStock } });
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -352,12 +390,14 @@ const updateDiscountPrice = asyncHandler(async (category, subCategory) => {
     // console.log('updated :', updated);
     if (updated) return updated;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
 module.exports = {
   findProducts,
+  findProductsForAdmin,
   findAllProducts,
   findSingleProduct,
   findSingleProductId,

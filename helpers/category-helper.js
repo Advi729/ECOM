@@ -13,7 +13,8 @@ const allCategories = asyncHandler(async () => {
       return foundCategories;
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -55,7 +56,8 @@ const addCategory = asyncHandler(async (data) => {
     //   return newCategory;
     // }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -66,7 +68,8 @@ const findCategory = asyncHandler(async (slug) => {
     const foundCategory = JSON.parse(JSON.stringify(getCategory));
     return foundCategory;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -77,7 +80,8 @@ const findCategoryByTitle = asyncHandler(async (title) => {
     const foundCategory = JSON.parse(JSON.stringify(getCategory));
     return foundCategory;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -99,7 +103,8 @@ const updateCategory = asyncHandler(async (slug, data) => {
     // console.log('updatedP:->', updated);
     return updated;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -118,7 +123,8 @@ const deleteCategoryProducts = asyncHandler(async (categorySlug) => {
       return foundProducts;
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -140,7 +146,8 @@ const deleteCategory = asyncHandler(async (slug) => {
     const delProducts = await deleteCategoryProducts(categorySlug);
     if (delProducts || delCategory) return delCategory;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -156,7 +163,8 @@ const restoreCategoryProducts = asyncHandler(async (categorySlug) => {
       return markedProduct;
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 // restore a category
@@ -176,7 +184,8 @@ const restoreCategory = asyncHandler(async (slug) => {
     const restoreStatus = await restoreCategoryProducts(categorySlug);
     if (resCategory || restoreStatus) return resCategory;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 

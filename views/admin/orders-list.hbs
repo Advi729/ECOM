@@ -37,11 +37,13 @@
                         <table class="table table-hover all-orders">
                             <thead>
                                 <tr>
-                                    <th>#ID</th>
-                                    <th scope="col">Name</th>
+                                    <th>Sl no.</th>
+                                    <th>Order Id</th>
+                                    <th scope="col">Billing name</th>
                                     {{!-- <th scope="col">Email</th> --}}
                                     <th scope="col">Total</th>
                                     <th scope="col">Status</th>
+                                    <th scope="col">Payment method</th>
                                     <th scope="col">Date</th>
                                     <th scope="col" class="text-end"> Action </th>
                                 </tr>
@@ -49,6 +51,7 @@
                             <tbody>
                                 {{#each userDetails}}
                                 <tr>
+                                    <td>{{index @index}}.</td>
                                     <td>{{orderId}}</td>
                                     <td><b>{{user.firstname}} {{user.lastname}}</b></td>
                                     {{!-- <td><template class="__cf_email__" data-cfemail="aec3cfdcd8c7c0eecbd6cfc3dec2cb80cdc1c3">[email&#160;protected]</template></td> --}}
@@ -74,21 +77,20 @@
                                             <span class="badge rounded-pill alert-danger">Cancelled</span>
                                             {{else if (equal orderStatus "return")}}
                                             <span class="badge rounded-pill alert-danger">Return initiated</span>
+                                            {{else if (equal orderStatus "returned")}}
+                                            <span class="badge rounded-pill alert-danger">Returned</span>
                                             {{!-- <p style="color: red;">Return initiated</p> --}}
                                             {{/if}}
+                                    </td>
+                                    <td>
+                                        {{#if (equal paymentMethod 'cod')}} Cash on delivery
+                                        {{else if (equal paymentMethod 'razorPay')}} Razor Pay
+                                        {{/if}}
                                     </td>
                                     <td>{{moment createdAt format="DD MMMM YYYY" locale="en-in"}}</td>
                                     <td class="text-end">
                                         <a href="/admin/order-details/{{orderId}}" class="btn btn-md rounded font-sm">Details</a>
-                                        {{!-- <div class="dropdown">
-                                            <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
-                                            <div class="dropdown-menu">
-                                                <a class="dropdown-item" href="#">View detail</a>
-                                                <a class="dropdown-item" href="#">Edit info</a>
-                                                <a class="dropdown-item text-danger" href="#">Delete</a>
-                                            </div>
-                                        </div>  --}}
-                                        <!-- dropdown //end -->
+                                        
                                     </td>
                                 </tr>
                                 {{/each}}

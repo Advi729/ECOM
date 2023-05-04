@@ -38,8 +38,9 @@ router
 
 // Verifying OTP
 router
-  .get('/verify-otp', userControllers.verifyOtpGet)
-  .post('/verify-otp', userControllers.verifyOtpPost);
+  .route('/verify-otp')
+  .get(userControllers.verifyOtpGet)
+  .post(userControllers.verifyOtpPost);
 
 // View single product
 router.get('/products/:slug', productControllers.getProduct);
@@ -169,8 +170,8 @@ router.get(
 );
 
 // Return order
-router.get(
-  '/return-order/:orderId',
+router.post(
+  '/return-order',
   authMiddlewares.isUser,
   orderControllers.returnOrder
 );

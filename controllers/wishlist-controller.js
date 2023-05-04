@@ -4,7 +4,7 @@ const wishlistHelpers = require('../helpers/wishlist-helper');
 const productHelpers = require('../helpers/product-helper');
 
 // Get the wishlist page
-const getWishlist = asyncHandler(async (req, res) => {
+const getWishlist = asyncHandler(async (req, res, next) => {
   try {
     const { user } = req.session;
     const userId = user.response._id;
@@ -34,12 +34,13 @@ console.log(foundProducts);
       foundProducts,
     });
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // Add product to wishlist
-const addToWishlist = asyncHandler(async (req, res) => {
+const addToWishlist = asyncHandler(async (req, res, next) => {
   try {
     const { user } = req.session;
     const { id } = req.params;
@@ -48,12 +49,13 @@ const addToWishlist = asyncHandler(async (req, res) => {
     const added = wishlistHelpers.addProductToWishlist(userId, productId);
     if (added) res.json({ status: true });
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // Remove product from wishlist
-const removeFromWishlist = asyncHandler(async (req, res) => {
+const removeFromWishlist = asyncHandler(async (req, res, next) => {
   try {
     const { user } = req.session;
     const { id } = req.params;
@@ -65,7 +67,8 @@ const removeFromWishlist = asyncHandler(async (req, res) => {
     );
     if (removed) res.json({ status: true });
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 

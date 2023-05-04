@@ -7,7 +7,7 @@ const brandHelpers = require('../helpers/brand-helper');
 const cartHelpers = require('../helpers/cart-helper');
 
 // create product get
-const createProductGet = asyncHandler(async (req, res) => {
+const createProductGet = asyncHandler(async (req, res, next) => {
   try {
     const { admin } = req.session;
     const findAllCategories = await categoryHelpers.allCategories();
@@ -26,12 +26,13 @@ const createProductGet = asyncHandler(async (req, res) => {
     req.session.productValidationError = false;
     req.session.imageValidationError = false;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // Create product post
-const createProductPost = asyncHandler(async (req, res) => {
+const createProductPost = asyncHandler(async (req, res, next) => {
   try {
     const addedProduct = await productHelpers.createProduct(req);
     if (addedProduct) {
@@ -44,12 +45,13 @@ const createProductPost = asyncHandler(async (req, res) => {
       res.redirect('/admin/add-product');
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // Get a product
-const getProduct = asyncHandler(async (req, res) => {
+const getProduct = asyncHandler(async (req, res, next) => {
   try {
     const { slug } = req.params;
     const { user } = req.session;
@@ -67,14 +69,18 @@ const getProduct = asyncHandler(async (req, res) => {
         isUser: true,
         cartCount,
       });
+    } else {
+      const error = new Error('Product not found');
+      throw error;
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // Update a product GET
-const editProductGet = asyncHandler(async (req, res) => {
+const editProductGet = asyncHandler(async (req, res, next) => {
   try {
     const { slug } = req.params;
     const { admin } = req.session;
@@ -101,14 +107,15 @@ const editProductGet = asyncHandler(async (req, res) => {
       res.redirect('/admin/products-list');
     }
   } catch (error) {
-    throw new Error();
+    console.error(error);
+    next(error);
   }
 });
 
 // Update a product POST
-const editProductPost = asyncHandler(async (req, res) => {
-  const { slug } = req.params;
+const editProductPost = asyncHandler(async (req, res, next) => {
   try {
+    const { slug } = req.params;
     // console.log('postSlug:', slug);
     // console.log('req.body:->', req.body);
     const edited = await productHelpers.updateProduct(slug, req);
@@ -123,14 +130,15 @@ const editProductPost = asyncHandler(async (req, res) => {
       res.redirect(`/admin/edit-product/${slug}`);
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // Unlist a product
-const deleteProduct = asyncHandler(async (req, res) => {
-  const { slug } = req.params;
+const deleteProduct = asyncHandler(async (req, res, next) => {
   try {
+    const { slug } = req.params;
     const deleteProd = await productHelpers.markDelete(slug);
     if (deleteProd) {
       req.session.unlistSuccess = `You have successfully unlisted  ${deleteProd.title}`;
@@ -139,14 +147,15 @@ const deleteProduct = asyncHandler(async (req, res) => {
       res.redirect('/admin/products-list');
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // Restore a Unlisted product
-const unDeleteProduct = asyncHandler(async (req, res) => {
-  const { slug } = req.params;
+const unDeleteProduct = asyncHandler(async (req, res, next) => {
   try {
+    const { slug } = req.params;
     const deleteProd = await productHelpers.unMarkDelete(slug);
     if (deleteProd) {
       req.session.restoreSuccess = `You have successfully restored  ${deleteProd.title}`;
@@ -155,14 +164,15 @@ const unDeleteProduct = asyncHandler(async (req, res) => {
       res.redirect('/admin/products-list');
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // Permanent delete a product
 const permanentDeleteProduct = asyncHandler(async (req, res) => {
-  const { slug } = req.params;
   try {
+    const { slug } = req.params;
     const deleteProd = await productHelpers.markPermanentDeleted(slug);
     if (deleteProd) {
       req.session.deleteSuccess = `You have permanently deleted  ${deleteProd.title}.`;
@@ -171,7 +181,8 @@ const permanentDeleteProduct = asyncHandler(async (req, res) => {
       res.redirect('/admin/products-list');
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 

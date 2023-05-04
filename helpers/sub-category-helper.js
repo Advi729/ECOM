@@ -14,7 +14,8 @@ const allSubCategories = asyncHandler(async () => {
       return foundSubCategories;
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -28,7 +29,8 @@ const updateInCategorySchemaAdd = asyncHandler(
       );
       if (updated) return updated;
     } catch (error) {
-      throw new Error(error);
+      console.error(error);
+      throw error;
     }
   }
 );
@@ -59,7 +61,8 @@ const addSubCategory = asyncHandler(async (data) => {
       return newSubCategory;
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -70,7 +73,8 @@ const findSubCategory = asyncHandler(async (slug) => {
     const foundSubCategory = JSON.parse(JSON.stringify(getSubCategory));
     return foundSubCategory;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -81,7 +85,8 @@ const findSubCategoryByTitle = asyncHandler(async (title) => {
     const foundSubCategory = JSON.parse(JSON.stringify(getSubCategory));
     return foundSubCategory;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -95,7 +100,8 @@ const updateInCategorySchemaDelete = asyncHandler(
       );
       if (updated) return updated;
     } catch (error) {
-      throw new Error(error);
+      console.error(error);
+      throw error;
     }
   }
 );
@@ -133,7 +139,8 @@ const updateSubCategory = asyncHandler(async (slug, data) => {
     }
     return updated;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -148,7 +155,8 @@ const deleteSubCategoryProducts = asyncHandler(async (subCategorySlugs) => {
       return markedProducts;
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -173,7 +181,8 @@ const deleteSubCategory = asyncHandler(async (slug) => {
     if (delProducts || delSubCategory) return delSubCategory;
     // return delSubCategory;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -186,7 +195,8 @@ const restoreSubCategoryProducts = asyncHandler(async (subCategorySlugs) => {
     );
     if (restoredProducts) return restoredProducts;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -208,7 +218,8 @@ const restoreSubCategory = asyncHandler(async (slug) => {
     const restoredProds = await restoreSubCategoryProducts(finalSlugs);
     if (restoredProds || resSubCategory) return resSubCategory;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 

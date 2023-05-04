@@ -23,13 +23,13 @@
                                     </div>
                                     <form method="post" action="/admin/login">
                                         <div class="form-group">
-                                            <input type="text" name="email" placeholder="Username or email">
+                                            <input type="text" name="email" placeholder="Username or email" value="{{#if formData}}{{formData.email}}{{/if}}">
                                         </div>
                                         {{#if emailError}}
                                         <p style="color: red;">{{emailError}}</p><br>
                                         {{/if}}
                                         <div class="form-group">
-                                            <input type="password" name="password" placeholder="Password">
+                                            <input type="password" name="password" placeholder="Password" value="{{#if formData}}{{formData.password}}{{/if}}">
                                         </div>
                                         {{#if passwordError}}
                                         <p style="color: red;">{{passwordError}}</p><br>

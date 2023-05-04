@@ -6,15 +6,15 @@ const bannerSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    heading1: {
-      type: String,
-      required: true,
-    },
-    heading2: {
+    heading: {
       type: String,
       required: true,
     },
     subHeading: {
+      type: String,
+      required: true,
+    },
+    footer: {
       type: String,
       required: true,
     },

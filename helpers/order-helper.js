@@ -24,7 +24,8 @@ const updateProductQuantity = asyncHandler(async (productsList) => {
       })
     );
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -62,7 +63,8 @@ const updateCouponDetails = asyncHandler(async (userId, coupon) => {
     // const updated = await user.save();
     return updated;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -117,6 +119,7 @@ const createOrder = asyncHandler(
         totalPrice,
         grandTotalPrice,
         couponPercentage,
+        returnReason: null,
       });
       await newOrder.save();
 
@@ -134,7 +137,8 @@ const createOrder = asyncHandler(
         return newOrder;
       }
     } catch (error) {
-      throw new Error(error);
+      console.error(error);
+      throw error;
     }
   }
 );
@@ -157,7 +161,8 @@ const getOrderDetails = asyncHandler(async (userId, page) => {
 
     return { orderData, totalPages };
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -168,7 +173,8 @@ const getSingleOrderDetails = asyncHandler(async (orderId) => {
     const singleOrderDetails = JSON.parse(JSON.stringify(singleOrderData));
     return singleOrderDetails;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -197,7 +203,8 @@ const giveRefund = asyncHandler(async (order) => {
     await walletNew.save();
     return walletNew;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -225,12 +232,13 @@ const cancelProductOrder = asyncHandler(async (orderId) => {
     }
     if (cancelled) return cancelled;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
 // Return order
-const returnProductOrder = asyncHandler(async (orderId) => {
+const returnProductOrder = asyncHandler(async (orderId, returnReason) => {
   try {
     const newStatus = 'return';
     let paymentStatus;
@@ -244,7 +252,7 @@ const returnProductOrder = asyncHandler(async (orderId) => {
     }
     const returned = await Order.updateOne(
       { orderId },
-      { $set: { orderStatus: newStatus, paymentStatus } }
+      { $set: { orderStatus: newStatus, paymentStatus, returnReason } }
     );
 
     // if (orderDetails.paymentMethod !== 'cod') {
@@ -253,8 +261,8 @@ const returnProductOrder = asyncHandler(async (orderId) => {
     // }
     // if (returned) return returned;
   } catch (error) {
-    // throw new Error(error);
     console.error(error);
+    throw error;
   }
 });
 
@@ -274,7 +282,8 @@ const allOrders = asyncHandler(async (page) => {
 
     return { orderDetails, totalPages };
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -320,7 +329,8 @@ const allDeliveredOrders = asyncHandler(async () => {
 
     return { orderDetails };
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -374,7 +384,7 @@ const dateWiseOrders = asyncHandler(async (data) => {
     return { orderDetails };
   } catch (error) {
     console.error(error);
-    throw new Error(error);
+    throw error;
   }
 });
 
@@ -385,14 +395,17 @@ const updateOrderStatus = asyncHandler(async (orderId, orderStatus) => {
       { orderId },
       { $set: { orderStatus } }
     );
-    let statusUpdated;
+    let paymentStatus;
     if (orderStatus === 'delivered') {
-      const paymentStatus = 'paid';
-      statusUpdated = await updatePaymentStatus(orderId, paymentStatus);
+      paymentStatus = 'paid';
+    } else if (orderStatus === 'returned') {
+      paymentStatus = 'refunded';
     }
+    const statusUpdated = await updatePaymentStatus(orderId, paymentStatus);
     if (updated && statusUpdated) return updated;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -406,8 +419,8 @@ const generateRazorPay = asyncHandler(async (orderId, totalPrice) => {
     });
     return createdInstance;
   } catch (error) {
-    // throw new Error(error);
     console.error(error);
+    throw error;
   }
 });
 
@@ -426,7 +439,8 @@ const verifyRazorpayPayment = asyncHandler(async (details) => {
     }
     return false;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -439,7 +453,8 @@ const updatePaymentStatus = asyncHandler(async (orderId, paymentStatus) => {
     );
     if (updated) return updated;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -450,7 +465,8 @@ const getWalletDetails = asyncHandler(async (userId) => {
     const walletDetails = JSON.parse(JSON.stringify(walletData));
     if (walletDetails) return walletDetails;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 

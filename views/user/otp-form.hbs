@@ -22,7 +22,7 @@
                                 </div>
                                 <form method="post" action="/login-otp">
                                     <div class="form-group">
-                                        <input type="tel" name="mobile" placeholder="Your mobile number">
+                                        <input type="tel" name="mobile" placeholder="Your mobile number" value="{{#if formData}}{{formData.mobile}}{{/if}}">
                                     </div>
                                     <div>
                                         {{#if accountError}}

@@ -7,7 +7,8 @@ const getWishlistDetails = asyncHandler(async (userId) => {
     const wishlistDetails = await Wishlist.findOne({ userId });
     return wishlistDetails;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -32,7 +33,8 @@ const addProductToWishlist = asyncHandler(async (userId, productId) => {
     );
     return updated;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -46,7 +48,8 @@ const getWishlistCount = asyncHandler(async (userId) => {
     }
     return null;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -59,7 +62,8 @@ const removeProductFromWishlist = asyncHandler(async (userId, productId) => {
     );
     if (removed) return removed;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 module.exports = {

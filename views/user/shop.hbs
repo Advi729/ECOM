@@ -209,15 +209,23 @@
                         {{#if this.isDeleted}}
                         {{else}}
                         <div class="widget-category mb-30">
+                        
                             <a href="/categories/{{this.slug}}s-footwear">
                                 <h5 class="section-title style-1 mb-30 wow fadeIn animated">{{this.title}}'s Footwear</h5>
                             </a>
+                        
                             <ul class="categories">
                                 {{#each ../allSubCategories}}
-                                {{#if this.isDeleted}}
-                                {{else}}
-                                <li><a href="/sub-categories/{{../this.slug}}s-{{this.slug}}">{{this.title}}</a></li>
-                                {{/if}}
+                                    {{#if this.isDeleted}}
+                                    {{else}}
+                                        {{#if (contains this.parent ../this.title)}}                        
+                                            {{#if (contains ../../allSubCategorySlugs (concat ../this.slug 's-' this.slug))}}
+                                                <li><a href="/sub-categories/{{../this.slug}}s-{{this.slug}}">{{this.title}}</a></li>
+                                            {{else}}
+                                            {{/if}}
+                                        {{else}}
+                                        {{/if}}
+                                    {{/if}}
                                 {{/each}}
                             </ul>
                         </div>
@@ -230,10 +238,10 @@
                                 {{#each allBrands}}
                                 {{#if this.isDeleted}}
                                 {{else}}
-                                {{!-- {{#if (filter allProducts (fn p) (and (contains p.allCategories title) (contains p.allSubCategories title) (eq p.brand this.title)))}} --}}
+                                {{#if (contains ../allBrandSlugs this.slug)}}
                                 <li><a href="/brands/{{this.slug}}">{{this.title}}</a></li>
                                 {{/if}}
-                                {{!-- {{/if}} --}}
+                                {{/if}}
                                 {{/each}}
                             </ul>
                         </div>

@@ -32,11 +32,15 @@
                                 <p>Please enter the OTP sent to {{mobile}}:</p>
                                 <form method="post" action="/verify-otp">
                                     <div class="form-group">
-                                        <input type="hidden" required="" name="mobileNumber" value="{{mobile}}">
+                                        <input type="hidden" required="" name="mobile" value="{{mobile}}">
                                     </div>
                                     <div class="form-group">
                                         <input type="text" name="otp" maxlength="6">
                                     </div>
+
+                                    {{#if otpError}}
+                                        <p style="color: red;">{{otpError}}</p>
+                                        {{/if}}
                                     
                                     <div class="form-group">
                                         <button type="submit" class="btn btn-fill-out btn-block hover-up" name="verify">Verify</button>

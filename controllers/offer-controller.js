@@ -21,7 +21,7 @@ const getAddCategoryOffer = asyncHandler(async (req, res) => {
 });
 
 // post add offer for category
-const postAddCategoryOffer = asyncHandler(async (req, res) => {
+const postAddCategoryOffer = asyncHandler(async (req, res, next) => {
   try {
     const added = await offerHelpers.addOffer(req.body);
     const { category, subCategory } = req.body;
@@ -35,12 +35,13 @@ const postAddCategoryOffer = asyncHandler(async (req, res) => {
       res.json({ status: false });
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // Change offer status
-const changeOfferStatus = asyncHandler(async (req, res) => {
+const changeOfferStatus = asyncHandler(async (req, res, next) => {
   try {
     const { id } = req.params;
     const offer = await offerHelpers.getSingleOffer(id);
@@ -51,12 +52,13 @@ const changeOfferStatus = asyncHandler(async (req, res) => {
     );
     if (changed && updatedPrice) res.json({ status: true });
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // Delete offer
-const deleteOffer = asyncHandler(async (req, res) => {
+const deleteOffer = asyncHandler(async (req, res, next) => {
   try {
     const { id } = req.params;
     const offer = await offerHelpers.getSingleOffer(id);
@@ -67,7 +69,8 @@ const deleteOffer = asyncHandler(async (req, res) => {
     );
     if (deleted) res.redirect('/admin/add-category-offer');
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 

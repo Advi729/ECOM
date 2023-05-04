@@ -280,21 +280,25 @@
                                 <div class="header-action-icon-2">
                                     <a href="/wishlist">
                                         <img class="svgInject" alt="Evara" src="/assets-user/imgs/theme/icons/icon-heart.svg">
-                                        {{#if user}}
+                                        {{!-- {{#if user}} --}}
                                         {{#if wishlistCount}}
                                         <span class="pro-count blue" id="wishlist-count">{{wishlistCount}}</span>
+                                        {{else}}
+                                        <span class="pro-count blue" id="wishlist-count">0</span>
                                         {{/if}}
-                                        {{/if}}
+                                        {{!-- {{/if}} --}}
                                     </a>
                                 </div>
                                 <div class="header-action-icon-2">
                                     <a class="mini-cart-icon" href="/cart">
                                         <img alt="Evara" src="/assets-user/imgs/theme/icons/icon-cart.svg">
-                                        {{#if user}}
+                                        {{!-- {{#if user}} --}}
                                         {{#if cartCount}}
                                         <span class="pro-count blue" id="cart-count">{{cartCount}}</span>
+                                        {{else}}
+                                        <span class="pro-count blue" id="cart-count">0</span>
                                         {{/if}}
-                                        {{/if}}
+                                        {{!-- {{/if}} --}}
                                     </a>
                                     {{!-- <div class="cart-dropdown-wrap cart-dropdown-hm2">
                                         <ul>

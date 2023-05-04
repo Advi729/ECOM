@@ -62,6 +62,8 @@
                                             <span class="badge rounded-pill alert-danger">Cancelled</span>
                                             {{else if (equal this.orderStatus "return")}}
                                             <span class="badge rounded-pill alert-danger">Return initiated</span>
+                                            {{else if (equal this.orderStatus "returned")}}
+                                            <span class="badge rounded-pill alert-danger">Returned</span>
                                             {{!-- <p style="color: red;">Return initiated</p> --}}
                                             {{/if}}
                                         </td>
@@ -74,6 +76,8 @@
                                             <span class="badge rounded-pill alert-danger">Cancelled</span>
                                             {{else if (equal this.paymentStatus "return")}}
                                             <span class="badge rounded-pill alert-danger">Refund initiated</span>
+                                            {{else if (equal this.paymentStatus "refunded")}}
+                                            <span class="badge rounded-pill alert-danger">Refunded</span>
                                             {{!-- <p style="color: red;">Return initiated</p> --}}
                                             {{/if}}
                                         </td>

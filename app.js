@@ -54,6 +54,28 @@ Handlebars.registerHelper('moment', (dateValue, options) => {
   const locale = options.hash.locale || 'en-in';
   return moment(dateValue).locale(locale).format(format);
 });
+// Handlebars.registerHelper('any', (array, value) => array.includes(value));
+Handlebars.registerHelper('contains', function (array, value, options = {}) {
+  console.log('array in helper: ', array);
+  console.log('value in helper: ', value);
+  if (array && array.indexOf(value) !== -1) {
+    if (options.fn) {
+      return options.fn(this);
+    }
+    return true;
+  }
+  if (options.inverse) {
+    return options.inverse(this);
+  }
+  return false;
+});
+
+Handlebars.registerHelper('concat', function () {
+  const args = Array.prototype.slice.call(arguments);
+  args.pop(); // remove the options argument
+
+  return args.join('');
+});
 
 // Register handlebars-intl with the handlebars instance
 handlebarsIntl.registerWith(Handlebars);
@@ -96,20 +118,20 @@ app.use('/admin', adminRouter);
 app.use(notFound);
 app.use(errorHandler);
 
-// catch 404 and forward to error handler
-app.use((req, res, next) => {
-  next(createError(404));
-});
+// // catch 404 and forward to error handler
+// app.use((req, res, next) => {
+//   next(createError(404));
+// });
 
-// error handler
-app.use((err, req, res, next) => {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+// // error handler
+// app.use((err, req, res, next) => {
+//   // set locals, only providing error in development
+//   res.locals.message = err.message;
+//   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
+//   // render the error page
+//   res.status(err.status || 500);
+//   res.render('error');
+// });
 
 module.exports = app;

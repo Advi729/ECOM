@@ -13,7 +13,8 @@ const allBrands = asyncHandler(async () => {
       return foundBrands;
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -53,7 +54,8 @@ const addBrand = asyncHandler(async (data) => {
     //   return newBrand;
     // }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -64,7 +66,8 @@ const findBrand = asyncHandler(async (slug) => {
     const foundBrand = JSON.parse(JSON.stringify(getBrand));
     return foundBrand;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -75,7 +78,8 @@ const findBrandByTitle = asyncHandler(async (title) => {
     const foundBrand = JSON.parse(JSON.stringify(getBrand));
     return foundBrand;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -94,7 +98,8 @@ const updateBrand = asyncHandler(async (slug, data) => {
     // console.log('updatedP:->', updated);
     return updated;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -110,7 +115,8 @@ const deleteBrandProducts = asyncHandler(async (brandSlug) => {
       return markedProducts;
     }
   } catch (error) {
-    throw new Error();
+    console.error(error);
+    throw error;
   }
 });
 
@@ -125,7 +131,8 @@ const deleteBrand = asyncHandler(async (slug) => {
     const deletedBrand = await deleteBrandProducts(slug);
     if (delBrand || deletedBrand) return delBrand;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -141,7 +148,8 @@ const restoreBrandProducts = asyncHandler(async (brandSlug) => {
       return markedProduct;
     }
   } catch (error) {
-    throw new Error();
+    console.error(error);
+    throw error;
   }
 });
 // restore a brand
@@ -156,7 +164,8 @@ const restoreBrand = asyncHandler(async (slug) => {
     const restoredProducts = await restoreBrandProducts(slug);
     if (restoredProducts || resBrand) return resBrand;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 

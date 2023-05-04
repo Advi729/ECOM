@@ -1,5 +1,9 @@
 const asyncHandler = require('express-async-handler');
 const { validationResult } = require('express-validator');
+
+const accountSid = process.env.ACCOUNT_SID;
+const authToken = process.env.AUTH_TOKEN;
+const client = require('twilio')(accountSid, authToken);
 const User = require('../models/user-model');
 const twilioMiddlewares = require('../middlewares/twilio-middleware');
 const productHelpers = require('../helpers/product-helper');
@@ -14,12 +18,14 @@ const couponHelpers = require('../helpers/coupon-helper');
 const bannerHelpers = require('../helpers/banner-helper');
 
 // Get home page
-const getHomePage = asyncHandler(async (req, res) => {
+const getHomePage = asyncHandler(async (req, res, next) => {
   try {
     const { user } = req.session;
+    console.log('user:', user);
+    console.log('req.session:', req.session);
     let cartCount = null;
     let wishlistCount = null;
-    if (user) {
+    if (user?.response) {
       const userId = user.response._id;
       cartCount = await cartHelpers.getCartCount(userId);
       wishlistCount = await wishlistHelpers.getWishlistCount(userId);
@@ -39,35 +45,45 @@ const getHomePage = asyncHandler(async (req, res) => {
       allBanners,
     });
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // User sign up GET
-const createUserGet = asyncHandler(async (req, res) => {
-  res.render('user/signup', {
-    signUpErr: req.session.signUpError,
-    userExist: req.session.userExist,
-    isUser: true,
-  });
-  req.session.userExist = false;
-  req.session.signUpError = false;
+const createUserGet = asyncHandler(async (req, res, next) => {
+  try {
+    res.render('user/signup', {
+      signUpErr: req.session.signUpError,
+      userExist: req.session.userExist,
+      formData: req.session.formData,
+      isUser: true,
+    });
+    req.session.userExist = false;
+    req.session.signUpError = false;
+    req.session.formData = false;
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
 });
 
-// new User sign up post
-const createUserPost = asyncHandler(async (req, res) => {
+// User sign up post
+const createUserPost = asyncHandler(async (req, res, next) => {
   try {
     const errors = validationResult(req);
     const err = errors.errors;
     // console.log('errorsignup:', err);
     if (!errors.isEmpty()) {
       req.session.signUpError = err[0].msg;
+      req.session.formData = req.body; // Store the user input in session
       res.redirect('/signup');
     } else {
       // console.log('req.body::::', req.body);
       const existingUser = await userHelpers.userSignUp(req.body);
       if (existingUser.status) {
         req.session.userExist = 'Username or phone already exist!!';
+        req.session.formData = req.body; // Store the user input in session
         res.redirect('/signup');
       } else {
         // console.log('existing:::', existingUser);
@@ -81,29 +97,38 @@ const createUserPost = asyncHandler(async (req, res) => {
       }
     }
   } catch (error) {
-    throw new Error();
+    console.error(error);
+    next(error);
   }
 });
 
 // User login GET
-const loginUserGet = asyncHandler(async (req, res) => {
-  res.render('user/login', {
-    isUser: true,
-    loginError: req.session.loginError,
-    statusError: req.session.statusError,
-  });
-  req.session.loginError = false;
-  req.session.statusError = false;
+const loginUserGet = asyncHandler(async (req, res, next) => {
+  try {
+    res.render('user/login', {
+      isUser: true,
+      loginError: req.session.loginError,
+      statusError: req.session.statusError,
+      formData: req.session.formData,
+    });
+    req.session.loginError = false;
+    req.session.statusError = false;
+    req.session.formData = false;
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
 });
 
 // User login POST
-const loginUserPost = asyncHandler(async (req, res) => {
+const loginUserPost = asyncHandler(async (req, res, next) => {
   try {
     const errors = validationResult(req);
     // console.log(errors.errors);
     const err = errors.errors;
     if (!errors.isEmpty()) {
       req.session.loginError = err[0].msg;
+      req.session.formData = req.body;
       res.redirect('/login');
     } else {
       const loginStatus = await userHelpers.userLogin(req.body);
@@ -113,38 +138,49 @@ const loginUserPost = asyncHandler(async (req, res) => {
         res.redirect('/');
       } else if (loginStatus.blockedStatus) {
         req.session.statusError = 'You are blocked!';
+        req.session.formData = req.body;
         req.session.user = false;
         res.redirect('/login');
       } else {
         req.session.loginError = 'Invalid username or password!';
+        req.session.formData = req.body;
         req.session.user = false;
         res.redirect('/login');
       }
     }
   } catch (error) {
-    throw new Error();
+    console.error(error);
+    next(error);
   }
 });
 
 // User login GET using OTP
-const loginUserGetOTP = asyncHandler(async (req, res) => {
-  res.render('user/otp-form', {
-    isUser: true,
-    accountError: req.session.accountError,
-    statusError: req.session.statusError,
-  });
-  req.session.accountError = false;
-  req.session.statusError = false;
+const loginUserGetOTP = asyncHandler(async (req, res, next) => {
+  try {
+    res.render('user/otp-form', {
+      isUser: true,
+      accountError: req.session.accountError,
+      statusError: req.session.statusError,
+      formData: req.session.formData,
+    });
+    req.session.accountError = false;
+    req.session.statusError = false;
+    req.session.formData = false;
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
 });
 
 // User login POST using OTP
-const loginUserPostOTP = asyncHandler(async (req, res) => {
+const loginUserPostOTP = asyncHandler(async (req, res, next) => {
   try {
     const errors = validationResult(req);
     const err = errors.errors;
     // console.log('error:',err);
     if (!errors.isEmpty()) {
       req.session.accountError = err[0].msg;
+      req.session.formData = req.body;
       res.redirect('/login-otp');
     } else {
       const { mobile } = req.body;
@@ -160,33 +196,41 @@ const loginUserPostOTP = asyncHandler(async (req, res) => {
         });
       } else if (foundUser.response === null) {
         req.session.accountError = 'Number not registered with an account!';
+        req.session.formData = req.body;
         res.redirect('/login-otp');
       } else if (foundUser.response.blocked !== false) {
         req.session.statusError = 'Access has been denied!';
+        req.session.formData = req.body;
         res.redirect('login-otp');
       }
     }
   } catch (error) {
-    throw new Error();
+    console.error(error);
+    next(error);
   }
 });
 
 // User login otp verify get method
-const verifyOtpGet = async (req, res) => {
+const verifyOtpGet = async (req, res, next) => {
   try {
     const { mobile } = req.session;
-    res.render('user/otp', { mobile, otpError: req.session.otpError });
+    console.log('mobile in verifyOtpGet: ', mobile);
+    res.render('user/otp', { mobile, otpError: req.session.otpErr });
     req.session.otpErr = false;
   } catch (error) {
-    throw new Error();
+    console.error(error);
+    next(error);
   }
 };
 
 // User login otp verify
-const verifyOtpPost = async (req, res) => {
+const verifyOtpPost = asyncHandler(async (req, res, next) => {
   try {
     const { mobile } = req.body;
     const { otp } = req.body;
+    console.log('body in verifyotpost: ', req.body);
+    console.log('mobileNo in controller: ', mobile);
+
     // Verify the OTP
     twilioMiddlewares.verifying_otp(mobile, otp).then((verification) => {
       if (verification.status === 'approved') {
@@ -195,14 +239,22 @@ const verifyOtpPost = async (req, res) => {
         req.session.otpErr = 'OTP is invalid!';
         res.redirect('/verify-otp');
       }
-      // const products = req.productsAll;
-      // res.render('user/home', { allProducts: products, user: true });
-      // // here we need to send username
     });
   } catch (error) {
-    throw new Error();
+    // if (error instanceof client.constructor.RestClient.RestException) {
+    //   console.error(error.code);
+    //   console.error(error.message);
+    //   console.error(error.moreInfo);
+    //   req.session.otpErr =
+    //     'An error occurred while verifying your OTP. Please check your mobile number and OTP and try again.';
+    //   res.redirect('/verify-otp');
+    // } else {
+    //   console.error(error);
+    // }
+    console.error(error);
+    next(error);
   }
-};
+});
 
 // new logout user
 const logoutUser = asyncHandler(async (req, res) => {
@@ -211,25 +263,26 @@ const logoutUser = asyncHandler(async (req, res) => {
 });
 
 // Get details of a user
-const getaUser = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-  // console.log(req.params);
+const getaUser = asyncHandler(async (req, res, next) => {
   try {
+    const { id } = req.params;
     const getUser = await User.findById(id);
     res.json({ getUser });
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 //------------------------------------------------------------------------------------------------------------------------------------------
 // Render shop
-const getShop = asyncHandler(async (req, res) => {
+const getShop = asyncHandler(async (req, res, next) => {
   try {
     const page = req.query.page || 1;
     const { foundProducts, totalPages } = await productHelpers.findProducts(
       page
     );
+    const productsForSlugs = await productHelpers.findAllProducts();
     const categories = await categoryHelpers.allCategories();
     const subCategories = await subCategoryHelpers.allSubCategories();
     const brands = await brandHelpers.allBrands();
@@ -244,6 +297,17 @@ const getShop = asyncHandler(async (req, res) => {
     const products = JSON.parse(JSON.stringify(foundProducts));
     const pageShop = true;
 
+    // all slugs from products
+    const { allCategorySlugs, allSubCategorySlugs, allBrandSlugs } =
+      await userHelpers.allSlugsInProducts(productsForSlugs);
+
+    console.log(
+      'found categories   : ',
+      allCategorySlugs,
+      allSubCategorySlugs,
+      allBrandSlugs
+    );
+
     res.render('user/shop', {
       user,
       pageShop,
@@ -255,19 +319,24 @@ const getShop = asyncHandler(async (req, res) => {
       cartCount,
       wishlistCount,
       totalPages,
+      allCategorySlugs,
+      allSubCategorySlugs,
+      allBrandSlugs,
     });
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // filter products using category slug
-const filterCategory = asyncHandler(async (req, res) => {
+const filterCategory = asyncHandler(async (req, res, next) => {
   try {
     const { categorySlug } = req.params;
     const page = req.query.page || 1;
 
     const { user } = req.session;
+    const productsForSlugs = await productHelpers.findAllProducts();
     const categories = await categoryHelpers.allCategories();
     const subCategories = await subCategoryHelpers.allSubCategories();
     const brands = await brandHelpers.allBrands();
@@ -284,8 +353,12 @@ const filterCategory = asyncHandler(async (req, res) => {
 
     const categoryHeading = foundProducts[0].category;
     const pageCategory = true;
+
+    // all slugs from products
+    const { allCategorySlugs, allSubCategorySlugs, allBrandSlugs } =
+      await userHelpers.allSlugsInProducts(productsForSlugs);
+
     if (foundProducts) {
-      // res.render('user/shop-category', {
       res.render('user/shop', {
         user,
         pageCategory,
@@ -298,21 +371,26 @@ const filterCategory = asyncHandler(async (req, res) => {
         cartCount,
         wishlistCount,
         totalPages,
+        allCategorySlugs,
+        allSubCategorySlugs,
+        allBrandSlugs,
       });
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // filter products using category slug
-const filterSubCategory = asyncHandler(async (req, res) => {
+const filterSubCategory = asyncHandler(async (req, res, next) => {
   try {
     const { subCategorySlug } = req.params;
     // console.log('filterparamss:', req.params);
     const page = req.query.page || 1;
 
     const { user } = req.session;
+    const productsForSlugs = await productHelpers.findAllProducts();
     const categories = await categoryHelpers.allCategories();
     const subCategories = await subCategoryHelpers.allSubCategories();
     const brands = await brandHelpers.allBrands();
@@ -332,8 +410,11 @@ const filterSubCategory = asyncHandler(async (req, res) => {
       wishlistCount = await wishlistHelpers.getWishlistCount(userId);
     }
 
+    // all slugs from products
+    const { allCategorySlugs, allSubCategorySlugs, allBrandSlugs } =
+      await userHelpers.allSlugsInProducts(productsForSlugs);
+
     if (foundProducts) {
-      // res.render('user/shop-sub-category', {
       res.render('user/shop', {
         user,
         isUser: true,
@@ -348,21 +429,26 @@ const filterSubCategory = asyncHandler(async (req, res) => {
         cartCount,
         wishlistCount,
         totalPages,
+        allCategorySlugs,
+        allSubCategorySlugs,
+        allBrandSlugs,
       });
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // filter products using category slug
-const filterBrand = asyncHandler(async (req, res) => {
+const filterBrand = asyncHandler(async (req, res, next) => {
   try {
     const { brandSlug } = req.params;
     // console.log('filterparamss:', req.params);
     const page = req.query.page || 1;
 
     const { user } = req.session;
+    const productsForSlugs = await productHelpers.findAllProducts();
     const categories = await categoryHelpers.allCategories();
     const subCategories = await subCategoryHelpers.allSubCategories();
     const brands = await brandHelpers.allBrands();
@@ -380,8 +466,11 @@ const filterBrand = asyncHandler(async (req, res) => {
       wishlistCount = await wishlistHelpers.getWishlistCount(userId);
     }
 
+    // all slugs from products
+    const { allCategorySlugs, allSubCategorySlugs, allBrandSlugs } =
+      await userHelpers.allSlugsInProducts(productsForSlugs);
+
     if (foundProducts) {
-      // res.render('user/shop-brand', {
       res.render('user/shop', {
         user,
         isUser: true,
@@ -394,15 +483,19 @@ const filterBrand = asyncHandler(async (req, res) => {
         cartCount,
         wishlistCount,
         totalPages,
+        allCategorySlugs,
+        allSubCategorySlugs,
+        allBrandSlugs,
       });
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // get user profile
-const getUserProfile = asyncHandler(async (req, res) => {
+const getUserProfile = asyncHandler(async (req, res, next) => {
   try {
     const { _id } = req.params;
     const { user } = req.session;
@@ -430,14 +523,19 @@ const getUserProfile = asyncHandler(async (req, res) => {
         walletDetails,
         coupon,
       });
+    } else {
+      const error = new Error('User not found');
+      error.status = 404; // set the error status to 404 (Not Found)
+      throw error;
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // Add address
-const addAddress = asyncHandler(async (req, res) => {
+const addAddress = asyncHandler(async (req, res, next) => {
   try {
     const { _id } = req.params;
     const addressAdded = await userHelpers.addUserAddress(_id, req);
@@ -445,12 +543,13 @@ const addAddress = asyncHandler(async (req, res) => {
       res.redirect(`/profile/${_id}`);
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // Add address Checkout
-const addAddressCheckout = asyncHandler(async (req, res) => {
+const addAddressCheckout = asyncHandler(async (req, res, next) => {
   try {
     const { _id } = req.params;
     const addressAdded = await userHelpers.addUserAddress(_id, req);
@@ -458,12 +557,13 @@ const addAddressCheckout = asyncHandler(async (req, res) => {
       res.redirect(`/check-out`);
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // Edit address
-const editAddress = asyncHandler(async (req, res) => {
+const editAddress = asyncHandler(async (req, res, next) => {
   try {
     // console.log('reached edit address>>>>>>>');
     const { _id } = req.params;
@@ -478,12 +578,13 @@ const editAddress = asyncHandler(async (req, res) => {
       res.redirect(`/profile/${user.response._id}`);
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // Delete address
-const deleteAddress = asyncHandler(async (req, res) => {
+const deleteAddress = asyncHandler(async (req, res, next) => {
   try {
     const { _id } = req.params;
     const { user } = req.session;
@@ -496,7 +597,8 @@ const deleteAddress = asyncHandler(async (req, res) => {
       res.redirect(`/profile/${user.response._id}`);
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 

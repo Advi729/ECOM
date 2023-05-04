@@ -8,7 +8,8 @@ const getCartDetails = asyncHandler(async (userId) => {
     //   console.log('carrrrrrrr',cartDetails);
     return cartDetails;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -48,7 +49,8 @@ const addProductToCart = asyncHandler(async (userId, prodId, subTotal) => {
     );
     return updated;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -61,7 +63,8 @@ const removeFromCart = asyncHandler(async (userId, prodId) => {
     );
     return removed;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -74,7 +77,8 @@ const clearedCart = asyncHandler(async (userId) => {
     );
     return cleared;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -88,7 +92,8 @@ const getCartCount = asyncHandler(async (userId) => {
     }
     return null;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -153,7 +158,8 @@ const changeTheQuantity = asyncHandler(async (data, totalStock) => {
     return { stockLimit: false };
     // console.log('updated:', updated);
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -163,7 +169,8 @@ const deleteTheCart = asyncHandler(async (userId) => {
     const deleted = await Cart.deleteOne({ userId });
     return deleted;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 

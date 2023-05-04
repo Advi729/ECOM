@@ -44,7 +44,7 @@
             <div class="card" id="sales-report">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-3">
+                        {{!-- <div class="col-md-3">
                             
                             
                                 <div class="mb-4">
@@ -76,15 +76,54 @@
                                 </div>
 
                                 
-                        </div>
-                        <div class="col-md-9">
+                        </div> --}}
+                        {{!-- <div class="col-md-9"> --}}
+    
                             <div class="card-body">
+
+<div class="row align-items-center">
+      <h4 class="content-title card-title ms-2">Sales Report</h4>
+    </div>
+                              <div class="table-responsive">
+                        <table class="table table-hover all-orders">
+                            <thead>
+                                <tr>
+                                    
+                                    <th scope="col">Total Users</th>
+                                    <th scope="col">Total Products</th>
+                                    <th scope="col">Total Orders</th>
+                                    <th scope="col">Monthly Revenue</th>
+                                    <th scope="col">Total Revenue</th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                                <tr>
+                                    
+                                    <td>{{totalUsers}}</td>
+                                    <td>{{totalProducts}}</td>
+                                    <td>{{totalOrders}}</td>
+                                    <td>{{formatNumber totalSales style='currency' currency='INR' minimumFractionDigits=2}}</td>
+                                    <td>{{formatNumber totalRevenue style='currency' currency='INR' minimumFractionDigits=2}}</td>
+                                </tr>
+                                
+                               
+                            </tbody>
+                        </table>
+                    </div>
+                    <br>
+
+<div class="row align-items-center">
+      <h4 class="content-title card-title ms-2">Orders</h4>
+    </div>
                     <div class="table-responsive">
                         <table id="sales-table" class="table table-hover all-orders">
                             <thead>
                                 <tr>
-                                    <th scope="col">#ID</th>
-                                    <th scope="col">Customer name</th>
+                                    <th>Sl no.</th>
+                                    <th scope="col">Order Id</th>
+                                    <th scope="col">Billing name</th>
                                     {{!-- <th scope="col">Email</th> --}}
                                     <th scope="col">Total Price</th>
                                     <th scope="col">Payment method</th>
@@ -95,6 +134,7 @@
                             <tbody>
                                 {{#each deliveredOrders.orderDetails}}
                                 <tr>
+                                    <td>{{index @index}}.</td>
                                     <td>{{orderId}}</td>
                                     <td><b>{{firstname}} {{lastname}}</b></td>
                                     {{!-- <td><template class="__cf_email__" data-cfemail="aec3cfdcd8c7c0eecbd6cfc3dec2cb80cdc1c3">[email&#160;protected]</template></td> --}}
@@ -123,7 +163,7 @@
                         </table>
                     </div> <!-- table-responsive //end -->
                 </div>
-                        </div> <!-- .col// -->
+                        {{!-- </div> <!-- .col// --> --}}
                     </div> <!-- .row // -->
                 </div> <!-- card body .// -->
             </div> <!-- card .// -->

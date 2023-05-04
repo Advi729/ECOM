@@ -144,7 +144,7 @@ function generateCustomerInformation(doc, userData, invoiceDetails) {
 function generateInvoiceTable(doc, invoiceDetails, foundProducts) {
   let i;
   const invoiceTableTop = 330;
-
+  console.log('invoiceDetails: ', invoiceDetails);
   doc.font('Helvetica-Bold');
   generateTableRow(
     doc,
@@ -160,6 +160,13 @@ function generateInvoiceTable(doc, invoiceDetails, foundProducts) {
 
   for (i = 0; i < foundProducts.length; i++) {
     const item = foundProducts[i];
+    console.log('itemprices: ', item.price, item.discountPrice);
+    let finalPrice;
+    if (item.discountPrice !== 0) {
+      finalPrice = item.discountPrice;
+    } else {
+      finalPrice = item.price;
+    }
     const description = `${item.brand}'s ${item.category}'s ${item.subCategory}`;
     const position = invoiceTableTop + (i + 1) * 30;
     generateTableRow(
@@ -167,7 +174,7 @@ function generateInvoiceTable(doc, invoiceDetails, foundProducts) {
       position,
       item.title,
       description,
-      formatCurrency(item.price / item.quantity),
+      formatCurrency(finalPrice / item.quantity),
       item.quantity,
       formatCurrency(item.subTotal)
     );
@@ -175,16 +182,40 @@ function generateInvoiceTable(doc, invoiceDetails, foundProducts) {
     generateHr(doc, position + 30);
   }
 
-  const subtotalPosition = invoiceTableTop + (i + 1) * 30;
-  generateTableRow(
-    doc,
-    subtotalPosition,
-    '',
-    '',
-    'Grand Total:',
-    '',
-    formatCurrency(invoiceDetails.totalPrice)
-  );
+  if (invoiceDetails.grandTotalPrice) {
+    const discountPercentagePosition = invoiceTableTop + (i + 1) * 30;
+    const couponPercentage = `${invoiceDetails.couponPercentage} %`;
+    generateTableRow(
+      doc,
+      discountPercentagePosition,
+      '',
+      '',
+      '',
+      'Discount :',
+      couponPercentage
+    );
+    const subtotalPosition = discountPercentagePosition + 20;
+    generateTableRow(
+      doc,
+      subtotalPosition,
+      '',
+      '',
+      '',
+      'Grand Total :',
+      formatCurrency(invoiceDetails.grandTotalPrice)
+    );
+  } else {
+    const subtotalPosition = invoiceTableTop + (i + 1) * 30;
+    generateTableRow(
+      doc,
+      subtotalPosition,
+      '',
+      '',
+      '',
+      'Grand Total :',
+      formatCurrency(invoiceDetails.totalPrice)
+    );
+  }
 
   //   const paidToDatePosition = subtotalPosition + 20;
   //   generateTableRow(
@@ -263,7 +294,7 @@ function formatCurrency(price) {
 //   return `${day}/${month}/${year}`;
 // }
 function formatDate(date) {
-    return moment(date).format('ddd, MMM D, YYYY, h:mmA');
-  }
+  return moment(date).format('ddd, MMM D, YYYY, h:mmA');
+}
 
 module.exports = { invoiceDownload };

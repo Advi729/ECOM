@@ -3,7 +3,7 @@ const subCategoryHelpers = require('../helpers/sub-category-helper');
 const categoryHelpers = require('../helpers/category-helper');
 
 // Get All categories
-const getAllSubCategories = asyncHandler(async (req, res) => {
+const getAllSubCategories = asyncHandler(async (req, res, next) => {
   try {
     const { admin } = req.session;
     const findAllSubCategories = await subCategoryHelpers.allSubCategories();
@@ -29,12 +29,13 @@ const getAllSubCategories = asyncHandler(async (req, res) => {
     //   res.redirect('/admin/add-category');
     // }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // Create a sub-category
-const createSubCategory = asyncHandler(async (req, res) => {
+const createSubCategory = asyncHandler(async (req, res, next) => {
   try {
     // console.log('form valuesesseses:----->', req.body['parent[]']);
     const createdSubCategory = await subCategoryHelpers.addSubCategory(req);
@@ -47,12 +48,13 @@ const createSubCategory = asyncHandler(async (req, res) => {
       res.redirect('/admin/add-sub-category');
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // GET edit category page
-const getEditSubCategory = asyncHandler(async (req, res) => {
+const getEditSubCategory = asyncHandler(async (req, res, next) => {
   try {
     const { admin } = req.session;
     const { slug } = req.params;
@@ -80,14 +82,15 @@ const getEditSubCategory = asyncHandler(async (req, res) => {
     req.session.subCategoryEditedSuccess = false;
     req.session.subCategoryEditValidationError = false;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // POST edit category page
-const postEditSubCategory = asyncHandler(async (req, res) => {
-  const { slug } = req.params;
+const postEditSubCategory = asyncHandler(async (req, res, next) => {
   try {
+    const { slug } = req.params;
     const editedSubCategory = await subCategoryHelpers.updateSubCategory(
       slug,
       req
@@ -102,14 +105,15 @@ const postEditSubCategory = asyncHandler(async (req, res) => {
       res.redirect(`/admin/edit-sub-category/${slug}`);
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // Delete a category
-const getDeleteSubCategory = asyncHandler(async (req, res) => {
-  const { slug } = req.params;
+const getDeleteSubCategory = asyncHandler(async (req, res, next) => {
   try {
+    const { slug } = req.params;
     const deletedSubCategory = await subCategoryHelpers.deleteSubCategory(slug);
     if (deletedSubCategory) {
       req.session.subCategoryDeletedSuccess = `You have successfully deleted sub-category ${deletedSubCategory.title}`;
@@ -119,14 +123,15 @@ const getDeleteSubCategory = asyncHandler(async (req, res) => {
       res.redirect('/admin/add-sub-category');
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // Restore a category
-const getRestoreSubCategory = asyncHandler(async (req, res) => {
-  const { slug } = req.params;
+const getRestoreSubCategory = asyncHandler(async (req, res, next) => {
   try {
+    const { slug } = req.params;
     const restoredSubCategory = await subCategoryHelpers.restoreSubCategory(
       slug
     );
@@ -138,7 +143,8 @@ const getRestoreSubCategory = asyncHandler(async (req, res) => {
       res.redirect('/admin/add-sub-category');
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 

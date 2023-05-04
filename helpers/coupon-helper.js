@@ -9,7 +9,8 @@ const getAllCouponsAdmin = asyncHandler(async () => {
     const foundCoupons = JSON.parse(JSON.stringify(findCoupons));
     if (foundCoupons) return foundCoupons;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -43,7 +44,8 @@ const getAllCoupons = asyncHandler(async (userdetails) => {
     // if (foundCoupons) return foundCoupons;
     if (filteredCouponDetails) return filteredCouponDetails;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -54,7 +56,8 @@ const getSingleCoupon = asyncHandler(async (code) => {
     const foundCoupon = JSON.parse(JSON.stringify(findCoupon));
     if (foundCoupon) return foundCoupon;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -69,7 +72,8 @@ const addCoupon = asyncHandler(async (data) => {
     const newCoupon = await Coupon.create(coupon);
     if (newCoupon) return newCoupon;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -86,7 +90,8 @@ const changeStatus = asyncHandler(async (code) => {
 
     return changed;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -96,7 +101,8 @@ const deleteTheCoupon = asyncHandler(async (code) => {
     const deleted = await Coupon.deleteOne({ code });
     if (deleted) return deleted;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
@@ -111,7 +117,8 @@ const applyDiscountPrice = asyncHandler(async (code, totalPrice) => {
     }
     return { status: false };
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 

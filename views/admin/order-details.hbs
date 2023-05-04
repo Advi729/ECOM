@@ -23,6 +23,7 @@
                                 <option>Confirmed</option> --}}
                                 <option value="shipped">Shipped</option>
                                 <option value="delivered">Delivered</option>
+                                <option value="returned">Returned</option>
                             </select>
                             {{!-- <a class="btn btn-primary" type="submit" href="/admin/order-status">Save</a> --}}
                             <button type="submit" class="btn btn-primary">Save</a>
@@ -71,8 +72,12 @@
                                             <small class="badge rounded-pill alert-danger">Cancelled</small>
                                             {{else if (equal orderData.orderStatus "return")}}
                                             <small class="badge rounded-pill alert-danger">Return initiated</small>
-                                            {{!-- <p style="color: red;">Return initiated</p> --}}
+                                            {{else if (equal orderData.orderStatus "returned")}}
+                                            <small class="badge rounded-pill alert-danger">Returned</small>
                                             {{/if}}
+                                        {{#if (equal orderData.orderStatus "return")}}
+                                        Reason: {{orderData.returnReason}}
+                                        {{/if}}
                                     </p>
                                     {{!-- <a href="#">Download info</a> --}}
                                 </div>
@@ -173,6 +178,8 @@
                                                             <span class="badge rounded-pill alert-danger">Cancelled</span>
                                                             {{else if (equal orderData.paymentStatus "return")}}
                                                             <span class="badge rounded-pill alert-danger">Refund initiated</span>
+                                                            {{else if (equal orderData.paymentStatus "refunded")}}
+                                                            <span class="badge rounded-pill alert-danger">Refunded</span>
                                                             {{!-- <p style="color: red;">Return initiated</p> --}}
                                                             {{/if}}
                                                         </dd>

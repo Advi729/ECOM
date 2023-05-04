@@ -2,7 +2,7 @@ const asyncHandler = require('express-async-handler');
 const brandHelpers = require('../helpers/brand-helper');
 
 // Get All brands
-const getAllbrands = asyncHandler(async (req, res) => {
+const getAllbrands = asyncHandler(async (req, res, next) => {
   try {
     const { admin } = req.session;
     const findAllBrands = await brandHelpers.allBrands();
@@ -21,12 +21,13 @@ const getAllbrands = asyncHandler(async (req, res) => {
     req.session.brandRestoredSuccess = false;
     req.session.brandAddValidationError = false;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // Create a brand POST method
-const createBrand = asyncHandler(async (req, res) => {
+const createBrand = asyncHandler(async (req, res, next) => {
   try {
     // console.log(req.body);
     const createdBrand = await brandHelpers.addBrand(req);
@@ -39,12 +40,13 @@ const createBrand = asyncHandler(async (req, res) => {
       res.redirect('/admin/add-brand');
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // GET edit brand page
-const getEditBrand = asyncHandler(async (req, res) => {
+const getEditBrand = asyncHandler(async (req, res, next) => {
   try {
     const { admin } = req.session;
     const { slug } = req.params;
@@ -60,14 +62,15 @@ const getEditBrand = asyncHandler(async (req, res) => {
     req.session.brandEditedSuccess = false;
     req.session.brandEditValidationError = false;
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // POST edit brand page
-const postEditBrand = asyncHandler(async (req, res) => {
-  const { slug } = req.params;
+const postEditBrand = asyncHandler(async (req, res, next) => {
   try {
+    const { slug } = req.params;
     const editedBrand = await brandHelpers.updateBrand(slug, req);
 
     if (editedBrand) {
@@ -78,14 +81,15 @@ const postEditBrand = asyncHandler(async (req, res) => {
       res.redirect(`/admin/edit-brand/${slug}`);
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // Delete a brand
-const getDeleteBrand = asyncHandler(async (req, res) => {
-  const { slug } = req.params;
+const getDeleteBrand = asyncHandler(async (req, res, next) => {
   try {
+    const { slug } = req.params;
     const deletedBrand = await brandHelpers.deleteBrand(slug);
     if (deletedBrand) {
       req.session.brandDeletedSuccess = `You have successfully deleted brand ${deletedBrand.title}`;
@@ -95,14 +99,15 @@ const getDeleteBrand = asyncHandler(async (req, res) => {
       res.redirect('/admin/add-brand');
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // Restore a brand
-const getRestoreBrand = asyncHandler(async (req, res) => {
-  const { slug } = req.params;
+const getRestoreBrand = asyncHandler(async (req, res, next) => {
   try {
+    const { slug } = req.params;
     const restoredBrand = await brandHelpers.restoreBrand(slug);
     if (restoredBrand) {
       req.session.brandRestoredSuccess = `You have successfully restored brand ${restoredBrand.title}`;
@@ -112,7 +117,8 @@ const getRestoreBrand = asyncHandler(async (req, res) => {
       res.redirect('/admin/add-brand');
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 

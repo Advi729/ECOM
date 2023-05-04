@@ -9,7 +9,7 @@ const User = require('../models/user-model');
 const Cart = require('../models/cart-model');
 
 // Proceed to checkout
-const checkOutCart = asyncHandler(async (req, res) => {
+const checkOutCart = asyncHandler(async (req, res, next) => {
   try {
     const { user } = req.session;
     const userId = user.response._id;
@@ -53,7 +53,8 @@ const checkOutCart = asyncHandler(async (req, res) => {
       finalUser,
     });
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
@@ -78,11 +79,12 @@ const getTotalPrice = asyncHandler(async (products) => {
     return totalPrice;
     // const foundProducts = JSON.parse(JSON.stringify(productDetails));
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw error;
   }
 });
 
-const placeOrder = asyncHandler(async (req, res) => {
+const placeOrder = asyncHandler(async (req, res, next) => {
   try {
     const { userId, deliveryAddress, couponCode, grandTotalPrice } = req.body;
     console.log('couponCode: ', couponCode);
@@ -160,13 +162,13 @@ const placeOrder = asyncHandler(async (req, res) => {
       res.json({ status: false });
     }
   } catch (error) {
-    // throw new Error(error);
     console.error(error);
+    next(error);
   }
 });
 
 // verify payment
-const verifyPayment = asyncHandler(async (req, res) => {
+const verifyPayment = asyncHandler(async (req, res, next) => {
   try {
     const { userId } = req.body;
     const onlinePayment = await orderHelpers.verifyRazorpayPayment(req.body);
@@ -184,12 +186,13 @@ const verifyPayment = asyncHandler(async (req, res) => {
       }
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // View all orders
-const viewOrders = asyncHandler(async (req, res) => {
+const viewOrders = asyncHandler(async (req, res, next) => {
   try {
     const page = req.query.page || 1;
     const { user } = req.session;
@@ -218,12 +221,13 @@ const viewOrders = asyncHandler(async (req, res) => {
       });
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // View single order details
-const viewSingleOrder = asyncHandler(async (req, res) => {
+const viewSingleOrder = asyncHandler(async (req, res, next) => {
   try {
     const { user } = req.session;
     const { orderId } = req.query;
@@ -264,37 +268,46 @@ const viewSingleOrder = asyncHandler(async (req, res) => {
       totalPrice,
     });
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // Cancel order
-const cancelOrder = asyncHandler(async (req, res) => {
+const cancelOrder = asyncHandler(async (req, res, next) => {
   try {
     const { id } = req.params;
     const orderId = id;
     const cancelled = await orderHelpers.cancelProductOrder(orderId);
     if (cancelled) res.json({ status: true });
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // Return order
-const returnOrder = asyncHandler(async (req, res) => {
+const returnOrder = asyncHandler(async (req, res, next) => {
   try {
-    const { orderId } = req.params;
+    console.log('reason in body: ', req.body);
+    const { orderId, returnReason } = req.body;
+    console.log('returnReason: ', orderId, returnReason);
+    // const { orderId } = req.params;
     // console.log('orderidddddd: ', orderId);
-    const returned = await orderHelpers.returnProductOrder(orderId);
+    const returned = await orderHelpers.returnProductOrder(
+      orderId,
+      returnReason
+    );
     // console.log('returned order: ', returned);
     if (returned) res.json({ status: true });
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // All orders admin side
-const allOrdersAdmin = asyncHandler(async (req, res) => {
+const allOrdersAdmin = asyncHandler(async (req, res, next) => {
   try {
     const page = req.query.page || 1;
     const { admin } = req.session;
@@ -328,12 +341,13 @@ const allOrdersAdmin = asyncHandler(async (req, res) => {
       });
     }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // Order details
-const orderDetails = asyncHandler(async (req, res) => {
+const orderDetails = asyncHandler(async (req, res, next) => {
   try {
     const { admin } = req.session;
     const { orderId } = req.params;
@@ -363,18 +377,20 @@ const orderDetails = asyncHandler(async (req, res) => {
       foundProducts,
     });
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
 // Change order status admin side
-const changeOrderStatus = asyncHandler(async (req, res) => {
+const changeOrderStatus = asyncHandler(async (req, res, next) => {
   try {
     const { orderStatus, orderId } = req.body;
     const updated = await orderHelpers.updateOrderStatus(orderId, orderStatus);
     if (updated) res.json({ status: true });
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    next(error);
   }
 });
 
