@@ -113,6 +113,10 @@
                                 let count = $('#wishlist-count').html();
                                 count = parseInt(count) - 1;
                                 $('#wishlist-count').html(count);
+                                // mobile wishlist count reduce
+                                let countMobile = $('#wishlist-count-mobile').html();
+                                countMobile = parseInt(countMobile) - 1;
+                                $('#wishlist-count-mobile').html(countMobile);
                             }
                             window.location.href = '/wishlist';
                         }
@@ -143,6 +147,10 @@
                     let count = $('#cart-count').html();
                     count = parseInt(count) + 1;
                     $('#cart-count').html(count);
+                    // mobile cart count
+                    let countMobile = $('#cart-count-mobile').html();
+                    countMobile = parseInt(countMobile) + 1;
+                    $('#cart-count-mobile').html(countMobile);
                 }
             }
             

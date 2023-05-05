@@ -4,6 +4,7 @@ const { validationResult } = require('express-validator');
 const accountSid = process.env.ACCOUNT_SID;
 const authToken = process.env.AUTH_TOKEN;
 const client = require('twilio')(accountSid, authToken);
+const moment = require('moment');
 const User = require('../models/user-model');
 const twilioMiddlewares = require('../middlewares/twilio-middleware');
 const productHelpers = require('../helpers/product-helper');
@@ -512,6 +513,20 @@ const getUserProfile = asyncHandler(async (req, res, next) => {
     // console.log('fouhnduser::->profiel::', resultUser);
     const walletDetails = await orderHelpers.getWalletDetails(userId);
     const coupon = await couponHelpers.getAllCoupons(finalUser);
+    const currentDate = new Date();
+    // if (moment(coupon[0].expiryDate).isAfter(currentDate)) {
+    //   console.log('currentDate33: ', coupon[0].expiryDate);
+    // } else {
+    //   console.log('coupon is valid.');
+    //   console.log('currentDate33: ', coupon[0].expiryDate);
+    //   console.log('currentDateOriginal: ', currentDate);
+    // }
+    console.log(
+      'expoirt:L ;lk ',
+      moment(currentDate).isAfter(coupon[0].expiryDate)
+    );
+
+    console.log('helper time: ', new Date(currentDate) > new Date(coupon[0].expiryDate))
     console.log('coupons: ', coupon);
     if (resultUser) {
       res.render('user/profile', {
@@ -522,6 +537,7 @@ const getUserProfile = asyncHandler(async (req, res, next) => {
         wishlistCount,
         walletDetails,
         coupon,
+        currentDate,
       });
     } else {
       const error = new Error('User not found');

@@ -926,7 +926,7 @@
                         },2000);
                     case 'razorPay':
                         //console.log(response.createdInstance)
-                        razorPayPayment(response.createdInstance, response.userData);                      
+                        razorPayPayment(response.createdInstance, response.userData, response.createdOrder);                      
                 }
             },
             error: (response, stat, err) => {
@@ -936,7 +936,7 @@
         })
     })
 
-    function razorPayPayment(order, userData) {
+    function razorPayPayment(order, userData, createdOrder) {
         const userName = `${userData.firstname}${userData.lastname}`;
         const userId = userData._id;
         var options = {
@@ -978,7 +978,8 @@
                 }).then(() => {
                     $.ajax({
                         url: '/delete-cart',
-                        method: 'get',
+                        method: 'post',
+                        data: { orderId: createdOrder.orderId },
                         success: (response) => {
                             if (response.status) {
                                 location.replace('/cart');

@@ -470,6 +470,23 @@ const getWalletDetails = asyncHandler(async (userId) => {
   }
 });
 
+// Delete an order
+const deleteTheOrder = asyncHandler(async (orderId) => {
+  try {
+    const deletedOrder = await Order.deleteOne({ orderId });
+    console.log('deletedOrder; ', deletedOrder);
+    if (deletedOrder) {
+      return deletedOrder;
+    }
+    const error = new Error('Not deleted the order.');
+    error.status = 500;
+    throw error;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+});
+
 module.exports = {
   createOrder,
   getOrderDetails,
@@ -484,4 +501,5 @@ module.exports = {
   getWalletDetails,
   allDeliveredOrders,
   dateWiseOrders,
+  deleteTheOrder,
 };

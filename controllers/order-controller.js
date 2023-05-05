@@ -154,8 +154,15 @@ const placeOrder = asyncHandler(async (req, res, next) => {
           userId,
           coupon
         );
+        console.log('created order: ', created);
+        console.log('createdInstance orderId: ', createdInstance);
         if (created) {
-          res.json({ status: 'razorPay', createdInstance, userData });
+          res.json({
+            status: 'razorPay',
+            createdInstance,
+            userData,
+            createdOrder: created,
+          });
         }
       }
     } else {

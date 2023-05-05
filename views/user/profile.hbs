@@ -67,6 +67,7 @@
                             <div class="tab-content dashboard-content">
                                 <div class="tab-pane fade active show" id="dashboard" role="tabpanel"
                                     aria-labelledby="dashboard-tab">
+                                    <br>
                                     <div class="card">
                                         <div class="card-header">
                                             <h5 class="mb-0">Hello {{foundUser.firstname}} {{foundUser.lastname}}! </h5>
@@ -188,6 +189,7 @@
                                     {{!--
                                 </div> --}}
                                 <div class="tab-pane fade" id="orders" role="tabpanel" aria-labelledby="orders-tab">
+                                    <br>
                                     <div class="card">
                                         <div class="card-header">
                                             <h5 class="mb-0">Your Orders</h5>
@@ -234,6 +236,7 @@
                                 </div>
             {{!-- wallet --}}
             <div class="tab-pane fade" id="wallet" role="tabpanel" aria-labelledby="wallet-tab">
+                <br>
                 <div class="row">
                     <div class="col-lg-6">
                         <div class="card mb-3 mb-lg-0">
@@ -290,61 +293,80 @@
 
 {{!-- coupons --}}
             <div class="tab-pane fade" id="coupon" role="tabpanel" aria-labelledby="coupon-tab">
-           
+                <br>
                 <div class="row">
+                    <div class="col-lg-6">
+                        <div class="card mb-3 mb-lg-0">
+                            <div class="card-header">
+                                <h5 class="mb-0">Coupons</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    
                      {{#each coupon as |coupon index|}}
                     {{#if this.active}}
                      {{!-- <div class="col-sm-6 col-md-3"> --}}
-                     <div class="col-sm-6 col-md-4">
-          <div  class="dl">
-            {{!-- <div class="brand">
-                <h2>lacoste</h2>
-            </div> --}}
-            <br>
-            <div class="discount emerald">
-                {{this.discountPercentage}}%
-                <div class="type">
-                    off
-                </div>
-            </div>
-            <div class="descr">
-                <strong>
-                    Limited time offer! 
-                </strong> 
-                <br>
-                <br>
-                Purchase minimum for {{formatNumber this.minimumPurchase style="currency" currency="INR" minimumFractionDigits=2}}
-                <br>
-                <br>
-                Coupon valid till  {{moment this.expiryDate format='D, MMM, YYYY'}}
-                <br>
-                <br>
-                <small>Maximum use: {{this.maximumUse}}</small>
-            </div>
-            <div class="ends">
-                <small>
-                   * Terms and Conditions apply.
-                </small>
-            </div>
-            {{!-- <div class="coupon midnight-blue">
-                <a data-toggle="collapse" href="#code-{{@index}}" class="open-code">Get a code</a>
-                <div id="code-{{@index}}" class="collapse in code">
-                    {{this.code}}
-                </div>
-            </div> --}}
-            <div class="coupon midnight-blue">
-                <a data-bs-toggle="collapse" href="#code-{{@index}}" class="open-code">Get a code</a>
-                <div id="code-{{@index}}" class="collapse in code">
-                    {{this.code}}
-                    <a><i class="fi fi-rs-copy-alt" onclick="copyToClipboard('{{this.code}}')"></i></a>
-
-                </div>
-            </div>
-            
-          </div>
-          <br>
-                  
-        </div>
+                    <div class="col-sm-6 col-md-4">
+                        <div class="dl">
+                            {{!-- <div class="brand">
+                                <h2>lacoste</h2>
+                            </div> --}}
+                            <br>
+                            <div class="discount emerald">
+                                {{this.discountPercentage}}%
+                                <div class="type">
+                                    off
+                                </div>
+                            </div>
+                            <div class="descr">
+                                <strong>
+                                    Limited time offer!
+                                </strong>
+                                <br>
+                                <br>
+                                Purchase minimum for {{formatNumber this.minimumPurchase style="currency" currency="INR"
+                                minimumFractionDigits=2}}
+                                <br>
+                                <br>
+                                {{#if (isAfter currentdate this.expiryDate)}}
+                                Expired on {{moment this.expiryDate format='D, MMM, YYYY'}}
+                                {{else}}
+                                Valid till {{moment this.expiryDate format='D, MMM, YYYY'}}
+                                {{/if}}
+                                <br>
+                                <br>
+                                <small>Maximum use: {{this.maximumUse}}</small>
+                            </div>
+                            <div class="ends">
+                                <small>
+                                    * Terms and Conditions apply.
+                                </small>
+                            </div>
+                            {{!-- <div class="coupon midnight-blue">
+                                <a data-toggle="collapse" href="#code-{{@index}}" class="open-code">Get a code</a>
+                                <div id="code-{{@index}}" class="collapse in code">
+                                    {{this.code}}
+                                </div>
+                            </div> --}}
+                            <div class="coupon midnight-blue">
+                                {{#if (isAfter currentdate this.expiryDate)}}
+                                <a class="open-code" id="expired-code-{{@index}}" onclick="expiredCodeSwal()">Get a code</a>
+                                {{else}}
+                                <a data-bs-toggle="collapse" href="#code-{{@index}}" class="open-code">Get a code</a>
+                                <div id="code-{{@index}}" class="collapse in code">
+                                    {{this.code}}
+                                    <a><i class="fi fi-rs-copy-alt" onclick="copyToClipboard('{{this.code}}')"></i></a>                   
+                                </div>
+                                {{/if}}
+                            </div>
+                    
+                        </div>
+                        <br>
+                    
+                    </div>
                     {{/if}}
                     {{/each}}
                     
@@ -387,6 +409,7 @@
                                     </div>
                                 </div>
                                 <div class="tab-pane fade" id="address" role="tabpanel" aria-labelledby="address-tab">
+                                    <br>
                                     <div class="row">
                                         {{!-- {{#if user.response.address}} --}}
                                         {{#each foundUser.address as |address index|}}
@@ -544,6 +567,7 @@
 
                                 <div class="tab-pane fade" id="account-detail" role="tabpanel"
                                     aria-labelledby="account-detail-tab">
+                                    <br>
                                     <div class="card">
                                         <div class="card-header">
                                             <h5>Edit Profile</h5>
@@ -748,6 +772,16 @@ addressEditForm.forEach((form) => {
         document.execCommand('copy');
         document.body.removeChild(el);
         alert('Coupon code copied to clipboard!');
+    }
+
+// expired code swal 
+    function expiredCodeSwal() {
+        Swal.fire({
+            title: "Expired!",
+            text: "Coupon has expired.",
+            icon: "info",
+            showConfirmButton: false,
+        });
     }
 
 </script>

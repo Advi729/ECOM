@@ -73,8 +73,20 @@ Handlebars.registerHelper('contains', function (array, value, options = {}) {
 Handlebars.registerHelper('concat', function () {
   const args = Array.prototype.slice.call(arguments);
   args.pop(); // remove the options argument
-
   return args.join('');
+});
+
+Handlebars.registerHelper('isAfter', function (date1, date2, options = {}) {
+  if (moment(date1).isAfter(date2)) {
+    if (options.fn) {
+      return options.fn(this);
+    }
+    return true;
+  }
+  if (options.inverse) {
+    return options.inverse(this);
+  }
+  return false;
 });
 
 // Register handlebars-intl with the handlebars instance

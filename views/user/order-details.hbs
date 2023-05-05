@@ -89,14 +89,23 @@
                         {{else if (equal orderDetails.orderStatus "return")}}
                         {{else if (equal orderDetails.orderStatus "returned")}}
                         {{else}}
-                        <div class="cart-action text-end">
+                        <div class="cart-action text-sm-center">
+                            {{!-- <div class="d-flex gx-2 justify-content-end justify-content-sm-between"> --}}
+                                 {{!-- <div class="d-flex justify-content-between flex-nowrap"></div> --}}
+                                 <div class="d-block d-sm-inline-block text-center mb-2 mb-sm-0 me-sm-2">
                             {{!-- <a class="btn  mr-10 mb-sm-15"><i class="fi-rs-shuffle mr-10"></i>Update Cart</a> --}}
-                            <a class="btn bg-secondary" href="/invoice/{{orderDetails.orderId}}" onclick="event.preventDefault(); invoiceOrderConfirmation(this)" data-id="{{orderDetails.orderId}}"><i class="fi-rr-download mr-10"></i>Download Invoice</a>
+                            <a class="btn bg-secondary btn-sm" href="/invoice/{{orderDetails.orderId}}" onclick="event.preventDefault(); invoiceOrderConfirmation(this)" data-id="{{orderDetails.orderId}}"><i class="fi-rr-download mr-10"></i>Download Invoice</a>
+                            </div>
                             {{#if (equal orderDetails.orderStatus "delivered")}}
                             {{!-- <a class="btn bg-primary" href="/return-order/{{orderDetails.orderId}}" onclick="event.preventDefault(); returnOrderConfirmation(this)" data-id="{{orderDetails.orderId}}"><i class="fi-rs-undo mr-10"></i>Return Order</a> --}}
-                            <a class="btn bg-primary" data-bs-toggle="modal" data-bs-target=".staticBackdrop"><i class="fi-rs-undo mr-10"></i>Return Order</a>
+                                 <div class="d-block d-sm-inline-block text-center mb-2 mb-sm-0 me-sm-2">
+
+                            <a class="btn bg-primary btn-sm" data-bs-toggle="modal" data-bs-target=".staticBackdrop"><i class="fi-rs-undo mr-10"></i>Return Order</a>
+                                 </div>
                             {{/if}}
-                            <a class="btn bg-danger" href="/cancel-order/{{orderDetails.orderId}}" onclick="event.preventDefault(); cancelOrderConfirmation(this)" data-id="{{orderDetails.orderId}}"><i class="fi-rs-trash mr-10"></i>Cancel Order</a>
+                                 <div class="d-block d-sm-inline-block text-center mb-2 mb-sm-0 me-sm-2">
+                            <a class="btn bg-danger btn-sm" href="/cancel-order/{{orderDetails.orderId}}" onclick="event.preventDefault(); cancelOrderConfirmation(this)" data-id="{{orderDetails.orderId}}"><i class="fi-rs-trash mr-10"></i>Cancel Order</a>
+                            </div>
                         </div>
                         {{/if}}
                         <div class="divider center_icon mt-50 mb-50"><i class="fi-rs-fingerprint"></i></div>

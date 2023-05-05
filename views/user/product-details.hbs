@@ -685,6 +685,10 @@
                     let count = $('#cart-count').html();
                     count = parseInt(count) + 1;
                     $('#cart-count').html(count);
+                    // mobile cart count
+                    let countMobile = $('#cart-count-mobile').html();
+                    countMobile = parseInt(countMobile) + 1;
+                    $('#cart-count-mobile').html(countMobile);
 
                     Swal.fire({
                         title: "Success!",
@@ -721,6 +725,10 @@ function addToWishlistConfirmation(anchor) {
         let count = $('#wishlist-count').html();
         count = parseInt(count) + 1;
         $('#wishlist-count').html(count);
+        // mobile wishlist count
+        let countMobile = $('#wishlist-count-mobile').html();
+        countMobile = parseInt(countMobile) + 1;
+        $('#wishlist-count-mobile').html(countMobile);
 
         Swal.fire({
           title: "Success!",

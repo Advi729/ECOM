@@ -62,7 +62,7 @@
                                 {{/if}} 
                             
                             </div>
-                            <div class="sort-by-product-area">
+                            {{!-- <div class="sort-by-product-area">
                                 <div class="sort-by-cover mr-10">
                                     <div class="sort-by-product-wrap">
                                         <div class="sort-by">
@@ -101,7 +101,7 @@
                                         </ul>
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
 
                         <div class="row product-grid-3 all-products">
@@ -362,6 +362,10 @@
                     let count = $('#cart-count').html();
                     count = parseInt(count) + 1;
                     $('#cart-count').html(count);
+                    // mobile cart count
+                    let countMobile = $('#cart-count-mobile').html();
+                    countMobile = parseInt(countMobile) + 1;
+                    $('#cart-count-mobile').html(countMobile);
 
                     Swal.fire({
                         title: "Success!",
@@ -393,6 +397,10 @@
                     let count = $('#wishlist-count').html();
                     count = parseInt(count) + 1;
                     $('#wishlist-count').html(count);
+                    // mobile wishlist count
+                    let countMobile = $('#wishlist-count-mobile').html();
+                    countMobile = parseInt(countMobile) + 1;
+                    $('#wishlist-count-mobile').html(countMobile);
 
                      Swal.fire({
                         title: "Success!",

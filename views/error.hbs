@@ -7,7 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
   <style>
     /* Add your custom styles here */
-    body {
+    .error-body {
       font-family: 'Montserrat', sans-serif;
       background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
       margin: 0;
@@ -22,13 +22,13 @@
       padding: 30px;
       text-align: center;
     }
-    h1 {
+    .h1-error {
       font-size: 72px;
       margin-bottom: 30px;
       color: #e94c3d;
       text-shadow: 0 0 10px rgba(233,76,61,0.2);
     }
-    p {
+    .p-error {
       font-size: 24px;
       margin-top: 0;
     }
@@ -42,11 +42,11 @@
     }
   </style>
 </head>
-<body>
+<body class="error-body">
   <section class="pt-150 pb-150">
     <div class="error-container">
-    <h1>Error {{ status }}</h1>
-    <p>{{ message }}!</p>
+    <h1 class="h1-error">Error {{ status }}</h1>
+    <p class="p-error">{{ message }}!</p>
     {{!-- <p><a href="/">Go back to homepage</a></p> --}}
   </div>
   </section>

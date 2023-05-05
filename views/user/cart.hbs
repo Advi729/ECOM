@@ -486,6 +486,10 @@
                                 let count = $('#cart-count').html();
                                 count = parseInt(count) - 1;
                                 $('#cart-count').html(count);
+                                // mobile cart count reduce
+                                let countMobile = $('#cart-count-mobile').html();
+                                countMobile = parseInt(countMobile) - 1;
+                                $('#cart-count-mobile').html(countMobile);
                             } else {
                                 alert(response.stockStatus);
                             }
@@ -527,6 +531,8 @@
                             if(response.status) {
                                 let count = 0;
                                 $('#cart-count').html(count);
+                                let countMobile = 0;
+                                $('#cart-count-mobile').html(count);
                             }
                             window.location.href = '/cart';
                         }

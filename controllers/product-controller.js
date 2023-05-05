@@ -5,6 +5,7 @@ const categoryHelpers = require('../helpers/category-helper');
 const subCategoryHelpers = require('../helpers/sub-category-helper');
 const brandHelpers = require('../helpers/brand-helper');
 const cartHelpers = require('../helpers/cart-helper');
+const wishlistHelpers = require('../helpers/wishlist-helper');
 
 // create product get
 const createProductGet = asyncHandler(async (req, res, next) => {
@@ -56,9 +57,11 @@ const getProduct = asyncHandler(async (req, res, next) => {
     const { slug } = req.params;
     const { user } = req.session;
     let cartCount = null;
+    let wishlistCount = null;
     if (user) {
       const userId = user.response._id;
       cartCount = await cartHelpers.getCartCount(userId);
+      wishlistCount = await wishlistHelpers.getWishlistCount(userId);
     }
     const productDetails = await productHelpers.findSingleProduct(slug);
 
@@ -68,6 +71,7 @@ const getProduct = asyncHandler(async (req, res, next) => {
         product: productDetails,
         isUser: true,
         cartCount,
+        wishlistCount,
       });
     } else {
       const error = new Error('Product not found');

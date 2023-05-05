@@ -2,6 +2,7 @@ const asyncHandler = require('express-async-handler');
 const cartHelpers = require('../helpers/cart-helper');
 const productHelpers = require('../helpers/product-helper');
 const wishlistHelpers = require('../helpers/wishlist-helper');
+const orderHelpers = require('../helpers/order-helper');
 
 // Get cart details
 const getCart = asyncHandler(async (req, res, next) => {
@@ -55,6 +56,7 @@ const getCart = asyncHandler(async (req, res, next) => {
       res.render('user/cart', {
         isUser: true,
         user,
+        wishlistCount,
       });
     }
   } catch (error) {
@@ -144,10 +146,13 @@ const changeProductQuantity = asyncHandler(async (req, res, next) => {
 // Delete cart after order is placed
 const deleteCart = asyncHandler(async (req, res, next) => {
   try {
+    const { orderId } = req.body;
+    console.log('orderId in deletecart: ', orderId);
     const { user } = req.session;
     const userId = user.response._id;
     const deleted = await cartHelpers.deleteTheCart(userId);
-    if (deleted) res.json({ status: true });
+    const deletedOrder = await orderHelpers.deleteTheOrder(orderId);
+    if (deleted && deletedOrder) res.json({ status: true });
   } catch (error) {
     console.error(error);
     next(error);

@@ -119,7 +119,7 @@ router.get(
 );
 
 // Delete cart
-router.get('/delete-cart', authMiddlewares.isUser, cartControllers.deleteCart);
+router.post('/delete-cart', authMiddlewares.isUser, cartControllers.deleteCart);
 
 // Change product quantity in cart
 router.post(
