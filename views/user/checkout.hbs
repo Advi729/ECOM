@@ -917,13 +917,13 @@
                     case 'cod':
                         Swal.fire({
                             title: "Success!",
-                            text: "Order is placed.",
+                            text: "Order is confirmed.",
                             icon: "success",
                             showConfirmButton: false,
                         });
                         setTimeout(() => {
                             location.replace('/orders');
-                        },2000);
+                        },3000);
                     case 'razorPay':
                         //console.log(response.createdInstance)
                         razorPayPayment(response.createdInstance, response.userData, response.createdOrder);                      

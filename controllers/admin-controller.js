@@ -9,18 +9,26 @@ const orderHelpers = require('../helpers/order-helper');
 // Admin Dashboard
 const dashboardAdmin = asyncHandler(async (req, res, next) => {
   try {
-    const totalOrders = await reportHelpers.computeTotalOrders();
-    const totalRevenue = await reportHelpers.computeTotalRevenue();
-    const totalProducts = await reportHelpers.computeTotalProducts();
-    const totalCategories = await reportHelpers.computeTotalCategories();
-    const monthlySales = await reportHelpers.computeMonthlySales();
-
+    const [
+      totalOrders,
+      totalRevenue,
+      totalProducts,
+      totalCategories,
+      monthlySales,
+    ] = await Promise.all([
+      reportHelpers.computeTotalOrders(),
+      reportHelpers.computeTotalRevenue(),
+      reportHelpers.computeTotalProducts(),
+      reportHelpers.computeTotalCategories(),
+      reportHelpers.computeMonthlySales(),
+    ]);
     const { totalSales } = monthlySales[0];
 
     console.log('totalrevenue: ', monthlySales[0]);
 
     // for chart
     const monthlyOrders = await reportHelpers.computeMonthlyOrders();
+    const monthlyOds = JSON.stringify(monthlyOrders);
     console.log('monthlyorders: ', monthlyOrders);
     const monthlyOrdersArr = monthlyOrders.map((e) => e.count);
     console.log('monthlyordersARRR: ', monthlyOrdersArr);
@@ -39,7 +47,7 @@ const dashboardAdmin = asyncHandler(async (req, res, next) => {
       totalProducts,
       totalCategories,
       totalSales,
-      monthlyOrdersArr,
+      monthlyOrders: monthlyOds,
       categoryWiseCount: cat,
     });
   } catch (error) {
@@ -166,7 +174,7 @@ const getAllUsers = asyncHandler(async (req, res, next) => {
   try {
     const { admin } = req.session;
     const users = await adminHelpers.findAllUsers();
-    console.log('userss: ; ', users)
+    console.log('userss: ; ', users);
     if (users.length !== 0) {
       res.render('admin/view-users', {
         admin,
@@ -240,16 +248,25 @@ const unblockUser = asyncHandler(async (req, res, next) => {
 const getSalesReport = asyncHandler(async (req, res, next) => {
   try {
     const { admin } = req.session;
-    const totalOrders = await reportHelpers.computeTotalOrders();
-    const totalRevenue = await reportHelpers.computeTotalRevenue();
-    const totalProducts = await reportHelpers.computeTotalProducts();
-    const totalUsers = await reportHelpers.computeTotalUsers();
-    const totalCategories = await reportHelpers.computeTotalCategories();
-    const monthlySales = await reportHelpers.computeMonthlySales();
+    const [
+      totalOrders,
+      totalRevenue,
+      totalProducts,
+      totalUsers,
+      totalCategories,
+      monthlySales,
+      deliveredOrders,
+    ] = await Promise.all([
+      reportHelpers.computeTotalOrders(),
+      reportHelpers.computeTotalRevenue(),
+      reportHelpers.computeTotalProducts(),
+      reportHelpers.computeTotalUsers(),
+      reportHelpers.computeTotalCategories(),
+      reportHelpers.computeMonthlySales(),
+      orderHelpers.allDeliveredOrders(),
+    ]);
 
     const { totalSales } = monthlySales[0];
-
-    const deliveredOrders = await orderHelpers.allDeliveredOrders();
 
     res.render('admin/sales-report', {
       admin,
@@ -272,17 +289,28 @@ const getSalesReport = asyncHandler(async (req, res, next) => {
 const sortReportDateWise = asyncHandler(async (req, res, next) => {
   try {
     const { admin } = req.session;
-    const totalOrders = await reportHelpers.computeTotalOrders();
-    const totalRevenue = await reportHelpers.computeTotalRevenue();
-    const totalProducts = await reportHelpers.computeTotalProducts();
-    const totalUsers = await reportHelpers.computeTotalUsers();
-    const totalCategories = await reportHelpers.computeTotalCategories();
-    const monthlySales = await reportHelpers.computeMonthlySales();
+    const [
+      totalOrders,
+      totalRevenue,
+      totalProducts,
+      totalUsers,
+      totalCategories,
+      monthlySales,
+      deliveredOrders,
+    ] = await Promise.all([
+      reportHelpers.computeTotalOrders(),
+      reportHelpers.computeTotalRevenue(),
+      reportHelpers.computeTotalProducts(),
+      reportHelpers.computeTotalUsers(),
+      reportHelpers.computeTotalCategories(),
+      reportHelpers.computeMonthlySales(),
+      orderHelpers.dateWiseOrders(req.body),
+    ]);
 
     const { totalSales } = monthlySales[0];
 
     // date wise delivered orders
-    const deliveredOrders = await orderHelpers.dateWiseOrders(req.body);
+    // const deliveredOrders = await orderHelpers.dateWiseOrders(req.body);
 
     res.render('admin/sales-report', {
       admin,

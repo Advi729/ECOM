@@ -123,45 +123,100 @@ const computeMonthlySales = asyncHandler(async () => {
 });
 
 // compute monthly order data for graph
+// const computeMonthlyOrders = asyncHandler(async () => {
+//   try {
+//     const monthlyOrders = await Order.aggregate([
+//       {
+//         $group: {
+//           _id: {
+//             $month: { $toDate: '$createdAt' },
+//           },
+//           count: {
+//             $sum: 1,
+//           },
+//         },
+//       },
+//       {
+//         $project: {
+//           _id: 0,
+//           month: '$_id',
+//           count: '$count',
+//         },
+//       },
+//       {
+//         $sort: {
+//           month: 1,
+//         },
+//       },
+//     ]);
+//     // console.log('monthlyOrders: ', monthlyOrders);
+
+//     // create array representing 12 months
+//     const months = Array.from({ length: 12 }, (_, i) => ({
+//       month: i + 1,
+//       count: 0,
+//     }));
+
+//     // merge monthly orders with months array
+//     const ordersInEachMonth = months.map((m) => {
+//       const result = monthlyOrders.find((r) => r.month === m.month);
+//       return result || m;
+//     });
+//     return ordersInEachMonth;
+//   } catch (error) {
+//     console.error(error);
+//     throw error;
+//   }
+// });
 const computeMonthlyOrders = asyncHandler(async () => {
   try {
     const monthlyOrders = await Order.aggregate([
       {
-        $group: {
-          _id: {
-            $month: { $toDate: '$createdAt' },
-          },
-          count: {
-            $sum: 1,
-          },
+        $project: {
+          year: { $year: { $toDate: '$createdAt' } },
+          month: { $month: { $toDate: '$createdAt' } },
         },
       },
       {
-        $project: {
-          _id: 0,
-          month: '$_id',
-          count: '$count',
+        $group: {
+          _id: {
+            year: '$year',
+            month: '$month',
+          },
+          count: { $sum: 1 },
         },
       },
       {
         $sort: {
-          month: 1,
+          '_id.year': 1,
+          '_id.month': 1,
         },
       },
     ]);
-    // console.log('monthlyOrders: ', monthlyOrders);
 
-    // create array representing 12 months
+    const currentYear = new Date().getFullYear();
     const months = Array.from({ length: 12 }, (_, i) => ({
+      year: currentYear,
       month: i + 1,
       count: 0,
     }));
 
-    // merge monthly orders with months array
     const ordersInEachMonth = months.map((m) => {
-      const result = monthlyOrders.find((r) => r.month === m.month);
-      return result || m;
+      const result = monthlyOrders.find(
+        (r) => r._id.year === m.year && r._id.month === m.month
+      );
+      return result
+        ? {
+            year: result._id.year,
+            month: result._id.month,
+            count: result.count,
+          }
+        : m;
     });
+    // console.log('stringified orders: ', JSON.stringify(ordersInEachMonth));
+    // const ordersInEachMonthParsed = JSON.parse(
+    //   JSON.stringify(ordersInEachMonth)
+    // );
     return ordersInEachMonth;
   } catch (error) {
     console.error(error);

@@ -1,7 +1,7 @@
 
         <section class="content-main">
             <div class="content-header">
-                <span id="order-sales-data" style="display:none">{{monthlyOrdersArr}}</span>
+                <span id="order-sales-data" style="display:none">{{monthlyOrders}}</span>
                 <span id="order-category-data" style="display:none">{{categoryWiseCount}}</span>
                 <div>
                     <h2 class="content-title card-title">Dashboard </h2>
@@ -69,11 +69,25 @@
             <div class="row">
                 <div class="col-xl-8 col-lg-12">
                     <div class="card mb-4">
-                        <article class="card-body">
-                            <h5 class="card-title" style="text-align: center">Sales statistics</h5>
-                            <canvas id="myChart1" height="120px"></canvas>
-                        </article>
+                    <article class="card-body">
+                        <h5 class="card-title" style="text-align: center">Sales statistics</h5>
+                        <div class="chart-container">
+                        <canvas id="myChart1" height="120px"></canvas>
+                        </div>
+                        <br>
+
+                        <div class="filter-container">
+                            <div class="year-filter">
+                                <label for="yearFilter">Filter by Year:</label>
+                                <select id="yearFilter" style="border-color:rgba(15, 98, 15, 0.2)">
+                                <option value="">All Years</option>
+                                </select>
+                            </div>
+                            <button id="applyFilter" style="border-color:rgba(102, 204, 102, 1)">Apply Filter</button>
+                        </div>
+                    </article>
                     </div>
+
                     {{!-- <div class="row">
                         <div class="col-lg-5">
                             <div class="card mb-4">
@@ -475,24 +489,83 @@
     "use strict";
     /*Sale statistics Chart*/
     if ($('#myChart1').length) {
-        var ordersInEachMonth = document.getElementById("order-sales-data").innerHTML;
+        //var ordersInEachMonth = document.getElementById("order-sales-data").innerHTML;
         //var ordersByMonth = salesDataElement.innerHTML;
-        let arr = ordersInEachMonth.split(",").map(x => parseInt(x));
-        console.log('arr:',arr)
+        const ordersInEachMonthElement = document.getElementById("order-sales-data");
+        const ordersInEachMonth = JSON.parse(ordersInEachMonthElement.innerHTML)
+        console.log('ordersInEachMonth not parsed: ', ordersInEachMonthElement.innerHTML)
+        
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = currentDate.getMonth();
+        const labels = [];
+        const data = [];
+
+        console.log('ordersInEachMonth: ', ordersInEachMonth[0].count)
+        //let arr = ordersInEachMonth.split(",").map(x => parseInt(x));
+        //arr = arr.slice(0, currentMonth+1); 
+
+        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        for(let i = 0; i <= currentMonth; i++) {
+            labels.push(monthNames[i]);
+            data.push(ordersInEachMonth[i].count);
+        }
+        console.log('labels: ', labels)
+        const yearFilterSelect = document.getElementById('yearFilter');
+        const applyFilterBtn = document.getElementById('applyFilter');
+
+        // Generate the year options dynamically
+        const currentYearFilter = new Date().getFullYear();
+        for (let year = currentYearFilter; year >= 2000; year--) {
+            const option = document.createElement('option');
+            option.value = year;
+            option.text = year;
+            yearFilterSelect.appendChild(option);
+        }
+
+        // Add an event listener to the apply filter button
+        applyFilterBtn.addEventListener('click', applyFilter);
+
+        function applyFilter() {
+            const selectedYear = yearFilterSelect.value;
+            let filteredLabels = [];
+            let filteredData = [];
+
+            if (selectedYear) {
+                for(let i = 0; i <= currentMonth; i++) {
+                    if (ordersInEachMonth[i].year.toString() === selectedYear) {
+                        filteredLabels.push(labels[i]);
+                        filteredData.push(data[i]);
+                    } 
+                }
+            } else {
+                filteredLabels = labels;
+                filteredData = data;
+            } 
+
+            if (filteredData.length === 0) {
+            // Display a message to the user indicating no data is available for the selected year
+            filteredLabels = ['',`No Data for ${selectedYear}`];
+            }
+
+            chart.data.labels = filteredLabels;
+            chart.data.datasets[0].data = filteredData;
+            chart.update();
+        }
+
         var ctx = document.getElementById('myChart1').getContext('2d');
         var chart = new Chart(ctx, {
             // The type of chart we want to create
             type: 'line',
             // The data for our dataset
             data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                {{!-- labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], --}}
+                labels: labels,
                 datasets: [{
                     label: 'Orders',
                     tension: 0.3,
                     fill: true,
-                    //backgroundColor: 'rgba(44, 120, 220, 0.2)',
-                    //borderColor: 'rgba(44, 120, 220)',
-                    data: arr,
+                    data: data,
                     backgroundColor: 'rgba(102, 204, 102, 0.2)',
                     borderColor: 'rgba(102, 204, 102, 1)',
                     borderWidth: 1,
