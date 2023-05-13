@@ -29,15 +29,15 @@
                                 </thead>
                                 <tbody>
                                     {{#each orderDetails}}
-                                    <tr>
+                                    <tr data-title="Sl No.">
                                         <td>
                                         {{index @index}}
                                     </td>
 
-                                    <td>
+                                    <td data-title="OrderId">
                                         {{this.orderId}}
                                     </td>
-                                        <td class="price" data-title="Price">
+                                        <td class="price" data-title="Total Price">
                                             {{#if this.grandTotalPrice}}
                                             <span>{{formatNumber this.grandTotalPrice style="currency" currency="INR" minimumFractionDigits=2}}</span>
                                             {{else}}
@@ -47,7 +47,7 @@
                                
                 
 
-                                        <td class="text-right" data-title="Cart">
+                                        <td class="text-right" data-title="Order Status">
                                             {{#if (equal this.orderStatus "placed")}}
                                             <span class="badge rounded-pill alert-success">Placed</span>
                                             {{else if (equal this.orderStatus "pending")}}
@@ -67,7 +67,7 @@
                                             {{!-- <p style="color: red;">Return initiated</p> --}}
                                             {{/if}}
                                         </td>
-                                        <td>
+                                        <td class="text-right" data-title="Payment Status">
                                             {{#if (equal this.paymentStatus "paid")}}
                                             <span class="badge rounded-pill alert-success">Paid</span>
                                             {{else if (equal this.paymentStatus "pending")}}
@@ -81,7 +81,7 @@
                                             {{!-- <p style="color: red;">Return initiated</p> --}}
                                             {{/if}}
                                         </td>
-                                        <td class="text-right" data-title="Cart">
+                                        <td class="text-right" data-title="Action">
                                         <a href="/order-details?orderId={{this.orderId}}"
                                             class="btn btn-md rounded font-sm">View</a>
                                     </td>
