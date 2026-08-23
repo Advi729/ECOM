@@ -3,6 +3,8 @@ const cors = require('cors');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 
+const userRoutes = require('./routes/user-route');
+
 const app = express();
 
 // security headers
@@ -32,5 +34,7 @@ app.get('/api/health', (req, res) => {
     message: 'Heats api is running',
   });
 });
+
+app.use('/api/users', userRoutes);
 
 module.exports = app;
