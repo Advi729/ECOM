@@ -1,3 +1,10 @@
+---
+name: Bug Fix
+about: Describe a bug fix to help us improve
+title: 'fix: '
+labels: bug
+---
+
 ## 🐛 Bug Fix Description
 
 <!-- What is the current incorrect behavior? -->
