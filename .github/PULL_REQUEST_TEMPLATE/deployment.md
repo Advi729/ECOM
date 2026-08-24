@@ -1,3 +1,10 @@
+---
+name: Deployment & Infra
+about: Render config, CI/CD pipelines, environment variables, or release updates
+title: 'chore(deploy): '
+labels: devops
+---
+
 ## 🚀 Deployment Checklist
 
 <!-- What needs to happen to get this specific code live and working on Render? -->
