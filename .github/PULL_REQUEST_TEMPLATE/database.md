@@ -1,3 +1,10 @@
+---
+name: Database Migration
+about: Schema updates, seed data, or database query changes
+title: 'db: '
+labels: database
+---
+
 ## 🗄️ Database Changes
 
 <!-- Describe the database changes introduced by this PR. -->
