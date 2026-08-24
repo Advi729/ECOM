@@ -43,7 +43,7 @@ const registerUser = async (userData) => {
 
   const token = generateToken(user);
   user.password = undefined;
-  
+
   return {
     user,
     token,
@@ -82,10 +82,23 @@ const loginUser = async (email, password) => {
   };
 };
 
+// Get user details by id
+const getMe = async (userId) => {
+  // const user = await User.findById(userId).select('-password');
+  const user = await User.findById(userId);
 
+  if (!user) {
+    const error = new Error('User not found');
+    error.statusCode = 404;
+    throw error;
+  }
+
+  return user;
+};
 
 module.exports = {
   registerUser,
   loginUser,
+  getMe,
 };
 
