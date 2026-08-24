@@ -6,6 +6,8 @@ const cookieParser = require('cookie-parser');
 const userRoutes = require('./routes/user-route');
 const authRoutes = require('./routes/auth-route');
 
+const errorHandler = require('./middlewares/error-middleware');
+
 const app = express();
 
 // security headers
@@ -38,5 +40,11 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
+
+
+
+
+
+app.use(errorHandler);
 
 module.exports = app;
