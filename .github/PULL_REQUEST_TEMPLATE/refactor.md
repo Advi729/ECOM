@@ -1,3 +1,10 @@
+---
+name: Code Refactor
+about: Restructuring existing code without changing external behavior
+title: 'refactor: '
+labels: refactor
+---
+
 ## 🧹 Refactor Description
 
 <!-- What code are you restructuring, cleaning up, or optimizing? -->
