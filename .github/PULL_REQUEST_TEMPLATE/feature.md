@@ -1,3 +1,10 @@
+---
+name: Feature Request
+about: Propose a new feature or functionality for rebuildv2
+title: 'feat: '
+labels: enhancement
+---
+
 ## ✨ Feature Description
 
 <!-- What new functionality does this PR introduce? -->
