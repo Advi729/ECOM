@@ -2,7 +2,7 @@ const asyncHandler = require('express-async-handler');
 const authService = require('../services/auth-service');
 
 // User account registration
-const register = asyncHandler(async (req, res) => {
+const registerUser = asyncHandler(async (req, res) => {
 
   const { user, token } = await authService.registerUser(req.body);
 
@@ -17,7 +17,7 @@ const register = asyncHandler(async (req, res) => {
 });
 
 // User account login
-const login = asyncHandler(async (req, res) =>{
+const loginUser = asyncHandler(async (req, res) =>{
   const { email, password } = req.body;
 
   const { user, token } = await authService.loginUser(email, password);
@@ -44,7 +44,7 @@ const getMe = asyncHandler(async (req, res) => {
 
 
 module.exports = {
-  register,
-  login,
+  registerUser,
+  loginUser,
   getMe,
 };
