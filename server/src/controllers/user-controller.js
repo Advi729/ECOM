@@ -1,7 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const userService = require('../services/user-service');
 
-const getUsers = asyncHandler(async (req, res) => {
+const findUsers = asyncHandler(async (req, res) => {
   const users = await userService.findUsers();
   res.status(200).json({
     success: true,
@@ -12,5 +12,5 @@ const getUsers = asyncHandler(async (req, res) => {
 
 
 module.exports = {
-  getUsers,
+  findUsers,
 };

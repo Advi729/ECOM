@@ -8,10 +8,6 @@ const findUserById = async (userId) => {
   return User.findById(userId);
 };
 
-const createUser = async (userData) => {
-  return User.create(userData);
-};
-
 const findUsers = async () => {
   return User.find();
 };
@@ -19,6 +15,5 @@ const findUsers = async () => {
 module.exports = {
   findUserByEmail,
   findUserById,
-  createUser,
   findUsers,
 };

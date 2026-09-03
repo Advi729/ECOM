@@ -13,10 +13,10 @@ const router = express.Router();
 router.post('/register',
   registerValidation,
   validate,
-  authController.register
+  authController.registerUser
 );
 
-router.post('/login', loginValidation, validate, authController.login);
+router.post('/login', loginValidation, validate, authController.loginUser);
 
 router.get('/me', protect, getMe);
 
