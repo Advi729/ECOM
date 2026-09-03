@@ -22,4 +22,18 @@ const protect = (req, res, next) => {
   
 };
 
-module.exports = protect;
+// middleware to check if admin
+const isAdmin = (req, res, next) => {
+    console.log('isAdmin: ', req.user);
+  if (req.user && req.user.role === 'admin') {
+    next();
+  } else {
+    res.status(403);
+    throw new Error('Access denied. Admin only.');
+  }
+};
+
+module.exports = {
+  protect,
+  isAdmin,
+};
