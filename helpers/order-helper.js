@@ -10,8 +10,8 @@ const couponHelpers = require('./coupon-helper');
 const userHelpers = require('./user-helper');
 
 const instance = new Razorpay({
-  key_id: 'rzp_test_unePQlLuDT2Zxm',
-  key_secret: 'Qrv55Iyw8yIfTZMR8plnQBTa',
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
 // update quantity in product schema after ordering
