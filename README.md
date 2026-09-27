@@ -396,5 +396,5 @@ GitHub: `Advi729`
 
 ## 📄 License
 
-Distributed under the MIT License. View the accompanying `LICENSE` file layout context for structural authorization parameters.
+Distributed under the Apache-2.0 License. View the accompanying `LICENSE` file layout context for structural authorization parameters.
 
