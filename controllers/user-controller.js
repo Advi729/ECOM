@@ -212,17 +212,18 @@ const loginUserPostOTP = asyncHandler(async (req, res, next) => {
 });
 
 // User login otp verify get method
-const verifyOtpGet = async (req, res, next) => {
+const verifyOtpGet = asyncHandler(async (req, res, next) => {
   try {
     const { mobile } = req.session;
     console.log('mobile in verifyOtpGet: ', mobile);
     res.render('user/otp', { mobile, otpError: req.session.otpErr });
     req.session.otpErr = false;
   } catch (error) {
+    console.log('error in verifyOtpGet: ', error);
     console.error(error);
     next(error);
   }
-};
+});
 
 // User login otp verify
 const verifyOtpPost = asyncHandler(async (req, res, next) => {

@@ -144,6 +144,7 @@ const placeOrder = asyncHandler(async (req, res, next) => {
         orderId,
         totalPrice
       );
+      
       if (createdInstance) {
         const created = await orderHelpers.createOrder(
           productsList,
@@ -154,14 +155,17 @@ const placeOrder = asyncHandler(async (req, res, next) => {
           userId,
           coupon
         );
-        console.log('created order: ', created);
+        const razorPayKeyId = process.env.RAZORPAY_KEY_ID;
         console.log('createdInstance orderId: ', createdInstance);
+        console.log('created order: ', created);
+        console.log('process.env::::::::::', razorPayKeyId);
         if (created) {
           res.json({
             status: 'razorPay',
             createdInstance,
             userData,
             createdOrder: created,
+            razorPayKeyId,
           });
         }
       }

@@ -925,8 +925,8 @@
                             location.replace('/orders');
                         },3000);
                     case 'razorPay':
-                        //console.log(response.createdInstance)
-                        razorPayPayment(response.createdInstance, response.userData, response.createdOrder);                      
+                        console.log('raaaaaaaaaaaaaaz: ',response);
+                        razorPayPayment(response.createdInstance, response.userData, response.createdOrder, response.razorPayKeyId);                      
                 }
             },
             error: (response, stat, err) => {
@@ -936,11 +936,11 @@
         })
     })
 
-    function razorPayPayment(order, userData, createdOrder) {
+    function razorPayPayment(order, userData, createdOrder, razorPayKeyId) {
         const userName = `${userData.firstname}${userData.lastname}`;
         const userId = userData._id;
         var options = {
-            "key": "rzp_test_unePQlLuDT2Zxm", // Enter the Key ID generated from the Dashboard
+            "key": String(razorPayKeyId), // Enter the Key ID generated from the Dashboard
             "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
             "currency": "INR",
             "name": "Heats", //your business name
