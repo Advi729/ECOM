@@ -365,30 +365,34 @@ function invoiceOrderConfirmation(anchor) {
         cancelButtonText: "No, cancel",
     }).then((result) => {
         if (result.isConfirmed) {
-  
-    $.ajax({
-      url: '/invoice/'+orderId,
-      type: 'GET',
-      dataType: 'blob',
-      success: (data) => {
-        console.log('data:', data)
-        const blob = new Blob([data], { type: 'application/pdf' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `invoice_${orderId}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      },
-      error: (xhr, status, error) => {
-        console.error(status, error);
-      }
-    });
- 
-         }
+        // Use native fetch to safely download binary data/blobs
+        fetch('/invoice/' + orderId)
+            .then((response) => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.blob(); // Native support for handling blob types
+            })
+            .then((blob) => {
+                console.log('data:', blob);
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `invoice_${orderId}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url); // Clean up memory
+            })
+            .catch((error) => {
+                console.error('Download failed:', error);
+                Swal.fire("Error", "Could not download the invoice.", "error");
+            });
+        }
+
     })
 }
+
 
 
 
