@@ -939,6 +939,7 @@
     function razorPayPayment(order, userData, createdOrder, razorPayKeyId) {
         const userName = `${userData.firstname}${userData.lastname}`;
         const userId = userData._id;
+        const orderId = createdOrder.orderId;
         var options = {
             "key": String(razorPayKeyId), // Enter the Key ID generated from the Dashboard
             "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
@@ -952,7 +953,7 @@
                 //alert(response.razorpay_order_id);
                 //alert(response.razorpay_signature)
 
-                verifyPayment(response, order, userId);
+                verifyPayment(response, order, userId, orderId);
             },
             "prefill": {
                 "name": userName, //your customer's name
@@ -1002,13 +1003,14 @@
         //}
     }
 
-    function verifyPayment(payment, order, userId) {
+    function verifyPayment(payment, order, userId, orderId) {
         $.ajax({
             url: '/verify-payment',
             data: {
                 payment,
                 order,
-                userId
+                userId,
+                orderId,
             },
             method: 'post',
             success: (response) => {

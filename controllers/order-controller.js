@@ -158,7 +158,6 @@ const placeOrder = asyncHandler(async (req, res, next) => {
         const razorPayKeyId = process.env.RAZORPAY_KEY_ID;
         console.log('createdInstance orderId: ', createdInstance);
         console.log('created order: ', created);
-        console.log('process.env::::::::::', razorPayKeyId);
         if (created) {
           res.json({
             status: 'razorPay',
@@ -183,8 +182,9 @@ const verifyPayment = asyncHandler(async (req, res, next) => {
   try {
     const { userId } = req.body;
     const onlinePayment = await orderHelpers.verifyRazorpayPayment(req.body);
+
     if (onlinePayment) {
-      const orderId = req.body['order[receipt]'];
+      const { orderId } = req.body;
       const paymentStatus = 'paid';
       const updated = await orderHelpers.updatePaymentStatus(
         orderId,
@@ -195,6 +195,8 @@ const verifyPayment = asyncHandler(async (req, res, next) => {
         await Cart.deleteOne({ userId });
         res.json({ status: true });
       }
+    } else {
+      res.json({ status: false });
     }
   } catch (error) {
     console.error(error);

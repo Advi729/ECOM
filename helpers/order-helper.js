@@ -102,7 +102,8 @@ const createOrder = asyncHandler(
       };
 
       const status = order.payment_option === 'cod' ? 'placed' : 'pending';
-      const payStatus = order.payment_option === 'cod' ? 'pending' : 'paid';
+      const payStatus = 'pending';
+      // const payStatus = order.payment_option === 'cod' ? 'pending' : 'paid';
 
       let couponPercentage;
       if (coupon) {
@@ -427,14 +428,17 @@ const generateRazorPay = asyncHandler(async (orderId, totalPrice) => {
 // Verify the payment
 const verifyRazorpayPayment = asyncHandler(async (details) => {
   try {
+    console.log('in verifyRazorpayPayment helper:->   ', details);
     const crypto = require('crypto');
-    let hmac = crypto.createHmac('sha256', 'Qrv55Iyw8yIfTZMR8plnQBTa');
+    let hmac = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET);
 
     hmac.update(
       `${details['payment[razorpay_order_id]']}|${details['payment[razorpay_payment_id]']}`
     );
     hmac = hmac.digest('hex');
+    console.log('hmac :', hmac);
     if (hmac === details['payment[razorpay_signature]']) {
+      console.log('hmac true777777777777777777777777777:');
       return true;
     }
     return false;
@@ -447,10 +451,12 @@ const verifyRazorpayPayment = asyncHandler(async (details) => {
 // Update the payment status
 const updatePaymentStatus = asyncHandler(async (orderId, paymentStatus) => {
   try {
+    console.log('in updatePaymentStatus helper:----- ', orderId, paymentStatus);
     const updated = await Order.updateOne(
       { orderId },
       { $set: { paymentStatus } }
     );
+    console.log('in uptpayment updated::::', updated);
     if (updated) return updated;
   } catch (error) {
     console.error(error);
