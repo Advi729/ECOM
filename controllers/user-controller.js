@@ -216,7 +216,11 @@ const verifyOtpGet = asyncHandler(async (req, res, next) => {
   try {
     const { mobile } = req.session;
     console.log('mobile in verifyOtpGet: ', mobile);
-    res.render('user/otp', { mobile, otpError: req.session.otpErr });
+    res.render('user/otp', {
+      mobile,
+      otpError: req.session.otpErr,
+      isUser: true,
+    });
     req.session.otpErr = false;
   } catch (error) {
     console.log('error in verifyOtpGet: ', error);
