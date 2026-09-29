@@ -98,6 +98,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.get('/favicon.ico', (req, res) => {
+  res.sendFile(
+    path.join(__dirname, 'public/assets-user/imgs/theme/heats_favicon.png')
+  );
+});
 
 app.use(
   session({
