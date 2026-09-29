@@ -187,23 +187,23 @@ const loginUserPostOTP = asyncHandler(async (req, res, next) => {
       const { mobile } = req.body;
       //   const otp = generateOTP();
       const foundUser = await userHelpers.findOtp(mobile);
-      req.session.user = foundUser;
-      if (foundUser.response !== null) {
-        twilioMiddlewares.send_otp(mobile).then((response) => {
-          // const mobileNumber = req.body.mobileNumber;
-          req.session.mobile = mobile;
-          res.redirect('/verify-otp');
-          // res.render('user/otp', { title: 'OTP Verification', mobileNumber });
-        });
-      } else if (foundUser.response === null) {
+      if (!foundUser.response) {
         req.session.accountError = 'Number not registered with an account!';
         req.session.formData = req.body;
         res.redirect('/login-otp');
-      } else if (foundUser.response.blocked !== false) {
+        return;
+      }
+
+      if (foundUser.response.isBlocked) {
         req.session.statusError = 'Access has been denied!';
         req.session.formData = req.body;
-        res.redirect('login-otp');
+        res.redirect('/login-otp');
+        return;
       }
+
+      await twilioMiddlewares.send_otp(mobile);
+      req.session.mobile = mobile;
+      res.redirect('/verify-otp');
     }
   } catch (error) {
     console.error(error);
@@ -215,6 +215,11 @@ const loginUserPostOTP = asyncHandler(async (req, res, next) => {
 const verifyOtpGet = asyncHandler(async (req, res, next) => {
   try {
     const { mobile } = req.session;
+    if (!mobile) {
+      res.redirect('/login-otp');
+      return;
+    }
+
     console.log('mobile in verifyOtpGet: ', mobile);
     res.render('user/otp', {
       mobile,
@@ -232,20 +237,31 @@ const verifyOtpGet = asyncHandler(async (req, res, next) => {
 // User login otp verify
 const verifyOtpPost = asyncHandler(async (req, res, next) => {
   try {
-    const { mobile } = req.body;
     const { otp } = req.body;
-    console.log('body in verifyotpost: ', req.body);
-    console.log('mobileNo in controller: ', mobile);
+    const { mobile } = req.session;
+    if (!mobile) {
+      res.redirect('/login-otp');
+      return;
+    }
 
-    // Verify the OTP
-    twilioMiddlewares.verifying_otp(mobile, otp).then((verification) => {
-      if (verification.status === 'approved') {
-        res.redirect('/');
-      } else {
-        req.session.otpErr = 'OTP is invalid!';
-        res.redirect('/verify-otp');
-      }
-    });
+    const verification = await twilioMiddlewares.verifying_otp(mobile, otp);
+    if (verification.status !== 'approved') {
+      req.session.otpErr = 'OTP is invalid!';
+      res.redirect('/verify-otp');
+      return;
+    }
+
+    const foundUser = await userHelpers.findOtp(mobile);
+    if (!foundUser.response || foundUser.response.isBlocked) {
+      delete req.session.mobile;
+      req.session.statusError = 'Access has been denied!';
+      res.redirect('/login-otp');
+      return;
+    }
+
+    req.session.user = foundUser;
+    delete req.session.mobile;
+    res.redirect('/');
   } catch (error) {
     // if (error instanceof client.constructor.RestClient.RestException) {
     //   console.error(error.code);
